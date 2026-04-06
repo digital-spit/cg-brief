@@ -8,6 +8,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #030712; color: #e5e7eb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
 
+  /* Auth screen */
+  #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; background: #030712; z-index: 9999; }
+  #auth-screen.hidden { display: none; }
+  .auth-box { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 32px; width: 320px; text-align: center; }
+  .auth-box h1 { font-size: 20px; font-weight: 700; color: #f9fafb; margin-bottom: 4px; }
+  .auth-box p { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+  .auth-input { width: 100%; padding: 12px 16px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #f9fafb; font-size: 15px; outline: none; text-align: center; letter-spacing: 2px; }
+  .auth-input:focus { border-color: #3b82f6; }
+  .auth-input.error { border-color: #ef4444; animation: shake 0.3s; }
+  .auth-btn { width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: background 0.2s; }
+  .auth-btn:hover { background: #2563eb; }
+  .auth-error { color: #ef4444; font-size: 12px; margin-top: 8px; min-height: 16px; }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  #app-content { display: none; }
+  #app-content.visible { display: block; }
+
   .header { background: #0d1117; border-bottom: 1px solid #1f2937; padding: 16px 20px; position: sticky; top: 0; z-index: 100; }
   .header-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   .header-date { color: #6b7280; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -99,6 +115,20 @@
 </style>
 </head>
 <body>
+
+<!-- Auth Screen -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <h1>C&G Brief</h1>
+    <p>Enter password to continue</p>
+    <input type="password" id="auth-password" class="auth-input" placeholder="Password" autocomplete="off" autofocus>
+    <button class="auth-btn" id="auth-btn">Unlock</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- Dashboard (hidden until authenticated) -->
+<div id="app-content">
 
 <div class="header">
   <div class="header-top">
@@ -555,7 +585,54 @@
   <div style="margin-top:12px;font-size:11px;color:#4b5563;padding:0 4px;">All data retrieved April 6, 2026 for 5:15 PM Dubai briefing. Prices indicative, may vary by source/timestamp.</div>
 </div>
 
+</div><!-- end app-content -->
+
 <script>
+// Auth system — SHA-256 hash comparison (password never stored in plain text)
+var PASS_HASH = '66ccfad64b6374e8edae32dcf758bbf3ca7cc2630c3d72a9d8b8c0e1970df9ae';
+async function hashPassword(pw) {
+  var enc = new TextEncoder().encode(pw);
+  var buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+
+(async function() {
+  var realHash = PASS_HASH;
+
+  var authScreen = document.getElementById('auth-screen');
+  var appContent = document.getElementById('app-content');
+  var passwordInput = document.getElementById('auth-password');
+  var authBtn = document.getElementById('auth-btn');
+  var authError = document.getElementById('auth-error');
+
+  // Check if already authenticated this session
+  if (sessionStorage.getItem('cg-auth') === 'true') {
+    authScreen.classList.add('hidden');
+    appContent.classList.add('visible');
+  }
+
+  async function tryAuth() {
+    var pw = passwordInput.value;
+    if (!pw) return;
+    var hash = await hashPassword(pw);
+    if (hash === realHash) {
+      sessionStorage.setItem('cg-auth', 'true');
+      authScreen.classList.add('hidden');
+      appContent.classList.add('visible');
+      authError.textContent = '';
+    } else {
+      passwordInput.classList.add('error');
+      authError.textContent = 'Wrong password';
+      setTimeout(function() { passwordInput.classList.remove('error'); }, 300);
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  }
+
+  authBtn.addEventListener('click', tryAuth);
+  passwordInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryAuth(); });
+})();
+
 function showTab(id, el) {
   document.querySelectorAll('.content').forEach(function(c) { c.classList.remove('active'); });
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
