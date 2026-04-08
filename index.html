@@ -5,155 +5,158 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>C&G Optimizer — Path to 1M AED</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #030712; --surface: #111827; --surface2: #1f2937; --border: #1f2937;
-    --text: #f9fafb; --text2: #9ca3af; --text3: #6b7280;
-    --green: #22c55e; --red: #ef4444; --amber: #f59e0b; --blue: #3b82f6;
-    --gold: #eab308; --cyan: #06b6d4; --purple: #a855f7;
-  }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#030712;--s1:#0a1120;--s2:#111827;--s3:#1f2937;--border:#1e293b;
+  --t1:#f8fafc;--t2:#94a3b8;--t3:#64748b;--t4:#475569;
+  --green:#22c55e;--red:#ef4444;--amber:#f59e0b;--blue:#3b82f6;
+  --gold:#eab308;--cyan:#06b6d4;--purple:#a855f7;--pink:#ec4899;
+  --green-bg:rgba(34,197,94,.08);--red-bg:rgba(239,68,68,.08);
+  --amber-bg:rgba(245,158,11,.08);--blue-bg:rgba(59,130,246,.08);
+  --gold-bg:rgba(234,179,8,.08);--purple-bg:rgba(168,85,247,.08);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t1);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}
 
-  /* Auth */
-  #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; background: #030712; z-index: 9999; }
-  #auth-screen.hidden { display: none; }
-  .auth-box { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 32px; width: 320px; text-align: center; }
-  .auth-box h1 { font-size: 20px; font-weight: 700; color: #f9fafb; margin-bottom: 4px; }
-  .auth-box p { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
-  .auth-input { width: 100%; padding: 12px 16px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #f9fafb; font-size: 15px; outline: none; text-align: center; letter-spacing: 2px; }
-  .auth-input:focus { border-color: #3b82f6; }
-  .auth-input.error { border-color: #ef4444; animation: shake 0.3s; }
-  .auth-btn { width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; }
-  .auth-btn:hover { background: #2563eb; }
-  .auth-error { color: #ef4444; font-size: 12px; margin-top: 8px; min-height: 16px; }
-  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-  #app-content { display: none; }
-  #app-content.visible { display: block; }
+/* AUTH */
+#auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;position:fixed;inset:0;background:var(--bg);z-index:9999}
+#auth-screen.hidden{display:none}
+.auth-box{background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:36px;width:340px;text-align:center}
+.auth-box h1{font-size:22px;font-weight:800;margin-bottom:4px}
+.auth-box h1 span{color:var(--gold)}
+.auth-box p{font-size:13px;color:var(--t3);margin-bottom:20px}
+.auth-input{width:100%;padding:12px 16px;background:var(--s3);border:1px solid #374151;border-radius:10px;color:var(--t1);font-size:15px;outline:none;text-align:center;letter-spacing:2px}
+.auth-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.auth-input.error{border-color:var(--red);animation:shake .3s}
+.auth-btn{width:100%;padding:12px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px;transition:.2s}
+.auth-btn:hover{background:#ca8a04}
+.auth-error{color:var(--red);font-size:12px;margin-top:8px;min-height:16px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#app-content{display:none}
+#app-content.visible{display:block}
 
-  /* Layout */
-  .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+/* LAYOUT */
+.wrap{max-width:1280px;margin:0 auto;padding:0 16px 40px}
+.header{padding:20px 0 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.logo{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.logo span{color:var(--gold)}
+.header-date{font-size:12px;color:var(--t3);background:var(--s2);padding:4px 10px;border-radius:6px}
 
-  /* Header */
-  .header { padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
-  .header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
-  .header h1 span { color: var(--gold); }
-  .header-sub { font-size: 13px; color: var(--text3); margin-top: 4px; }
+/* NAV */
+.nav{display:flex;gap:2px;overflow-x:auto;padding:4px;background:var(--s1);border-radius:12px;margin-bottom:20px;-webkit-overflow-scrolling:touch}
+.nav-btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;background:transparent;color:var(--t3);border:none;transition:.15s}
+.nav-btn:hover{color:var(--t2);background:var(--s2)}
+.nav-btn.active{color:var(--t1);background:var(--s2);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.panel{display:none}.panel.active{display:block}
 
-  /* Tabs */
-  .tabs { display: flex; gap: 4px; overflow-x: auto; margin-bottom: 24px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-  .tab { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; background: transparent; color: var(--text3); border: 1px solid transparent; transition: all 0.2s; }
-  .tab:hover { color: var(--text2); background: var(--surface); }
-  .tab.active { color: var(--text); background: var(--surface); border-color: var(--border); }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
+/* CARDS */
+.card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.card-sm{padding:16px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.badge{font-size:10px;padding:3px 8px;border-radius:5px;font-weight:700;letter-spacing:.3px}
+.b-red{background:var(--red-bg);color:var(--red)}.b-green{background:var(--green-bg);color:var(--green)}
+.b-amber{background:var(--amber-bg);color:var(--amber)}.b-blue{background:var(--blue-bg);color:var(--blue)}
+.b-gold{background:var(--gold-bg);color:var(--gold)}.b-purple{background:var(--purple-bg);color:var(--purple)}
 
-  /* Goal Ring */
-  .goal-ring-container { display: flex; align-items: center; gap: 32px; padding: 24px; background: var(--surface); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; }
-  .goal-ring { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
-  .goal-ring svg { transform: rotate(-90deg); }
-  .goal-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .goal-ring-pct { font-size: 32px; font-weight: 800; color: var(--gold); }
-  .goal-ring-sub { font-size: 11px; color: var(--text3); }
-  .goal-stats { flex: 1; }
-  .goal-stat { margin-bottom: 12px; }
-  .goal-stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
-  .goal-stat-value { font-size: 20px; font-weight: 700; }
-  .goal-stat-value.green { color: var(--green); }
-  .goal-stat-value.red { color: var(--red); }
-  .goal-stat-value.gold { color: var(--gold); }
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+@media(max-width:900px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}.goal-hero{flex-direction:column;text-align:center}}
 
-  /* Cards */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-  .card-title { font-size: 14px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .card-title .badge { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
-  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); }
-  .badge-amber { background: rgba(245,158,11,0.15); color: var(--amber); }
-  .badge-blue { background: rgba(59,130,246,0.15); color: var(--blue); }
+/* GOAL HERO */
+.goal-hero{display:flex;align-items:center;gap:36px;padding:28px;background:linear-gradient(135deg,var(--s2),var(--s1));border:1px solid var(--border);border-radius:16px;margin-bottom:20px}
+.ring-wrap{position:relative;width:180px;height:180px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--gold),#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ring-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.goal-nums{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.gn{padding:12px 16px;background:var(--s3);border-radius:10px}
+.gn-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.gn-val{font-size:20px;font-weight:700}
 
-  /* Grid */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .goal-ring-container { flex-direction: column; text-align: center; } }
+/* METRIC ROWS */
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(30,41,59,.5)}
+.mrow:last-child{border-bottom:none}
+.mrow-label{font-size:13px;color:var(--t2)}
+.mrow-val{font-size:13px;font-weight:600}
 
-  /* Levers */
-  .lever { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--surface2); border-radius: 10px; margin-bottom: 8px; }
-  .lever-rank { font-size: 24px; font-weight: 800; color: var(--text3); width: 32px; text-align: center; }
-  .lever-bar-bg { flex: 1; height: 8px; background: #374151; border-radius: 4px; overflow: hidden; }
-  .lever-bar { height: 100%; border-radius: 4px; }
-  .lever-info { flex: 1; }
-  .lever-name { font-size: 14px; font-weight: 600; }
-  .lever-detail { font-size: 12px; color: var(--text3); }
-  .lever-impact { font-size: 16px; font-weight: 700; white-space: nowrap; }
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.tbl td{padding:9px 10px;border-bottom:1px solid rgba(30,41,59,.4)}
+.tbl tr:hover td{background:rgba(30,41,59,.2)}
 
-  /* Scenario bars */
-  .scenario { padding: 16px; background: var(--surface2); border-radius: 10px; margin-bottom: 10px; }
-  .scenario-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .scenario-name { font-size: 13px; font-weight: 600; }
-  .scenario-value { font-size: 15px; font-weight: 700; }
-  .scenario-bar-bg { height: 10px; background: #374151; border-radius: 5px; overflow: hidden; position: relative; }
-  .scenario-bar { height: 100%; border-radius: 5px; transition: width 1s ease; }
-  .scenario-marker { position: absolute; top: -4px; width: 2px; height: 18px; background: var(--gold); }
-  .scenario-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+/* COLORS */
+.pos{color:var(--green)}.neg{color:var(--red)}.warn{color:var(--amber)}.gold{color:var(--gold)}.purp{color:var(--purple)}
 
-  /* Table */
-  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .data-table th { text-align: left; font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 12px; border-bottom: 1px solid var(--border); }
-  .data-table td { padding: 10px 12px; border-bottom: 1px solid rgba(31,41,55,0.5); }
-  .data-table tr:hover { background: rgba(31,41,55,0.3); }
-  .pos { color: var(--green); }
-  .neg { color: var(--red); }
-  .warn { color: var(--amber); }
+/* LEVER BAR */
+.lever{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--s3);border-radius:12px;margin-bottom:10px}
+.lever-n{font-size:28px;font-weight:800;color:var(--t4);width:28px;text-align:center;line-height:1;margin-top:2px}
+.lever-body{flex:1}
+.lever-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.lever-desc{font-size:12px;color:var(--t2);margin-bottom:6px}
+.lever-trigger{font-size:11px;padding:4px 8px;border-radius:6px;display:inline-block}
+.lever-impact{font-size:18px;font-weight:800;white-space:nowrap;margin-top:4px}
 
-  /* Action items */
-  .action { display: flex; gap: 12px; padding: 14px; background: var(--surface2); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid; }
-  .action.stop { border-color: var(--red); }
-  .action.start { border-color: var(--green); }
-  .action.continue { border-color: var(--blue); }
-  .action-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-  .action-text { font-size: 13px; }
-  .action-impact { font-size: 11px; color: var(--text3); margin-top: 4px; }
+/* ACTION ITEM */
+.act{padding:14px 16px;background:var(--s3);border-radius:10px;margin-bottom:8px;border-left:3px solid}
+.act.stop{border-color:var(--red)}.act.start{border-color:var(--green)}.act.cont{border-color:var(--blue)}
+.act-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px}
+.act-text{font-size:13px;font-weight:600;margin-bottom:4px}
+.act-why{font-size:12px;color:var(--t2)}
 
-  /* Macro cards */
-  .macro-card { padding: 16px; background: var(--surface2); border-radius: 10px; }
-  .macro-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
-  .macro-value { font-size: 22px; font-weight: 700; margin: 4px 0; }
-  .macro-sub { font-size: 12px; color: var(--text3); }
-  .macro-signal { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin-top: 6px; }
+/* SCENARIO */
+.scn{padding:16px;background:var(--s3);border-radius:12px;margin-bottom:10px}
+.scn-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.scn-name{font-size:13px;font-weight:700}
+.scn-desc{font-size:11px;color:var(--t3)}
+.scn-val{font-size:18px;font-weight:800;white-space:nowrap}
+.scn-bar-bg{height:10px;background:#1e293b;border-radius:5px;overflow:hidden;position:relative}
+.scn-bar{height:100%;border-radius:5px;transition:width 1.2s ease}
+.scn-goal-line{position:absolute;right:0;top:-3px;height:16px;width:2px;background:var(--gold);border-radius:1px}
+.scn-foot{font-size:11px;color:var(--t3);margin-top:6px}
 
-  /* Savings tracker */
-  .savings-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--surface2); border-radius: 10px; margin-bottom: 8px; }
-  .savings-month { width: 60px; font-size: 13px; font-weight: 600; }
-  .savings-bar-bg { flex: 1; height: 6px; background: #374151; border-radius: 3px; overflow: hidden; }
-  .savings-bar { height: 100%; background: var(--green); border-radius: 3px; }
-  .savings-cum { font-size: 13px; font-weight: 600; width: 80px; text-align: right; }
+/* MACRO CARD */
+.mc{padding:16px;background:var(--s3);border-radius:12px;display:flex;flex-direction:column;gap:6px}
+.mc-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.mc-val{font-size:24px;font-weight:800}
+.mc-sub{font-size:11px;color:var(--t3)}
+.mc-sig{font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;display:inline-block;width:fit-content}
 
-  /* Catalyst timeline */
-  .timeline { position: relative; padding-left: 24px; }
-  .timeline::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
-  .tl-item { position: relative; padding: 12px 0; }
-  .tl-dot { position: absolute; left: -20px; top: 16px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid; }
-  .tl-date { font-size: 11px; color: var(--text3); }
-  .tl-event { font-size: 13px; font-weight: 600; }
-  .tl-impact { font-size: 12px; color: var(--text3); }
+/* TIMELINE */
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:8px;top:12px;bottom:12px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding:14px 0}
+.tl-dot{position:absolute;left:-24px;top:18px;width:12px;height:12px;border-radius:50%;border:2px solid}
+.tl-date{font-size:11px;color:var(--t3)}
+.tl-event{font-size:13px;font-weight:700;margin:2px 0}
+.tl-note{font-size:12px;color:var(--t2)}
 
-  /* Portfolio health */
-  .health-metric { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(31,41,55,0.5); }
-  .health-label { font-size: 13px; color: var(--text2); }
-  .health-value { font-size: 13px; font-weight: 600; }
+/* SAVINGS ROW */
+.sv{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--s3);border-radius:10px;margin-bottom:6px}
+.sv-mo{width:36px;font-size:12px;font-weight:700;color:var(--t2)}
+.sv-bar-bg{flex:1;height:6px;background:#1e293b;border-radius:3px;overflow:hidden}
+.sv-bar{height:100%;border-radius:3px;background:var(--green)}
+.sv-cum{font-size:12px;font-weight:600;width:90px;text-align:right}
 
-  /* Bottom bar */
-  .bottom-line { padding: 20px; background: linear-gradient(135deg, rgba(234,179,8,0.08), rgba(59,130,246,0.08)); border: 1px solid rgba(234,179,8,0.2); border-radius: 12px; margin-top: 24px; }
-  .bottom-line h3 { font-size: 14px; color: var(--gold); margin-bottom: 8px; }
-  .bottom-line p { font-size: 13px; color: var(--text2); }
+/* BOTTOM LINE */
+.bl{padding:20px;background:linear-gradient(135deg,var(--gold-bg),var(--blue-bg));border:1px solid rgba(234,179,8,.15);border-radius:14px;margin-top:20px}
+.bl h3{font-size:13px;color:var(--gold);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.bl p{font-size:13px;color:var(--t2);line-height:1.7}
 
-  .updated { font-size: 11px; color: var(--text3); text-align: center; padding: 20px 0; }
+.footer{font-size:11px;color:var(--t4);text-align:center;padding:24px 0}
 </style>
 </head>
 <body>
+
+<!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="auth-box">
-    <h1>C&G Optimizer</h1>
+    <h1>C&G <span>Optimizer</span></h1>
     <p>Enter password to continue</p>
     <input type="password" id="auth-password" class="auth-input" placeholder="Password" autocomplete="off" autofocus>
     <button class="auth-btn" id="auth-btn">Unlock</button>
@@ -161,669 +164,596 @@
   </div>
 </div>
 
+<!-- MAIN CONTENT -->
 <div id="app-content">
-<div class="container">
+<div class="wrap">
 
-<!-- HEADER -->
 <div class="header">
-  <h1>Compounds & <span>Gains</span> Optimizer</h1>
-  <div class="header-sub">Path to AED 1,000,000 — Data as of April 8, 2026 | eToro Statement Verified</div>
+  <div class="logo">Compounds & <span>Gains</span></div>
+  <div class="header-date">April 8, 2026 &mdash; eToro Statement Verified</div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <div class="tab active" data-tab="goal">Goal Tracker</div>
-  <div class="tab" data-tab="levers">5 Levers</div>
-  <div class="tab" data-tab="portfolio">Portfolio X-Ray</div>
-  <div class="tab" data-tab="macro">Macro & Technicals</div>
-  <div class="tab" data-tab="scenarios">Scenarios</div>
-  <div class="tab" data-tab="actions">Actions</div>
-  <div class="tab" data-tab="savings">Savings Plan</div>
-  <div class="tab" data-tab="catalysts">Catalysts</div>
-</div>
+<nav class="nav">
+  <button class="nav-btn active" data-p="goal">Goal</button>
+  <button class="nav-btn" data-p="levers">5 Levers</button>
+  <button class="nav-btn" data-p="port">Portfolio</button>
+  <button class="nav-btn" data-p="macro">Macro</button>
+  <button class="nav-btn" data-p="scen">Scenarios</button>
+  <button class="nav-btn" data-p="act">Actions</button>
+  <button class="nav-btn" data-p="save">Savings</button>
+  <button class="nav-btn" data-p="cat">Catalysts</button>
+</nav>
 
-<!-- ============================================ -->
-<!-- TAB 1: GOAL TRACKER -->
-<!-- ============================================ -->
-<div class="tab-panel active" id="tab-goal">
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 1 : GOAL TRACKER                             -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel active" id="p-goal">
 
-<div class="goal-ring-container">
-  <div class="goal-ring">
-    <svg width="160" height="160">
-      <circle cx="80" cy="80" r="70" fill="none" stroke="#1f2937" stroke-width="12"/>
-      <circle cx="80" cy="80" r="70" fill="none" stroke="#eab308" stroke-width="12" stroke-linecap="round"
-        stroke-dasharray="440" stroke-dashoffset="269" />
+<div class="goal-hero">
+  <div class="ring-wrap">
+    <svg width="180" height="180">
+      <circle cx="90" cy="90" r="78" fill="none" stroke="#1e293b" stroke-width="14"/>
+      <circle cx="90" cy="90" r="78" fill="none" stroke="url(#gold-grad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="490" stroke-dashoffset="300"/>
+      <defs><linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#eab308"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>
     </svg>
-    <div class="goal-ring-label">
-      <div class="goal-ring-pct">38.8%</div>
-      <div class="goal-ring-sub">of AED 1M</div>
+    <div class="ring-center">
+      <div class="ring-pct">38.8%</div>
+      <div class="ring-sub">of AED 1,000,000</div>
     </div>
   </div>
-  <div class="goal-stats">
-    <div class="goal-stat">
-      <div class="goal-stat-label">Net Liquid Position</div>
-      <div class="goal-stat-value">AED 388,053</div>
-    </div>
-    <div class="goal-stat">
-      <div class="goal-stat-label">Gap to 1M</div>
-      <div class="goal-stat-value red">AED 611,947</div>
-    </div>
-    <div class="goal-stat">
-      <div class="goal-stat-label">RSU Accelerator (if liquidated)</div>
-      <div class="goal-stat-value" style="color:var(--purple)">+ AED 150,986</div>
-    </div>
-    <div class="goal-stat">
-      <div class="goal-stat-label">Months Remaining</div>
-      <div class="goal-stat-value gold">8.75</div>
-    </div>
+  <div class="goal-nums">
+    <div class="gn"><div class="gn-label">Net Liquid</div><div class="gn-val">AED 388,053</div></div>
+    <div class="gn"><div class="gn-label">Gap to 1M</div><div class="gn-val neg">AED 611,947</div></div>
+    <div class="gn"><div class="gn-label">RSU Accelerator</div><div class="gn-val purp">+ AED 150,986</div></div>
+    <div class="gn"><div class="gn-label">Months Left</div><div class="gn-val gold">8.75</div></div>
+    <div class="gn"><div class="gn-label">Monthly Save Commit</div><div class="gn-val pos">AED 12,500</div></div>
+    <div class="gn"><div class="gn-label">Best Case Ceiling</div><div class="gn-val" style="color:var(--cyan)">AED 968K</div></div>
   </div>
 </div>
 
-<div class="grid-2">
-  <div class="card">
+<div class="g2">
+  <!-- ASSET BREAKDOWN -->
+  <div class="card card-sm">
     <div class="card-title">Asset Breakdown</div>
-    <div class="health-metric"><span class="health-label">eToro Portfolio</span><span class="health-value">AED 140,641 <span style="font-size:11px;color:var(--text3)">($38,296)</span></span></div>
-    <div class="health-metric"><span class="health-label">Wio USD</span><span class="health-value">AED 222,146 <span style="font-size:11px;color:var(--text3)">($60,489)</span></span></div>
-    <div class="health-metric"><span class="health-label">Wio EUR + AED</span><span class="health-value">AED 37,738</span></div>
-    <div class="health-metric"><span class="health-label">Wio Investments</span><span class="health-value">AED 4,776</span></div>
-    <div class="health-metric"><span class="health-label">ENBD Current</span><span class="health-value">AED 40,151</span></div>
-    <div class="health-metric"><span class="health-label">European Banks</span><span class="health-value">AED 29,778</span></div>
-    <div class="health-metric"><span class="health-label">Cash at Home</span><span class="health-value">AED 20,000</span></div>
-    <div class="health-metric" style="border-bottom:2px solid var(--border)"><span class="health-label" style="font-weight:700;color:var(--text)">Gross Liquid</span><span class="health-value" style="font-size:16px">AED 495,230</span></div>
-    <div class="health-metric"><span class="health-label neg">Credit Card</span><span class="health-value neg">- AED 15,487</span></div>
-    <div class="health-metric"><span class="health-label neg">Car Loan</span><span class="health-value neg">- AED 91,690</span></div>
-    <div class="health-metric" style="border-bottom:none"><span class="health-label" style="font-weight:700;color:var(--gold)">Net Liquid</span><span class="health-value gold" style="font-size:16px">AED 388,053</span></div>
+    <div class="mrow"><span class="mrow-label">eToro Portfolio</span><span class="mrow-val">AED 140,641 <small style="color:var(--t3)">($38,296)</small></span></div>
+    <div class="mrow"><span class="mrow-label">Wio USD</span><span class="mrow-val">AED 222,146 <small style="color:var(--t3)">($60,489)</small></span></div>
+    <div class="mrow"><span class="mrow-label">Wio AED + EUR</span><span class="mrow-val">AED 37,738</span></div>
+    <div class="mrow"><span class="mrow-label">Wio Investments</span><span class="mrow-val">AED 4,776</span></div>
+    <div class="mrow"><span class="mrow-label">ENBD Current</span><span class="mrow-val">AED 40,151</span></div>
+    <div class="mrow"><span class="mrow-label">European Banks</span><span class="mrow-val">AED 29,778</span></div>
+    <div class="mrow"><span class="mrow-label">Cash at Home</span><span class="mrow-val">AED 20,000</span></div>
+    <div class="mrow" style="border-top:2px solid var(--border);padding-top:10px"><span class="mrow-label" style="font-weight:700;color:var(--t1)">Gross Liquid</span><span class="mrow-val" style="font-size:15px">AED 495,230</span></div>
+    <div class="mrow"><span class="mrow-label neg">Credit Card</span><span class="mrow-val neg">-15,487</span></div>
+    <div class="mrow"><span class="mrow-label neg">Car Loan</span><span class="mrow-val neg">-91,690</span></div>
+    <div class="mrow" style="border-top:2px solid var(--gold);padding-top:10px"><span class="mrow-label" style="font-weight:700;color:var(--gold)">Net Liquid</span><span class="mrow-val gold" style="font-size:16px">AED 388,053</span></div>
   </div>
 
-  <div class="card">
-    <div class="card-title">eToro Account Health <span class="badge badge-red">NEEDS FIX</span></div>
-    <div class="health-metric"><span class="health-label">Total Value</span><span class="health-value">$38,296</span></div>
-    <div class="health-metric"><span class="health-label">Invested (open positions)</span><span class="health-value">$36,950</span></div>
-    <div class="health-metric"><span class="health-label">Uninvested Cash</span><span class="health-value warn">$1,346</span></div>
-    <div class="health-metric"><span class="health-label">Organic P/L (37 days)</span><span class="health-value neg">-$3,090 (-8.2%)</span></div>
-    <div class="health-metric"><span class="health-label">Closed Trade Win Rate</span><span class="health-value neg">17.3% (61W / 280L)</span></div>
-    <div class="health-metric"><span class="health-label">Avg Win vs Avg Loss</span><span class="health-value neg">$1.24 vs $11.11</span></div>
-    <div class="health-metric"><span class="health-label">Open Positions</span><span class="health-value warn">648 across 145 assets</span></div>
-    <div class="health-metric"><span class="health-label">Positions under $20</span><span class="health-value" style="color:var(--text3)">77 assets (dust)</span></div>
-    <div class="health-metric" style="border-bottom:none"><span class="health-label">CryptoPortfolio Copy P/L</span><span class="health-value neg">-$995 (0 wins / 103 losses)</span></div>
+  <!-- eTORO HEALTH -->
+  <div class="card card-sm">
+    <div class="card-header"><div class="card-title">eToro Health</div><span class="badge b-red">NEEDS FIX</span></div>
+    <div class="mrow"><span class="mrow-label">Account Value</span><span class="mrow-val">$38,296</span></div>
+    <div class="mrow"><span class="mrow-label">Open Positions (market)</span><span class="mrow-val">$36,950</span></div>
+    <div class="mrow"><span class="mrow-label">Uninvested Cash</span><span class="mrow-val warn">$1,346</span></div>
+    <div class="mrow"><span class="mrow-label">Organic P/L (37 days)</span><span class="mrow-val neg">-$3,090 (-8.2%)</span></div>
+    <div class="mrow"><span class="mrow-label">Closed Win Rate</span><span class="mrow-val neg">17.3%</span></div>
+    <div class="mrow"><span class="mrow-label">Avg Win vs Avg Loss</span><span class="mrow-val neg">$1.24 vs $11.11</span></div>
+    <div class="mrow"><span class="mrow-label">Open Positions</span><span class="mrow-val warn">648 across 145 assets</span></div>
+    <div class="mrow"><span class="mrow-label">Dust (&lt;$20 each)</span><span class="mrow-val" style="color:var(--t3)">77 assets</span></div>
+    <div class="mrow"><span class="mrow-label">CryptoPortfolio Copy</span><span class="mrow-val neg">-$995 | 0W/103L</span></div>
+    <div style="margin-top:12px;padding:10px;background:var(--red-bg);border-radius:8px;font-size:12px;color:var(--red)">
+      At current trajectory (-8.2%/month), the account is destroying ~$3,100 per month. Fixing this is the #1 operational priority.
+    </div>
   </div>
 </div>
 
-<div class="bottom-line">
+<div class="bl">
   <h3>Bottom Line</h3>
-  <p>1M by December requires ~116% return on investable capital + RSU liquidation. That's extremely difficult but the BULL scenario (ceasefire + tariff deal + RSU exit at $28 PINS) gets you to 85%. The realistic ceiling with RSU liquidation is AED 680-780K. Without RSUs: AED 550-600K. The priority right now isn't reaching for 1M — it's stopping the bleeding in eToro and positioning for the macro turn.</p>
+  <p>1M by December needs ~116% return on investable capital + RSU liquidation — very difficult but the BULL scenario (ceasefire + tariff pause + PINS at $28) reaches 85.4%. The moonshot scenario reaches 96.8%. Without RSUs, the realistic ceiling is AED 550-600K. <strong style="color:var(--t1)">Priority right now is not chasing returns — it's stopping the eToro bleeding, locking in the AED 12.5K savings discipline, and positioning for the macro turn (Hormuz, tariffs, PINS earnings).</strong></p>
 </div>
 </div>
 
-<!-- ============================================ -->
-<!-- TAB 2: 5 LEVERS -->
-<!-- ============================================ -->
-<div class="tab-panel" id="tab-levers">
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 2 : 5 LEVERS                                 -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel" id="p-levers">
 <div class="card">
-  <div class="card-title">The 5 Levers That Move the Needle — Ranked by Impact</div>
+  <div class="card-title">5 Levers That Move the Needle — Ranked by Impact</div>
+  <p style="font-size:12px;color:var(--t3);margin-bottom:16px">Every decision should be evaluated against: "Does this activate one of these 5 levers?"</p>
 
   <div class="lever">
-    <div class="lever-rank">1</div>
-    <div class="lever-info">
-      <div class="lever-name">Wio USD Deployment ($60,489 = AED 222K)</div>
-      <div class="lever-detail">Largest idle capital. Currently earning 0%. At 25% return = AED 55K gain. At 40% = AED 89K.</div>
-      <div class="lever-detail" style="color:var(--amber);margin-top:4px">Trigger: Hormuz reopening (tanker traffic >30% normal) + tariff de-escalation</div>
+    <div class="lever-n">1</div>
+    <div class="lever-body">
+      <div class="lever-title">Wio USD Deployment <small style="color:var(--t3)">($60,489 = AED 222K)</small></div>
+      <div class="lever-desc">Largest idle capital block. Currently earning 0%. This is bigger than the entire eToro portfolio. Deployment into the right assets at the right time is the single biggest swing factor.</div>
+      <div class="lever-trigger" style="background:var(--amber-bg);color:var(--amber)">Trigger: Hormuz tanker traffic &gt;30% of normal + tariff de-escalation signal</div>
+      <div class="lever-impact gold">AED 55K — 100K gain potential</div>
     </div>
-    <div class="lever-impact gold">AED 55-89K</div>
   </div>
 
   <div class="lever">
-    <div class="lever-rank">2</div>
-    <div class="lever-info">
-      <div class="lever-name">RSU Liquidation (PINS + SNAP)</div>
-      <div class="lever-detail">1,429 PINS @ $18.18 + 1,593 SNAP @ $9.50 = AED 151K today. At bull prices (PINS $28, SNAP $12) = AED 217K.</div>
-      <div class="lever-detail" style="color:var(--amber);margin-top:4px">Catalyst: PINS earnings Apr 23. Analyst target: $21-$28. 26 analysts: Buy consensus.</div>
+    <div class="lever-n">2</div>
+    <div class="lever-body">
+      <div class="lever-title">RSU Liquidation <small style="color:var(--t3)">(PINS 1,429 + SNAP 1,593 shares)</small></div>
+      <div class="lever-desc">AED 151K at today's prices. At bull prices (PINS $28, SNAP $12) = AED 217K. This is 25-35% of the entire gap. PINS earnings April 23 is the immediate catalyst. 26 analysts: Buy consensus. Target $21-28.</div>
+      <div class="lever-trigger" style="background:var(--purple-bg);color:var(--purple)">Catalyst: PINS earnings Apr 23 | SNAP: set trailing stop at +100% profit</div>
+      <div class="lever-impact purp">AED 151K — 217K direct value</div>
     </div>
-    <div class="lever-impact" style="color:var(--purple)">AED 151-217K</div>
   </div>
 
   <div class="lever">
-    <div class="lever-rank">3</div>
-    <div class="lever-info">
-      <div class="lever-name">Monthly Savings (AED 10-15K extra commitment)</div>
-      <div class="lever-detail">On top of existing AED 14.6K surplus. Total: AED 24.6-29.6K/month. Over 8.75 months = AED 125-169K net of rent.</div>
-      <div class="lever-detail" style="color:var(--green);margin-top:4px">This is guaranteed capital. No market risk. Biggest reliable lever.</div>
+    <div class="lever-n">3</div>
+    <div class="lever-body">
+      <div class="lever-title">Monthly Savings Discipline <small style="color:var(--t3)">(AED 12,500/mo extra)</small></div>
+      <div class="lever-desc">Combined with existing surplus (AED 14.6K) = AED 27,100/month total. Over 8.75 months = AED 237K gross. After rent cheque (90K): AED 147K net. This is guaranteed capital with zero market risk. The most reliable lever.</div>
+      <div class="lever-trigger" style="background:var(--green-bg);color:var(--green)">Action: Set up auto-transfer this week</div>
+      <div class="lever-impact pos">AED 125K — 169K guaranteed</div>
     </div>
-    <div class="lever-impact pos">AED 125-169K</div>
   </div>
 
   <div class="lever">
-    <div class="lever-rank">4</div>
-    <div class="lever-info">
-      <div class="lever-name">eToro Portfolio Fix & Returns</div>
-      <div class="lever-detail">Currently -8.2% in 37 days. Must stop CryptoPortfolio (-$995), consolidate 648 positions into 10-15 conviction holdings.</div>
-      <div class="lever-detail" style="color:var(--red);margin-top:4px">Step 1 is STOP LOSING. Step 2 is generate returns. At 15% = AED 21K gain.</div>
+    <div class="lever-n">4</div>
+    <div class="lever-body">
+      <div class="lever-title">eToro Fix & Returns <small style="color:var(--t3)">(AED 140K portfolio)</small></div>
+      <div class="lever-desc">Currently destroying ~$3,100/month. Step 1: stop CryptoPortfolio (0 wins, 103 losses, -$995). Step 2: consolidate 648 positions into 10-15 conviction holdings. Step 3: generate returns. At 15% = AED 21K. At 45% = AED 63K.</div>
+      <div class="lever-trigger" style="background:var(--red-bg);color:var(--red)">Stop CryptoPortfolio TODAY. Consolidate by April 15.</div>
+      <div class="lever-impact">AED 21K — 63K (after fix)</div>
     </div>
-    <div class="lever-impact">AED 21-63K</div>
   </div>
 
   <div class="lever">
-    <div class="lever-rank">5</div>
-    <div class="lever-info">
-      <div class="lever-name">Wio Fixed Deposit Yield</div>
-      <div class="lever-detail">4% on idle AED/EUR. Free money, zero risk. Do it this week.</div>
+    <div class="lever-n">5</div>
+    <div class="lever-body">
+      <div class="lever-title">Wio Fixed Deposit Yield <small style="color:var(--t3)">(4% p.a. on idle AED/EUR)</small></div>
+      <div class="lever-desc">Move idle cash into Wio Fixed Saving Space. 5 minutes of work. Free money.</div>
+      <div class="lever-trigger" style="background:var(--blue-bg);color:var(--blue)">Action: Do this week. Takes 5 minutes.</div>
+      <div class="lever-impact" style="color:var(--t3)">AED 2-3K (marginal but free)</div>
     </div>
-    <div class="lever-impact" style="color:var(--text3)">AED 2-3K</div>
   </div>
 </div>
 </div>
 
-<!-- ============================================ -->
-<!-- TAB 3: PORTFOLIO X-RAY -->
-<!-- ============================================ -->
-<div class="tab-panel" id="tab-portfolio">
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 3 : PORTFOLIO X-RAY                          -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel" id="p-port">
 
-<div class="grid-2">
+<div class="g2">
+  <div class="card card-sm">
+    <div class="card-title">Allocation by Type</div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--blue)">ETF (VTI + WGLD)</span><span>47.7% &mdash; $5,396</span></div>
+      <div style="height:8px;background:#1e293b;border-radius:4px;overflow:hidden"><div style="height:100%;width:47.7%;background:var(--blue);border-radius:4px"></div></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--cyan)">Stocks (140+ names)</span><span>35.1% &mdash; $3,979</span></div>
+      <div style="height:8px;background:#1e293b;border-radius:4px;overflow:hidden"><div style="height:100%;width:35.1%;background:var(--cyan);border-radius:4px"></div></div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--amber)">Crypto (BTC)</span><span>11.2% &mdash; $1,272</span></div>
+      <div style="height:8px;background:#1e293b;border-radius:4px;overflow:hidden"><div style="height:100%;width:11.2%;background:var(--amber);border-radius:4px"></div></div>
+    </div>
+    <div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--gold)">CFD (Gold, TAN, TSLA)</span><span>6.0% &mdash; $677</span></div>
+      <div style="height:8px;background:#1e293b;border-radius:4px;overflow:hidden"><div style="height:100%;width:6%;background:var(--gold);border-radius:4px"></div></div>
+    </div>
+    <div style="margin-top:14px;padding:10px;background:var(--amber-bg);border-radius:8px;font-size:11px;color:var(--amber)">
+      Only 3 assets are above $200 invested. 77 assets are under $20. The portfolio is a collection of dust with VTI as the only anchor.
+    </div>
+  </div>
+
+  <div class="card card-sm">
+    <div class="card-header"><div class="card-title">Copy Trader Scorecard</div><span class="badge b-red">CRITICAL</span></div>
+    <table class="tbl">
+      <tr><th>Trader</th><th>Trades</th><th>Win %</th><th>Net P/L</th><th>Verdict</th></tr>
+      <tr><td>CryptoPortfolio</td><td>103</td><td class="neg">0.0%</td><td class="neg">-$995</td><td><span class="badge b-red">STOP NOW</span></td></tr>
+      <tr><td>Jaynemesis</td><td>214</td><td class="warn">27.6%</td><td class="warn">-$41</td><td><span class="badge b-amber">RESTRUCTURE</span></td></tr>
+      <tr><td>Your Own</td><td>35</td><td class="neg">8.6%</td><td class="neg">-$2,000</td><td><span class="badge b-amber">DISCIPLINE</span></td></tr>
+    </table>
+    <div style="margin-top:14px;padding:10px;background:var(--s3);border-radius:8px;font-size:12px;color:var(--t2)">
+      <strong style="color:var(--t1)">Combined: 353 trades, 17.3% win rate, -$3,036 net.</strong><br>
+      Average win: $1.24. Average loss: $11.11. Win/loss ratio: 0.02x.<br>
+      This means losers are 9x bigger than winners. The edge is negative.
+    </div>
+  </div>
+</div>
+
 <div class="card">
-  <div class="card-title">Allocation by Type (Open Positions)</div>
-  <div style="margin-bottom:8px">
-    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>ETF (VTI + WGLD)</span><span>47.7% — $5,396</span></div>
-    <div style="height:8px;background:#374151;border-radius:4px;overflow:hidden"><div style="height:100%;width:47.7%;background:var(--blue);border-radius:4px"></div></div>
-  </div>
-  <div style="margin-bottom:8px">
-    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Stocks (140+ names)</span><span>35.1% — $3,979</span></div>
-    <div style="height:8px;background:#374151;border-radius:4px;overflow:hidden"><div style="height:100%;width:35.1%;background:var(--cyan);border-radius:4px"></div></div>
-  </div>
-  <div style="margin-bottom:8px">
-    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Crypto (BTC)</span><span>11.2% — $1,272</span></div>
-    <div style="height:8px;background:#374151;border-radius:4px;overflow:hidden"><div style="height:100%;width:11.2%;background:var(--amber);border-radius:4px"></div></div>
-  </div>
-  <div style="margin-bottom:8px">
-    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>CFD (Gold, TAN, TSLA)</span><span>6.0% — $677</span></div>
-    <div style="height:8px;background:#374151;border-radius:4px;overflow:hidden"><div style="height:100%;width:6%;background:var(--gold);border-radius:4px"></div></div>
+  <div class="card-title">Top Holdings (from statement period)</div>
+  <table class="tbl">
+    <tr><th>Asset</th><th>Type</th><th>Invested</th><th>% Total</th><th># Pos</th><th>Signal</th></tr>
+    <tr><td style="font-weight:700">VTI</td><td>ETF</td><td>$5,354</td><td>47.3%</td><td>6</td><td class="pos">Core &mdash; keep DCA</td></tr>
+    <tr><td style="font-weight:700">BTC</td><td>Crypto</td><td>$1,272</td><td>11.2%</td><td>2</td><td>Hold &mdash; watch $66K</td></tr>
+    <tr><td style="font-weight:700">Gold (XAU)</td><td>CFD</td><td>$600</td><td>5.3%</td><td>1</td><td class="pos">Increase &mdash; triple tailwind</td></tr>
+    <tr><td>Fastly</td><td>Stock</td><td>$166</td><td>1.5%</td><td>1</td><td class="warn">Check thesis</td></tr>
+    <tr><td>NVDA</td><td>Stock</td><td>$108</td><td>1.0%</td><td>20</td><td class="warn">Consolidate micro-pos</td></tr>
+    <tr><td>CrowdStrike</td><td>Stock</td><td>$94</td><td>0.8%</td><td>20</td><td class="warn">Consolidate</td></tr>
+    <tr><td>AMD</td><td>Stock</td><td>$92</td><td>0.8%</td><td>14</td><td class="warn">Consolidate</td></tr>
+    <tr><td>Cloudflare</td><td>Stock</td><td>$72</td><td>0.6%</td><td>1</td><td style="color:var(--t3)">Too small to matter</td></tr>
+    <tr><td>Palo Alto</td><td>Stock</td><td>$71</td><td>0.6%</td><td>5</td><td style="color:var(--t3)">Too small to matter</td></tr>
+  </table>
+  <div style="margin-top:12px;font-size:12px;color:var(--t3);padding:10px;background:var(--s3);border-radius:8px">
+    Remaining 136 assets hold $3,420 combined across 600+ positions. Average: $25/asset. This is noise, not a portfolio. Target: consolidate to 10-15 positions, each $500-$3,000+.
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title">Copy Trader Performance <span class="badge badge-red">CRITICAL</span></div>
-  <table class="data-table">
-    <tr><th>Trader</th><th>Trades</th><th>Win Rate</th><th>Net P/L</th><th>Verdict</th></tr>
-    <tr><td>CryptoPortfolio</td><td>103</td><td class="neg">0%</td><td class="neg">-$995</td><td class="neg" style="font-weight:700">STOP NOW</td></tr>
-    <tr><td>Jaynemesis</td><td>214</td><td class="warn">27.6%</td><td class="warn">-$41</td><td class="warn" style="font-weight:700">RESTRUCTURE</td></tr>
-    <tr><td>Your Own</td><td>35</td><td class="neg">8.6%</td><td class="neg">-$2,000</td><td class="warn" style="font-weight:700">DISCIPLINE</td></tr>
+  <div class="card-title">Biggest Closed Losses (Mar 1 &mdash; Apr 7)</div>
+  <table class="tbl">
+    <tr><th>Asset</th><th>Invested</th><th>P/L</th><th>Return</th><th>Source</th></tr>
+    <tr><td>Bitcoin</td><td>$1,408</td><td class="neg">-$498</td><td class="neg">-35%</td><td>Own</td></tr>
+    <tr><td>Ethereum</td><td>$1,555</td><td class="neg">-$483</td><td class="neg">-31%</td><td>Own</td></tr>
+    <tr><td>Reddit</td><td>$1,947</td><td class="neg">-$388</td><td class="neg">-20%</td><td>Own</td></tr>
+    <tr><td>Solana</td><td>$755</td><td class="neg">-$373</td><td class="neg">-49%</td><td>CryptoPortfolio</td></tr>
+    <tr><td>Navan</td><td>$473</td><td class="neg">-$255</td><td class="neg">-54%</td><td>Own</td></tr>
+    <tr><td>SNAP (eToro)</td><td>$300</td><td class="neg">-$134</td><td class="neg">-45%</td><td>Own</td></tr>
+    <tr><td>XRP</td><td>$749</td><td class="neg">-$131</td><td class="neg">-18%</td><td>CryptoPortfolio</td></tr>
+    <tr><td>York Space</td><td>$370</td><td class="neg">-$126</td><td class="neg">-34%</td><td>Own</td></tr>
+    <tr><td>Spotify</td><td>$654</td><td class="neg">-$119</td><td class="neg">-18%</td><td>Own</td></tr>
   </table>
 </div>
 </div>
 
-<div class="card">
-  <div class="card-title">Top 10 Holdings (by invested amount from statement period)</div>
-  <table class="data-table">
-    <tr><th>Asset</th><th>Type</th><th>Invested</th><th>% of Total</th><th># Positions</th><th>Status</th></tr>
-    <tr><td style="font-weight:600">VTI</td><td>ETF</td><td>$5,354</td><td>47.3%</td><td>6</td><td class="pos">Core DCA — keep</td></tr>
-    <tr><td style="font-weight:600">BTC</td><td>Crypto</td><td>$1,272</td><td>11.2%</td><td>2</td><td>Monitor $66K support</td></tr>
-    <tr><td style="font-weight:600">Gold (XAU)</td><td>CFD</td><td>$600</td><td>5.3%</td><td>1</td><td class="pos">Strong macro tailwind</td></tr>
-    <tr><td>Fastly (FSLY)</td><td>Stock</td><td>$166</td><td>1.5%</td><td>1</td><td class="warn">Needs thesis check</td></tr>
-    <tr><td>NVDA</td><td>Stock</td><td>$108</td><td>1.0%</td><td>20</td><td class="warn">20 micro-positions</td></tr>
-    <tr><td>CRWD</td><td>Stock</td><td>$94</td><td>0.8%</td><td>20</td><td class="warn">20 micro-positions</td></tr>
-    <tr><td>AMD</td><td>Stock</td><td>$92</td><td>0.8%</td><td>14</td><td class="warn">14 micro-positions</td></tr>
-    <tr><td>Akamai (AKAM)</td><td>Stock</td><td>$74</td><td>0.7%</td><td>5</td><td style="color:var(--text3)">Jaynemesis dust</td></tr>
-    <tr><td>Cloudflare (NET)</td><td>Stock</td><td>$72</td><td>0.6%</td><td>1</td><td>Decent name, tiny size</td></tr>
-    <tr><td>Palo Alto (PANW)</td><td>Stock</td><td>$71</td><td>0.6%</td><td>5</td><td>Good name, too small</td></tr>
-  </table>
-  <div style="font-size:12px;color:var(--text3);margin-top:12px;padding:8px;background:rgba(239,68,68,0.05);border-radius:8px">
-    The remaining 135 assets hold $3,420 combined (30% of total) across 600+ positions. Average: $25/asset. This is unmanageable noise. Consolidation is mandatory.
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 4 : MACRO & TECHNICALS                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel" id="p-macro">
+<div class="g3">
+  <div class="mc">
+    <div class="mc-label">S&P 500</div>
+    <div class="mc-val">6,582</div>
+    <div class="mc-sub">YTD: -5.1% | Below 50 & 200 MA</div>
+    <div class="mc-sub">Support: 6,400 &rarr; 6,170 | Resist: 6,700</div>
+    <div class="mc-sig" style="background:var(--red-bg);color:var(--red)">RISK OFF</div>
   </div>
-</div>
-
-<div class="card">
-  <div class="card-title">Biggest Closed Losses (Mar 1 — Apr 7)</div>
-  <table class="data-table">
-    <tr><th>Asset</th><th>Invested</th><th>P/L</th><th>Return</th><th>Lesson</th></tr>
-    <tr><td>BTC</td><td>$1,408</td><td class="neg">-$498</td><td class="neg">-35.4%</td><td>Closed at bottom of range</td></tr>
-    <tr><td>ETH</td><td>$1,555</td><td class="neg">-$483</td><td class="neg">-31.1%</td><td>No stop, held through crash</td></tr>
-    <tr><td>Reddit (RDDT)</td><td>$1,947</td><td class="neg">-$388</td><td class="neg">-19.9%</td><td>Speculative, no thesis</td></tr>
-    <tr><td>Solana (SOL)</td><td>$755</td><td class="neg">-$373</td><td class="neg">-49.4%</td><td>CryptoPortfolio bleed</td></tr>
-    <tr><td>Navan (NAVN)</td><td>$473</td><td class="neg">-$255</td><td class="neg">-53.9%</td><td>High-risk growth, no stop</td></tr>
-    <tr><td>SNAP (eToro)</td><td>$300</td><td class="neg">-$134</td><td class="neg">-44.6%</td><td>Separate from RSU holding</td></tr>
-    <tr><td>XRP</td><td>$749</td><td class="neg">-$131</td><td class="neg">-17.5%</td><td>CryptoPortfolio bleed</td></tr>
-    <tr><td>York Space (YSS)</td><td>$370</td><td class="neg">-$126</td><td class="neg">-34.1%</td><td>Speculative micro-cap</td></tr>
-  </table>
-</div>
-</div>
-
-<!-- ============================================ -->
-<!-- TAB 4: MACRO & TECHNICALS -->
-<!-- ============================================ -->
-<div class="tab-panel" id="tab-macro">
-
-<div class="grid-3">
-  <div class="macro-card">
-    <div class="macro-label">S&P 500</div>
-    <div class="macro-value">~6,582</div>
-    <div class="macro-sub">YTD: -5.1% | Below 50 & 200 MA</div>
-    <div class="macro-signal badge-red">RISK OFF</div>
+  <div class="mc">
+    <div class="mc-label">Gold XAU/USD</div>
+    <div class="mc-val gold">$4,667</div>
+    <div class="mc-sub">JP Morgan target: $5,000 | UBS: $6,200</div>
+    <div class="mc-sub">Support: $4,550 | 200D EMA: $4,200</div>
+    <div class="mc-sig" style="background:var(--green-bg);color:var(--green)">BULLISH</div>
   </div>
-  <div class="macro-card">
-    <div class="macro-label">Gold (XAU/USD)</div>
-    <div class="macro-value" style="color:var(--gold)">~$4,667</div>
-    <div class="macro-sub">Support: $4,550 | Target: $5,000-5,500</div>
-    <div class="macro-signal badge-green">BULLISH</div>
+  <div class="mc">
+    <div class="mc-label">Bitcoin</div>
+    <div class="mc-val">$69,000</div>
+    <div class="mc-sub">RSI: 54 (neutral) | Above 50/100/200 EMA</div>
+    <div class="mc-sub">Support: $66,200 | Resist: $70,000</div>
+    <div class="mc-sig" style="background:var(--amber-bg);color:var(--amber)">RANGE-BOUND</div>
   </div>
-  <div class="macro-card">
-    <div class="macro-label">Bitcoin</div>
-    <div class="macro-value">~$69,000</div>
-    <div class="macro-sub">Support: $66K | Resistance: $70K</div>
-    <div class="macro-signal badge-amber">NEUTRAL</div>
+  <div class="mc">
+    <div class="mc-label">Oil (Brent)</div>
+    <div class="mc-val neg">~$110</div>
+    <div class="mc-sub">Hormuz 90%+ closed | Peak: $126</div>
+    <div class="mc-sub">Goldman: $85 by Aug if Hormuz reopens</div>
+    <div class="mc-sig" style="background:var(--red-bg);color:var(--red)">CRISIS PREMIUM</div>
   </div>
-  <div class="macro-card">
-    <div class="macro-label">Oil (Brent)</div>
-    <div class="macro-value" style="color:var(--red)">~$110</div>
-    <div class="macro-sub">Hormuz 90%+ closed. Peak: $126</div>
-    <div class="macro-signal badge-red">CRISIS</div>
+  <div class="mc">
+    <div class="mc-label">Fed Rate</div>
+    <div class="mc-val">3.50-3.75%</div>
+    <div class="mc-sub">1 cut expected in 2026</div>
+    <div class="mc-sub">Core PCE target: 2.5% by year-end</div>
+    <div class="mc-sig" style="background:var(--amber-bg);color:var(--amber)">HOLD</div>
   </div>
-  <div class="macro-card">
-    <div class="macro-label">Fed Rate</div>
-    <div class="macro-value">3.50-3.75%</div>
-    <div class="macro-sub">1 cut expected in 2026</div>
-    <div class="macro-signal badge-amber">HOLD</div>
-  </div>
-  <div class="macro-card">
-    <div class="macro-label">VTI</div>
-    <div class="macro-value">$324.10</div>
-    <div class="macro-sub">52W: $236-$344 | DCA zone</div>
-    <div class="macro-signal badge-blue">ACCUMULATE</div>
+  <div class="mc">
+    <div class="mc-label">VTI</div>
+    <div class="mc-val">$324</div>
+    <div class="mc-sub">52W range: $236 &mdash; $344</div>
+    <div class="mc-sub">P/E: 28.9 | Div yield: 1.2%</div>
+    <div class="mc-sig" style="background:var(--blue-bg);color:var(--blue)">DCA ZONE</div>
   </div>
 </div>
 
 <div class="card" style="margin-top:16px">
-  <div class="card-title">Macro Regime Assessment</div>
-  <div style="font-size:13px;color:var(--text2);line-height:1.7">
-    <p style="margin-bottom:12px"><strong style="color:var(--text)">War + Tariffs + Sticky Inflation = Triple headwind.</strong> The US-Iran war has effectively closed the Strait of Hormuz (traffic down >90%). Oil above $110 is feeding inflation, limiting the Fed's ability to cut. Trump escalated China tariffs to 104%. S&P 500 is below both the 50-day and 200-day moving average — a setup that historically precedes consolidation or further downside.</p>
-    <p style="margin-bottom:12px"><strong style="color:var(--text)">Gold is the standout winner.</strong> War premium + inflation hedge + rate cut expectations = triple tailwind. JP Morgan targets $5,000 by Q4, UBS sees $6,200. Your gold position is right but too small.</p>
-    <p style="margin-bottom:12px"><strong style="color:var(--text)">BTC is range-bound.</strong> RSI at 54, neutral momentum. $66K support has held multiple times. A break above $70K would target $73-76K. Risk-off macro is capping upside but halving cycle support is providing a floor.</p>
-    <p><strong style="color:var(--text)">Hormuz reopening is THE catalyst.</strong> 8 tankers transited Monday vs. near-zero in March. Goldman expects gradual recovery if flows resume. Oil dropping to $85 would be bullish for everything — stocks, consumer spending, inflation path. This is the trigger for your Wio USD deployment.</p>
+  <div class="card-title">Macro Regime &mdash; The Big Picture</div>
+  <div style="font-size:13px;color:var(--t2);line-height:1.8">
+    <p style="margin-bottom:14px"><strong style="color:var(--t1)">Triple headwind: War + Tariffs + Sticky Inflation.</strong> The US-Iran war has closed the Strait of Hormuz (traffic down &gt;90%). Oil above $110 feeds inflation, limiting Fed cuts. Trump escalated China tariffs to 104%. S&P 500 is below both 50-day and 200-day moving averages &mdash; historically this precedes consolidation or further downside. RSI at 46, neutral but no buy-the-dip conviction.</p>
+    <p style="margin-bottom:14px"><strong style="color:var(--gold)">Gold is the standout winner.</strong> War premium + inflation hedge + rate cut expectations = triple tailwind. Your $600 position is right but undersized. Consider $1,500-2,500. JP Morgan targets $5,000 by Q4. Don't chase at ATH &mdash; buy pullbacks to $4,550 support.</p>
+    <p style="margin-bottom:14px"><strong style="color:var(--amber)">BTC is in no-man's-land.</strong> $66K support held multiple times. $70K resistance capping. RSI 54. Neutral. Don't add, don't sell. Wait for breakout direction. Halving cycle provides structural floor.</p>
+    <p><strong style="color:var(--cyan)">Hormuz reopening is THE macro catalyst.</strong> 8 tankers transited Monday vs. near-zero in March. Goldman base case: gradual recovery over 6 weeks. Oil to $85 = bullish for equities, consumer, inflation. This is the deployment trigger for your Wio USD.</p>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title">Technical Levels — Key Assets</div>
-  <table class="data-table">
-    <tr><th>Asset</th><th>Price</th><th>Support</th><th>Resistance</th><th>RSI</th><th>Signal</th></tr>
-    <tr><td>S&P 500</td><td>6,582</td><td>6,400 / 6,170</td><td>6,700 / 7,000</td><td>46</td><td class="warn">Below key MAs</td></tr>
-    <tr><td>Gold XAU</td><td>$4,667</td><td>$4,550 / $4,360</td><td>$4,800 / $5,000</td><td>—</td><td class="pos">Uptrend intact</td></tr>
-    <tr><td>BTC</td><td>$69,000</td><td>$66,200 / $65,000</td><td>$70,000 / $73,500</td><td>54</td><td>Range-bound</td></tr>
-    <tr><td>VTI</td><td>$324</td><td>$310 / $280</td><td>$335 / $344</td><td>—</td><td class="pos">DCA zone</td></tr>
-    <tr><td>Oil (Brent)</td><td>$110</td><td>$100 / $85</td><td>$126 / $150+</td><td>—</td><td class="neg">Hormuz-driven</td></tr>
-    <tr><td>PINS</td><td>$18.18</td><td>$15.50 / $14</td><td>$22 / $28</td><td>—</td><td class="warn">Earnings Apr 23</td></tr>
+  <div class="card-title">Technical Levels</div>
+  <table class="tbl">
+    <tr><th>Asset</th><th>Price</th><th>Support 1</th><th>Support 2</th><th>Resist 1</th><th>Resist 2</th><th>RSI</th><th>Signal</th></tr>
+    <tr><td>S&P 500</td><td>6,582</td><td>6,400</td><td>6,170</td><td>6,700</td><td>7,000</td><td>46</td><td class="warn">Below MAs</td></tr>
+    <tr><td>Gold</td><td>$4,667</td><td>$4,550</td><td>$4,360</td><td>$4,800</td><td>$5,000</td><td>&mdash;</td><td class="pos">Uptrend</td></tr>
+    <tr><td>BTC</td><td>$69,000</td><td>$66,200</td><td>$65,000</td><td>$70,000</td><td>$73,500</td><td>54</td><td>Range</td></tr>
+    <tr><td>VTI</td><td>$324</td><td>$310</td><td>$280</td><td>$335</td><td>$344</td><td>&mdash;</td><td class="pos">DCA zone</td></tr>
+    <tr><td>Oil</td><td>$110</td><td>$100</td><td>$85</td><td>$126</td><td>$150+</td><td>&mdash;</td><td class="neg">Hormuz</td></tr>
+    <tr><td>PINS</td><td>$18.18</td><td>$15.50</td><td>$14.00</td><td>$22</td><td>$28</td><td>&mdash;</td><td class="warn">Earnings</td></tr>
   </table>
 </div>
 </div>
 
-<!-- ============================================ -->
-<!-- TAB 5: SCENARIOS -->
-<!-- ============================================ -->
-<div class="tab-panel" id="tab-scenarios">
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 5 : SCENARIOS                                -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel" id="p-scen">
 <div class="card">
-  <div class="card-title">4 Scenarios — Path to 1M AED (with AED 12.5K/mo extra savings)</div>
+  <div class="card-title">4 Scenarios &mdash; Path to AED 1M</div>
+  <p style="font-size:12px;color:var(--t3);margin-bottom:16px">Based on AED 12.5K/mo extra savings, verified account statement data, live macro context</p>
 
-  <div class="scenario">
-    <div class="scenario-header">
-      <div><span class="scenario-name" style="color:var(--red)">BEAR: War drags, tariffs bite</span><br><span style="font-size:11px;color:var(--text3)">Hormuz closed Q2, S&P to 6000, BTC $55K, no RSU exit</span></div>
-      <div class="scenario-value">AED 503K</div>
+  <div class="scn">
+    <div class="scn-top">
+      <div><div class="scn-name neg">BEAR &mdash; War drags, tariffs bite</div><div class="scn-desc">Hormuz closed Q2, S&P to 6000, BTC $55K, no RSU exit, portfolio -10%</div></div>
+      <div class="scn-val neg">AED 503K</div>
     </div>
-    <div class="scenario-bar-bg">
-      <div class="scenario-bar" style="width:50.3%;background:var(--red)"></div>
-      <div class="scenario-marker" style="left:100%"></div>
-    </div>
-    <div class="scenario-sub">50.3% of goal | Shortfall: AED 497K</div>
+    <div class="scn-bar-bg"><div class="scn-bar" style="width:50.3%;background:var(--red)"></div><div class="scn-goal-line"></div></div>
+    <div class="scn-foot">50.3% of goal | Shortfall: AED 497K | Monthly extra save: AED 10K</div>
   </div>
 
-  <div class="scenario">
-    <div class="scenario-header">
-      <div><span class="scenario-name" style="color:var(--amber)">BASE: Gradual Hormuz reopening</span><br><span style="font-size:11px;color:var(--text3)">Oil to $85, S&P 6800, BTC $75K, markets stabilize</span></div>
-      <div class="scenario-value">AED 569K</div>
+  <div class="scn">
+    <div class="scn-top">
+      <div><div class="scn-name warn">BASE &mdash; Gradual Hormuz reopening</div><div class="scn-desc">Oil to $85 by Aug, S&P 6800, BTC $75K, 12% returns, 50% Wio deploy</div></div>
+      <div class="scn-val warn">AED 569K</div>
     </div>
-    <div class="scenario-bar-bg">
-      <div class="scenario-bar" style="width:56.9%;background:var(--amber)"></div>
-      <div class="scenario-marker" style="left:100%"></div>
-    </div>
-    <div class="scenario-sub">56.9% of goal | Shortfall: AED 431K | +AED 174K if RSUs sold at $22/$10</div>
+    <div class="scn-bar-bg"><div class="scn-bar" style="width:56.9%;background:var(--amber)"></div><div class="scn-goal-line"></div></div>
+    <div class="scn-foot">56.9% | Shortfall: AED 431K | <span class="purp">+AED 174K if RSUs sold at $22/$10</span></div>
   </div>
 
-  <div class="scenario">
-    <div class="scenario-header">
-      <div><span class="scenario-name" style="color:var(--blue)">BULL: Ceasefire + tariff deal + RSUs</span><br><span style="font-size:11px;color:var(--text3)">Iran ceasefire June, tariff pause, S&P 7200, PINS $28</span></div>
-      <div class="scenario-value" style="color:var(--blue)">AED 854K</div>
+  <div class="scn">
+    <div class="scn-top">
+      <div><div class="scn-name" style="color:var(--blue)">BULL &mdash; Ceasefire + tariff deal + RSU exit</div><div class="scn-desc">Iran ceasefire June, tariff pause, S&P 7200, BTC $90K, PINS $28, 25% returns</div></div>
+      <div class="scn-val" style="color:var(--blue)">AED 854K</div>
     </div>
-    <div class="scenario-bar-bg">
-      <div class="scenario-bar" style="width:85.4%;background:var(--blue)"></div>
-      <div class="scenario-marker" style="left:100%"></div>
-    </div>
-    <div class="scenario-sub">85.4% of goal | Shortfall: AED 146K</div>
+    <div class="scn-bar-bg"><div class="scn-bar" style="width:85.4%;background:var(--blue)"></div><div class="scn-goal-line"></div></div>
+    <div class="scn-foot">85.4% | Shortfall: AED 146K | Monthly extra save: AED 15K</div>
   </div>
 
-  <div class="scenario">
-    <div class="scenario-header">
-      <div><span class="scenario-name" style="color:var(--gold)">MOONSHOT: Everything aligns</span><br><span style="font-size:11px;color:var(--text3)">Ceasefire, Fed cuts, BTC $120K, gold $5500, full deploy</span></div>
-      <div class="scenario-value gold">AED 968K</div>
+  <div class="scn">
+    <div class="scn-top">
+      <div><div class="scn-name gold">MOONSHOT &mdash; Everything aligns</div><div class="scn-desc">Ceasefire, Fed cuts, BTC $120K, gold $5500, full Wio deploy, PINS $30, 45% returns</div></div>
+      <div class="scn-val gold">AED 968K</div>
     </div>
-    <div class="scenario-bar-bg">
-      <div class="scenario-bar" style="width:96.8%;background:var(--gold)"></div>
-      <div class="scenario-marker" style="left:100%"></div>
-    </div>
-    <div class="scenario-sub">96.8% of goal | Shortfall: AED 32K — essentially at the door</div>
+    <div class="scn-bar-bg"><div class="scn-bar" style="width:96.8%;background:var(--gold)"></div><div class="scn-goal-line"></div></div>
+    <div class="scn-foot">96.8% | Shortfall: AED 32K &mdash; <strong>essentially at the door</strong></div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title">What Each Scenario Assumes</div>
-  <table class="data-table" style="font-size:12px">
-    <tr><th></th><th>Bear</th><th>Base</th><th>Bull</th><th>Moon</th></tr>
+  <div class="card-title">Scenario Assumptions Matrix</div>
+  <table class="tbl" style="font-size:11px">
+    <tr><th></th><th style="color:var(--red)">Bear</th><th style="color:var(--amber)">Base</th><th style="color:var(--blue)">Bull</th><th style="color:var(--gold)">Moon</th></tr>
     <tr><td>Portfolio Return</td><td class="neg">-10%</td><td class="pos">+12%</td><td class="pos">+25%</td><td class="pos">+45%</td></tr>
-    <tr><td>Wio USD Deploy</td><td>No</td><td>50%</td><td>75%</td><td>100%</td></tr>
+    <tr><td>Wio USD Deploy</td><td>0%</td><td>50%</td><td>75%</td><td>100%</td></tr>
     <tr><td>RSU Liquidation</td><td>No</td><td>No</td><td>Yes ($28/$12)</td><td>Yes ($30/$15)</td></tr>
-    <tr><td>Monthly Extra Save</td><td>AED 10K</td><td>AED 12.5K</td><td>AED 15K</td><td>AED 15K</td></tr>
+    <tr><td>Extra Monthly Save</td><td>AED 10K</td><td>AED 12.5K</td><td>AED 15K</td><td>AED 15K</td></tr>
     <tr><td>Hormuz</td><td>Closed Q2</td><td>Opens May</td><td>Opens April</td><td>Open now</td></tr>
     <tr><td>S&P 500</td><td>6,000</td><td>6,800</td><td>7,200</td><td>7,500</td></tr>
     <tr><td>BTC</td><td>$55K</td><td>$75K</td><td>$90K</td><td>$120K</td></tr>
     <tr><td>Gold</td><td>$4,200</td><td>$4,800</td><td>$5,200</td><td>$5,500</td></tr>
+    <tr><td>PINS</td><td>$15</td><td>$22</td><td>$28</td><td>$30</td></tr>
   </table>
 </div>
 </div>
 
-<!-- ============================================ -->
-<!-- TAB 6: ACTIONS -->
-<!-- ============================================ -->
-<div class="tab-panel" id="tab-actions">
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 6 : ACTIONS (START / STOP / CONTINUE)        -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel" id="p-act">
+
 <div class="card">
-  <div class="card-title" style="color:var(--red)">STOP</div>
-
-  <div class="action stop">
-    <div>
-      <div class="action-type" style="color:var(--red)">STOP #1 — TODAY</div>
-      <div class="action-text">Stop CryptoPortfolio copy trader immediately</div>
-      <div class="action-impact">0 wins out of 103 trades. -$995 in 5 weeks. Every day it runs costs money. No recovery thesis.</div>
-    </div>
+  <div class="card-title neg">STOP &mdash; Eliminate Value Destroyers</div>
+  <div class="act stop">
+    <div><div class="act-label neg">STOP #1 &mdash; TODAY</div>
+    <div class="act-text">Stop CryptoPortfolio copy trader</div>
+    <div class="act-why">0 wins out of 103 trades. -$995 in 5 weeks. 100% loss rate. No thesis survives this data. Every day it runs = money destroyed.</div></div>
   </div>
-
-  <div class="action stop">
-    <div>
-      <div class="action-type" style="color:var(--red)">STOP #2</div>
-      <div class="action-text">Stop speculative trades without documented thesis + stop-loss</div>
-      <div class="action-impact">Your own trades: 3 wins vs 32 losses. -$2,000. RDDT, NAVN, YSS, SPOT — entries with no clear edge.</div>
-    </div>
+  <div class="act stop">
+    <div><div class="act-label neg">STOP #2</div>
+    <div class="act-text">Stop speculative entries without thesis + stop-loss</div>
+    <div class="act-why">Your own trades: 3W/32L = 8.6% win rate, -$2,000. RDDT, NAMN, YSS, SPOT = entries without edge. Rule: no thesis = no trade.</div></div>
   </div>
-
-  <div class="action stop">
-    <div>
-      <div class="action-type" style="color:var(--red)">STOP #3</div>
-      <div class="action-text">Stop treating 145 assets as a "portfolio"</div>
-      <div class="action-impact">648 positions. 77 assets under $20. This is dust, not alpha. Cannot manage risk. Must consolidate to 10-15 names.</div>
-    </div>
+  <div class="act stop">
+    <div><div class="act-label neg">STOP #3</div>
+    <div class="act-text">Stop managing 145 assets as a "portfolio"</div>
+    <div class="act-why">648 positions. 77 under $20 each. Impossible to manage risk. Consolidate to 10-15 conviction names. Everything else is dust.</div></div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title" style="color:var(--green)">START</div>
-
-  <div class="action start">
-    <div>
-      <div class="action-type" style="color:var(--green)">START #1 — THIS WEEK</div>
-      <div class="action-text">Start AED 12,500/month savings auto-transfer</div>
-      <div class="action-impact">Set up recurring transfer. This is AED 109K by December — guaranteed, no market risk. The most reliable lever.</div>
-    </div>
+  <div class="card-title pos">START &mdash; Activate Growth Levers</div>
+  <div class="act start">
+    <div><div class="act-label pos">START #1 &mdash; THIS WEEK</div>
+    <div class="act-text">Set up AED 12,500/month auto-transfer</div>
+    <div class="act-why">Guaranteed capital. AED 109K extra by December. No market risk. This is Lever #3 activation.</div></div>
   </div>
-
-  <div class="action start">
-    <div>
-      <div class="action-type" style="color:var(--green)">START #2 — THIS WEEK</div>
-      <div class="action-text">Move idle AED into Wio Fixed Saving Space (4% p.a.)</div>
-      <div class="action-impact">Free money. ~AED 2-3K by year end. Takes 5 minutes.</div>
-    </div>
+  <div class="act start">
+    <div><div class="act-label pos">START #2 &mdash; THIS WEEK</div>
+    <div class="act-text">Move idle AED into Wio Fixed Saving Space (4%)</div>
+    <div class="act-why">5 minutes of work. Free AED 2-3K by year-end. No reason not to.</div></div>
   </div>
-
-  <div class="action start">
-    <div>
-      <div class="action-type" style="color:var(--green)">START #3 — BY APR 15</div>
-      <div class="action-text">Consolidate Jaynemesis copy into 5-8 conviction positions held directly</div>
-      <div class="action-impact">Keep the industrial electrification thesis. Drop the 200+ micro-positions. Size properly: $500-2K each.</div>
-    </div>
+  <div class="act start">
+    <div><div class="act-label pos">START #3 &mdash; BY APR 15</div>
+    <div class="act-text">Consolidate Jaynemesis into 5-8 direct holdings</div>
+    <div class="act-why">Keep industrial electrification thesis. Drop 200+ micro-positions. Size properly: $500-2K each. Names to evaluate: WDC, FCX, SCCO, SMSN, CARR.</div></div>
   </div>
-
-  <div class="action start">
-    <div>
-      <div class="action-type" style="color:var(--green)">START #4 — PRE APR 23</div>
-      <div class="action-text">Define PINS earnings playbook: sell trigger, hold trigger, partial-take levels</div>
-      <div class="action-impact">Analysts: 54% Buy/Strong Buy. Target $21-28. If PINS pops above $22 post-earnings, partial sell unlocks capital.</div>
-    </div>
+  <div class="act start">
+    <div><div class="act-label pos">START #4 &mdash; BEFORE APR 23</div>
+    <div class="act-text">Define PINS earnings playbook</div>
+    <div class="act-why">26 analysts: Buy consensus. Target $21-28. Set rules: above $22 post-earnings = sell 50% RSU. Below $16 = hold + reassess. This is Lever #2.</div></div>
   </div>
-
-  <div class="action start">
-    <div>
-      <div class="action-type" style="color:var(--green)">START #5</div>
-      <div class="action-text">Increase gold allocation — it's your best-performing thesis</div>
-      <div class="action-impact">$600 is tiny. Gold has war premium + inflation hedge + rate cut optionality. JP Morgan $5,000, UBS $6,200. Consider $1,500-2,500 position.</div>
-    </div>
+  <div class="act start">
+    <div><div class="act-label pos">START #5</div>
+    <div class="act-text">Increase gold allocation to $1,500-2,500</div>
+    <div class="act-why">Triple tailwind: war premium + inflation hedge + rate cut option. Current $600 is too small for the thesis conviction. Buy pullbacks to $4,550.</div></div>
   </div>
 </div>
 
 <div class="card">
-  <div class="card-title" style="color:var(--blue)">CONTINUE</div>
-
-  <div class="action continue">
-    <div>
-      <div class="action-type" style="color:var(--blue)">CONTINUE #1</div>
-      <div class="action-text">VTI DCA — $300-400/month</div>
-      <div class="action-impact">Core holding. $5,354 and growing. Below 52W high. S&P recovery from here = outsized gains. Stay disciplined.</div>
-    </div>
+  <div class="card-title" style="color:var(--blue)">CONTINUE &mdash; Protect What Works</div>
+  <div class="act cont">
+    <div><div class="act-label" style="color:var(--blue)">CONTINUE #1</div>
+    <div class="act-text">VTI DCA $300-400/month</div>
+    <div class="act-why">Core holding. 47% of portfolio. Below 52W high. S&P recovery from 6,582 = significant upside. Stay disciplined.</div></div>
   </div>
-
-  <div class="action continue">
-    <div>
-      <div class="action-type" style="color:var(--blue)">CONTINUE #2</div>
-      <div class="action-text">War deployment framework — Wio USD stays locked until triggers met</div>
-      <div class="action-impact">$60,489 waits for: Hormuz >30% traffic OR ceasefire OR US-Iran deal. 8 tankers Monday = early signal. Monitor daily.</div>
-    </div>
+  <div class="act cont">
+    <div><div class="act-label" style="color:var(--blue)">CONTINUE #2</div>
+    <div class="act-text">Wio USD locked until deployment triggers met</div>
+    <div class="act-why">$60,489 waits for Hormuz &gt;30% traffic OR ceasefire OR US-Iran deal. 8 tankers Monday = early signal. Don't jump the gun.</div></div>
   </div>
-
-  <div class="action continue">
-    <div>
-      <div class="action-type" style="color:var(--blue)">CONTINUE #3</div>
-      <div class="action-text">Hold BTC at current levels</div>
-      <div class="action-impact">$66K support has held. RSI neutral at 54. Don't add, don't sell. Wait for break above $70K or below $65K for next move.</div>
-    </div>
+  <div class="act cont">
+    <div><div class="act-label" style="color:var(--blue)">CONTINUE #3</div>
+    <div class="act-text">Hold BTC at current levels</div>
+    <div class="act-why">$66K support held. RSI neutral. No thesis to add, no thesis to sell. Wait for $70K break or $65K breakdown.</div></div>
   </div>
-
-  <div class="action continue">
-    <div>
-      <div class="action-type" style="color:var(--blue)">CONTINUE #4</div>
-      <div class="action-text">Hold gold position — add on pullbacks to $4,550</div>
-      <div class="action-impact">Triple tailwind: war, inflation, rate expectations. Don't chase at ATH but hold and look for pullback entries.</div>
-    </div>
+  <div class="act cont">
+    <div><div class="act-label" style="color:var(--blue)">CONTINUE #4</div>
+    <div class="act-text">Hold gold &mdash; add on pullbacks to $4,550</div>
+    <div class="act-why">Don't chase ATH. But macro is strongly supportive. Accumulate on dips.</div></div>
   </div>
 </div>
 </div>
 
-<!-- ============================================ -->
-<!-- TAB 7: SAVINGS PLAN -->
-<!-- ============================================ -->
-<div class="tab-panel" id="tab-savings">
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 7 : SAVINGS PLAN                             -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel" id="p-save">
 <div class="card">
-  <div class="card-title">Monthly Savings Commitment Tracker</div>
-  <div style="font-size:13px;color:var(--text2);margin-bottom:16px">
-    Target: AED 12,500/month extra savings (adjustable: AED 10K-15K range)<br>
-    Combined with existing AED 14,600 surplus = AED 27,100/month total
+  <div class="card-title">Monthly Savings Commitment</div>
+  <div style="font-size:12px;color:var(--t2);margin-bottom:16px">
+    Commitment: <strong style="color:var(--green)">AED 12,500/month</strong> extra (adjustable 10K-15K) | Combined with surplus: <strong>AED 27,100/month</strong> total
   </div>
 
-  <div class="savings-row" style="background:rgba(234,179,8,0.08)">
-    <div class="savings-month" style="color:var(--gold)">APR</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span>Cumulative: AED 12,500</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:7.4%;background:var(--gold)"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+    <div style="padding:14px;background:var(--s3);border-radius:10px;text-align:center">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-bottom:4px">Gross Extra (9 mo)</div>
+      <div style="font-size:20px;font-weight:700">AED 112,500</div>
     </div>
-  </div>
-  <div class="savings-row">
-    <div class="savings-month">MAY</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span>Cumulative: AED 25,000</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:14.8%"></div></div>
+    <div style="padding:14px;background:var(--red-bg);border:1px solid rgba(239,68,68,.1);border-radius:10px;text-align:center">
+      <div style="font-size:10px;color:var(--red);text-transform:uppercase;margin-bottom:4px">Rent Cheque</div>
+      <div style="font-size:20px;font-weight:700;color:var(--red)">- AED 90,000</div>
     </div>
-  </div>
-  <div class="savings-row">
-    <div class="savings-month">JUN</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span>Cumulative: AED 37,500</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:22.2%"></div></div>
-    </div>
-  </div>
-  <div class="savings-row" style="background:rgba(239,68,68,0.05)">
-    <div class="savings-month" style="color:var(--red)">JUL</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500 <span style="color:var(--red)">- 90K rent cheque</span></span><span>Cumulative: AED -40,000</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:0%"></div></div>
-      <div style="font-size:11px;color:var(--red);margin-top:4px">Rent cheque month — net savings go negative. Plan for this.</div>
-    </div>
-  </div>
-  <div class="savings-row">
-    <div class="savings-month">AUG</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span>Cumulative: AED -27,500</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:0%"></div></div>
-    </div>
-  </div>
-  <div class="savings-row">
-    <div class="savings-month">SEP</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span>Cumulative: AED -15,000</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:0%"></div></div>
-    </div>
-  </div>
-  <div class="savings-row">
-    <div class="savings-month">OCT</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span>Cumulative: AED -2,500</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:0%"></div></div>
-    </div>
-  </div>
-  <div class="savings-row">
-    <div class="savings-month">NOV</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span>Cumulative: AED 10,000</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:5.9%"></div></div>
-    </div>
-  </div>
-  <div class="savings-row" style="background:rgba(34,197,94,0.05)">
-    <div class="savings-month" style="color:var(--green)">DEC</div>
-    <div style="flex:1">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>Save AED 12,500</span><span style="color:var(--green);font-weight:700">Cumulative: AED 22,500</span></div>
-      <div class="savings-bar-bg"><div class="savings-bar" style="width:13.3%"></div></div>
-      <div style="font-size:11px;color:var(--text3);margin-top:4px">Extra savings net contribution after rent cheque</div>
+    <div style="padding:14px;background:var(--green-bg);border:1px solid rgba(34,197,94,.1);border-radius:10px;text-align:center">
+      <div style="font-size:10px;color:var(--green);text-transform:uppercase;margin-bottom:4px">Net Extra by Dec</div>
+      <div style="font-size:20px;font-weight:700;color:var(--green)">AED 22,500</div>
     </div>
   </div>
 
-  <div style="margin-top:16px;padding:16px;background:rgba(234,179,8,0.05);border-radius:10px;border:1px solid rgba(234,179,8,0.1)">
-    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px">Net Impact of Extra Savings</div>
-    <div style="font-size:13px;color:var(--text2)">
-      Extra AED 12,500/mo x 9 months = AED 112,500 gross<br>
-      Minus rent cheque: AED 90,000<br>
-      <strong style="color:var(--text)">Net extra savings by Dec 31: AED 22,500</strong><br><br>
-      Combined with existing surplus (AED 14,600/mo x 8.75 = AED 127,750 - 90K rent = AED 37,750):<br>
-      <strong style="color:var(--gold)">Total new capital by Dec 31: ~AED 60,250</strong><br><br>
-      <span style="color:var(--text3)">Note: If you can push to AED 15K/mo extra, total jumps to AED 82,750. Every AED 2,500/mo extra = ~AED 22.5K more by year end.</span>
+  <div class="sv"><div class="sv-mo" style="color:var(--gold)">APR</div><div class="sv-bar-bg"><div class="sv-bar" style="width:11%;background:var(--gold)"></div></div><div class="sv-cum">AED 12,500</div></div>
+  <div class="sv"><div class="sv-mo">MAY</div><div class="sv-bar-bg"><div class="sv-bar" style="width:22%"></div></div><div class="sv-cum">AED 25,000</div></div>
+  <div class="sv"><div class="sv-mo">JUN</div><div class="sv-bar-bg"><div class="sv-bar" style="width:33%"></div></div><div class="sv-cum">AED 37,500</div></div>
+  <div class="sv" style="background:var(--red-bg)"><div class="sv-mo neg">JUL</div><div class="sv-bar-bg"><div class="sv-bar" style="width:0%"></div></div><div class="sv-cum neg">-52,500 *</div></div>
+  <div class="sv"><div class="sv-mo">AUG</div><div class="sv-bar-bg"><div class="sv-bar" style="width:0%"></div></div><div class="sv-cum" style="color:var(--t3)">-40,000</div></div>
+  <div class="sv"><div class="sv-mo">SEP</div><div class="sv-bar-bg"><div class="sv-bar" style="width:0%"></div></div><div class="sv-cum" style="color:var(--t3)">-27,500</div></div>
+  <div class="sv"><div class="sv-mo">OCT</div><div class="sv-bar-bg"><div class="sv-bar" style="width:0%"></div></div><div class="sv-cum" style="color:var(--t3)">-15,000</div></div>
+  <div class="sv"><div class="sv-mo">NOV</div><div class="sv-bar-bg"><div class="sv-bar" style="width:2%"></div></div><div class="sv-cum" style="color:var(--t3)">-2,500</div></div>
+  <div class="sv" style="background:var(--green-bg)"><div class="sv-mo pos">DEC</div><div class="sv-bar-bg"><div class="sv-bar" style="width:20%"></div></div><div class="sv-cum pos">AED 10,000</div></div>
+
+  <div style="font-size:11px;color:var(--t3);margin-top:8px">* July: rent cheque of AED 90,000 hits. The extra savings recover by late November. Plan cash flow around this.</div>
+
+  <div style="margin-top:20px;padding:16px;background:var(--gold-bg);border:1px solid rgba(234,179,8,.1);border-radius:10px">
+    <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:8px">Combined New Capital by Dec 31</div>
+    <div style="font-size:13px;color:var(--t2)">
+      Existing surplus: AED 14,600/mo x 8.75 = AED 127,750 gross<br>
+      Extra commitment: AED 12,500/mo x 9 = AED 112,500 gross<br>
+      Rent cheque: - AED 90,000<br>
+      <strong style="color:var(--gold);font-size:15px">Total new capital: ~AED 150,250</strong><br><br>
+      <span style="font-size:11px">Push to AED 15K/mo extra? Total jumps to AED 172,750. Each extra AED 2,500/mo = ~AED 22.5K more.</span>
     </div>
   </div>
 </div>
 </div>
 
-<!-- ============================================ -->
-<!-- TAB 8: CATALYSTS -->
-<!-- ============================================ -->
-<div class="tab-panel" id="tab-catalysts">
+<!-- ═══════════════════════════════════════════════════ -->
+<!--  TAB 8 : CATALYSTS TIMELINE                       -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="panel" id="p-cat">
 <div class="card">
-  <div class="card-title">Catalyst Timeline — Decision Points Ahead</div>
+  <div class="card-title">Catalyst Timeline &mdash; Decision Points</div>
 
-  <div class="timeline">
+  <div class="tl">
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--red);background:var(--red)"></div>
-      <div class="tl-date">April 8-9 — NOW</div>
-      <div class="tl-event">Trump 104% China tariffs take effect + Hormuz deadline</div>
-      <div class="tl-impact">Market volatility. Do NOT deploy capital. Watch for tanker traffic data.</div>
+      <div class="tl-date">Apr 8-9 &mdash; NOW</div>
+      <div class="tl-event neg">Trump 104% China tariffs + Hormuz deadline</div>
+      <div class="tl-note">Maximum volatility. Do NOT deploy capital. Watch tanker traffic data.</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--amber)"></div>
-      <div class="tl-date">April 9 — FOMC Minutes</div>
-      <div class="tl-event">Fed releases March meeting minutes</div>
-      <div class="tl-impact">Hawkish = pressure on risk assets. Dovish = green light for equities. Watch gold reaction.</div>
+      <div class="tl-date">Apr 9</div>
+      <div class="tl-event">FOMC Minutes Release</div>
+      <div class="tl-note">Hawkish = pressure on risk assets, gold holds. Dovish = green light for equities.</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--amber)"></div>
-      <div class="tl-date">April 10 — US CPI</div>
-      <div class="tl-event">Consumer Price Index release</div>
-      <div class="tl-impact">High CPI = no rate cuts, bearish. Low CPI = rate cut path, bullish for everything.</div>
+      <div class="tl-date">Apr 10</div>
+      <div class="tl-event">US CPI Release</div>
+      <div class="tl-note">High CPI = no rate cuts, bearish broad market, gold benefits. Low CPI = rate cut path opens.</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--gold);background:var(--gold)"></div>
       <div class="tl-date">Mid-April</div>
-      <div class="tl-event">Hormuz tanker traffic recovery signal</div>
-      <div class="tl-impact">If traffic reaches 30%+ of normal = begin Wio USD deployment planning. Oil analysts: mid-April critical.</div>
+      <div class="tl-event gold">Hormuz Tanker Traffic Recovery Signal</div>
+      <div class="tl-note">If traffic &gt;30% of normal = begin Wio USD deployment planning. Oil analysts: mid-April is critical deadline.</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--purple);background:var(--purple)"></div>
-      <div class="tl-date">April 23</div>
-      <div class="tl-event" style="color:var(--purple)">PINS Earnings — YOUR BIGGEST CATALYST</div>
-      <div class="tl-impact">Analyst consensus: Buy. Target $21-28. If above $22 post-earnings = partial RSU sell. If below $16 = reassess.</div>
+      <div class="tl-date">Apr 23</div>
+      <div class="tl-event purp">PINS Earnings &mdash; BIGGEST PERSONAL CATALYST</div>
+      <div class="tl-note">26 analysts: Buy consensus. Target $21-28. Above $22 = partial RSU sell. Below $16 = hold + reassess. AED 151K+ at stake.</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--blue)"></div>
-      <div class="tl-date">April 28</div>
-      <div class="tl-event">Jaynemesis 6-month review</div>
-      <div class="tl-impact">Evaluate: keep copy or switch to direct holdings. Decision should be made by Apr 15 (consolidation START action).</div>
+      <div class="tl-date">Apr 28</div>
+      <div class="tl-event">Jaynemesis 6-month Review</div>
+      <div class="tl-note">Decision: stop copy or direct-hold top names. Prep consolidation by Apr 15 (START #3).</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--blue)"></div>
-      <div class="tl-date">April 28-29</div>
+      <div class="tl-date">Apr 28-29</div>
       <div class="tl-event">MSFT Earnings</div>
-      <div class="tl-impact">Your MSFT position entry $517, current $369. Earnings could trigger recovery or confirm downtrend.</div>
+      <div class="tl-note">Your MSFT: entry $517, current $369. Earnings could begin recovery or confirm downtrend. Watch for cloud guidance.</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--green)"></div>
       <div class="tl-date">May-June</div>
-      <div class="tl-event">Hormuz full reopening (Goldman base case)</div>
-      <div class="tl-impact">Oil to $85 = deploy Wio USD. Stocks rally. This is the macro inflection point for your portfolio.</div>
+      <div class="tl-event pos">Hormuz Full Reopening (Goldman base)</div>
+      <div class="tl-note">Oil to $85 = deploy Wio USD. Stocks rally. This is the macro inflection for the portfolio. Deploy plan: 50K QQQ, 40K VTI, 25K ITA.</div>
     </div>
 
     <div class="tl-item">
       <div class="tl-dot" style="border-color:var(--green)"></div>
       <div class="tl-date">H2 2026</div>
-      <div class="tl-event">Fed rate cut (if inflation cooperates)</div>
-      <div class="tl-impact">Tailwind for: BTC, growth stocks, gold. Your concentrated portfolio benefits from this.</div>
+      <div class="tl-event">Potential Fed Rate Cut</div>
+      <div class="tl-note">If inflation cooperates. Tailwind for BTC, growth stocks, gold. Your concentrated portfolio benefits broadly.</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="border-color:var(--gold);background:var(--gold)"></div>
+      <div class="tl-date">Dec 31, 2026</div>
+      <div class="tl-event gold">1M AED Goal Deadline</div>
+      <div class="tl-note">Bear: AED 503K (50%). Base: AED 569K (57%). Bull: AED 854K (85%). Moon: AED 968K (97%).</div>
     </div>
   </div>
 </div>
 </div>
 
-<div class="updated">Last updated: April 8, 2026 | Data from eToro Account Statement (Mar 1 — Apr 7, 2026) | All calculations verified from source</div>
+<div class="footer">
+  Compounds &amp; Gains Optimizer &mdash; Last updated April 8, 2026<br>
+  Data source: eToro Account Statement (Mar 1 &mdash; Apr 7, 2026) | All calculations verified from source<br>
+  <span style="color:var(--t4)">Sources: Yahoo Finance, Investing.com, CNBC, Goldman Sachs, JP Morgan, UBS, TradingView, Fed Reserve</span>
+</div>
 
-</div><!-- container -->
+</div><!-- wrap -->
 </div><!-- app-content -->
 
 <script>
-// Auth
-var PASS_HASH='66ccfad64b6374e8edae32dcf758bbf3ca7cc2630c3d72a9d8b8c0e1970df9ae';
-async function hashPassword(pw){var enc=new TextEncoder().encode(pw);var buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0')}).join('')}
-(async function(){var authScreen=document.getElementById('auth-screen');var appContent=document.getElementById('app-content');var passwordInput=document.getElementById('auth-password');var authBtn=document.getElementById('auth-btn');var authError=document.getElementById('auth-error');if(sessionStorage.getItem('cg-auth')==='true'){authScreen.classList.add('hidden');appContent.classList.add('visible')}async function tryAuth(){var pw=passwordInput.value;if(!pw)return;var hash=await hashPassword(pw);if(hash===PASS_HASH){sessionStorage.setItem('cg-auth','true');authScreen.classList.add('hidden');appContent.classList.add('visible')}else{passwordInput.classList.add('error');authError.textContent='Wrong password';setTimeout(function(){passwordInput.classList.remove('error')},300);passwordInput.value='';passwordInput.focus()}}authBtn.addEventListener('click',tryAuth);passwordInput.addEventListener('keydown',function(e){if(e.key==='Enter')tryAuth()})})();
-
-// Tabs
-document.querySelectorAll('.tab').forEach(function(tab){
-  tab.addEventListener('click',function(){
-    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
-    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
-    tab.classList.add('active');
-    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
-  });
-});
+var PH='66ccfad64b6374e8edae32dcf758bbf3ca7cc2630c3d72a9d8b8c0e1970df9ae';
+async function hp(p){var e=new TextEncoder().encode(p),b=await crypto.subtle.digest('SHA-256',e);return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+(async()=>{var a=document.getElementById('auth-screen'),c=document.getElementById('app-content'),i=document.getElementById('auth-password'),b=document.getElementById('auth-btn'),er=document.getElementById('auth-error');
+if(sessionStorage.getItem('cg-auth')==='true'){a.classList.add('hidden');c.classList.add('visible')}
+async function go(){var p=i.value;if(!p)return;if(await hp(p)===PH){sessionStorage.setItem('cg-auth','true');a.classList.add('hidden');c.classList.add('visible')}else{i.classList.add('error');er.textContent='Wrong password';setTimeout(()=>i.classList.remove('error'),300);i.value='';i.focus()}}
+b.onclick=go;i.onkeydown=e=>{if(e.key==='Enter')go()}})();
+document.querySelectorAll('.nav-btn').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('p-'+b.dataset.p).classList.add('active')}});
 </script>
 </body>
 </html>
