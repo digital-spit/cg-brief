@@ -3,367 +3,577 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>C&G Brief — April 14, 2026</title>
+<title>C&G Daily Brief — April 17, 2026</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#030712;color:#e5e7eb;line-height:1.5;min-height:100vh}
-#auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;position:fixed;inset:0;background:#030712;z-index:9999}
-#auth-screen.hidden{display:none}
-.auth-box{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:32px;width:320px;text-align:center}
-.auth-box h1{font-size:20px;font-weight:700;color:#f9fafb;margin-bottom:4px}
-.auth-box p{font-size:13px;color:#6b7280;margin-bottom:20px}
-.auth-input{width:100%;padding:12px 16px;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#f9fafb;font-size:15px;outline:none;text-align:center;letter-spacing:2px}
-.auth-input:focus{border-color:#3b82f6}
-.auth-input.error{border-color:#ef4444;animation:shake .3s}
-.auth-btn{width:100%;padding:12px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:12px;transition:background .2s}
-.auth-btn:hover{background:#2563eb}
-.auth-error{color:#ef4444;font-size:12px;margin-top:8px;min-height:16px}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-#app-content{display:none}
-#app-content.visible{display:block}
-.container{max-width:900px;margin:0 auto;padding:16px}
-.header{text-align:center;padding:20px 0 12px;border-bottom:1px solid #1f2937;margin-bottom:16px}
-.header h1{font-size:22px;font-weight:700;color:#f9fafb}
-.header .date{font-size:13px;color:#6b7280;margin-top:2px}
-.headline{font-size:15px;color:#93c5fd;margin-top:8px;font-weight:500}
-.badges{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap}
-.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.badge-war{background:#7f1d1d;color:#fca5a5;animation:pulse 2s infinite}
-.badge-deploy{background:#1e3a5f;color:#93c5fd}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
-.tabs{display:flex;gap:4px;overflow-x:auto;padding:8px 0;border-bottom:1px solid #1f2937;margin-bottom:16px;-webkit-overflow-scrolling:touch}
-.tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;background:transparent;color:#6b7280;border:none;transition:all .2s}
-.tab:hover{color:#e5e7eb}
-.tab.active{background:#1e3a5f;color:#93c5fd}
-.panel{display:none}
-.panel.active{display:block}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:16px}
-.card{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:14px}
-.card-label{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.card-price{font-size:20px;font-weight:700;color:#f9fafb}
-.card-change{font-size:13px;font-weight:600;margin-top:2px}
-.card-note{font-size:11px;color:#6b7280;margin-top:4px}
-.up{color:#34d399}
-.down{color:#f87171}
-.flat{color:#6b7280}
-.section{background:#111827;border:1px solid #1f2937;border-radius:10px;padding:16px;margin-bottom:12px}
-.section-title{font-size:14px;font-weight:700;color:#f9fafb;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.flag{padding:10px 14px;border-radius:8px;margin-bottom:8px;font-size:13px;border-left:4px solid}
-.flag-critical{background:#1a0505;border-color:#ef4444;color:#fca5a5}
-.flag-watch{background:#1a1505;border-color:#f59e0b;color:#fde68a}
-.flag-ok{background:#051a0a;border-color:#22c55e;color:#86efac}
-.flag-title{font-weight:700;margin-bottom:2px}
-.flag-detail{font-size:12px;opacity:.85}
-.bottom-line{background:#0c1929;border:1px solid #1e3a5f;border-radius:10px;padding:16px;margin-top:16px;font-size:14px;color:#93c5fd;line-height:1.6}
-.bottom-line strong{color:#60a5fa}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;color:#6b7280;font-weight:600;padding:8px 6px;border-bottom:1px solid #1f2937;font-size:11px;text-transform:uppercase}
-td{padding:8px 6px;border-bottom:1px solid #111827}
-.cal-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #1f2937}
-.cal-item:last-child{border:none}
-.cal-date{min-width:70px;font-size:12px;font-weight:700;color:#6b7280}
-.cal-title{font-size:13px;color:#f9fafb}
-.cal-badge{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
-.cal-urgent{background:#7f1d1d;color:#fca5a5}
-.cal-soon{background:#78350f;color:#fde68a}
-.cal-later{background:#1e3a5f;color:#93c5fd}
-.trigger-row{display:flex;align-items:center;gap:8px;padding:8px 0;font-size:13px}
-.trigger-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
-.trigger-no{background:#7f1d1d;color:#fca5a5}
-.trigger-yes{background:#064e3b;color:#34d399}
-.sources-list{font-size:12px;color:#6b7280;line-height:2}
-.sources-list a{color:#60a5fa;text-decoration:none}
-.sources-list a:hover{text-decoration:underline}
-@media(max-width:600px){.container{padding:10px}.cards{grid-template-columns:1fr 1fr}.card-price{font-size:17px}.tabs{gap:2px}.tab{padding:6px 10px;font-size:12px}}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #030712; color: #f9fafb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  a { color: #60a5fa; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Auth */
+  #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: fixed; inset: 0; background: #030712; z-index: 9999; }
+  #auth-screen.hidden { display: none; }
+  .auth-box { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 32px; width: 320px; text-align: center; }
+  .auth-box h1 { font-size: 20px; font-weight: 700; color: #f9fafb; margin-bottom: 4px; }
+  .auth-box p { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+  .auth-input { width: 100%; padding: 12px 16px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #f9fafb; font-size: 15px; outline: none; text-align: center; letter-spacing: 2px; }
+  .auth-input:focus { border-color: #3b82f6; }
+  .auth-input.error { border-color: #ef4444; animation: shake 0.3s; }
+  .auth-btn { width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; transition: background 0.2s; }
+  .auth-btn:hover { background: #2563eb; }
+  .auth-error { color: #ef4444; font-size: 12px; margin-top: 8px; min-height: 16px; }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  #app-content { display: none; }
+  #app-content.visible { display: block; }
+
+  /* Layout */
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+  header { margin-bottom: 18px; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #6b7280; text-transform: uppercase; margin-bottom: 6px; }
+  h1.head { font-size: 26px; font-weight: 800; color: #f9fafb; line-height: 1.25; margin-bottom: 10px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid; }
+  .badge-green { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.35); color: #4ade80; }
+  .badge-yellow { background: rgba(250,204,21,0.1); border-color: rgba(250,204,21,0.35); color: #facc15; }
+  .badge-red { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.4); color: #f87171; animation: pulse 2s infinite; }
+  .badge-blue { background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.4); color: #60a5fa; }
+  .badge-gray { background: rgba(107,114,128,0.1); border-color: rgba(107,114,128,0.35); color: #9ca3af; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid #1f2937; margin: 20px 0 22px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab { padding: 10px 14px; background: transparent; border: none; border-bottom: 2px solid transparent; color: #9ca3af; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.15s; font-family: inherit; }
+  .tab:hover { color: #f9fafb; }
+  .tab.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Cards */
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .card h3 { font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #9ca3af; text-transform: uppercase; margin-bottom: 12px; }
+  .price-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (min-width: 620px) { .price-grid { grid-template-columns: repeat(4, 1fr); } }
+  .price-card { background: #0a0f1e; border: 1px solid #1f2937; border-radius: 8px; padding: 12px; }
+  .ticker { font-size: 11px; font-weight: 700; color: #6b7280; letter-spacing: 1px; }
+  .price { font-size: 18px; font-weight: 700; color: #f9fafb; margin: 4px 0 2px; }
+  .change { font-size: 12px; font-weight: 600; }
+  .up { color: #4ade80; }
+  .down { color: #f87171; }
+  .flat { color: #9ca3af; }
+  .note { font-size: 11px; color: #6b7280; margin-top: 6px; line-height: 1.35; }
+
+  /* Flags */
+  .flag { border-left: 3px solid; padding: 12px 14px; background: #0a0f1e; border-radius: 6px; margin-bottom: 10px; }
+  .flag.critical { border-left-color: #ef4444; }
+  .flag.watch { border-left-color: #facc15; }
+  .flag.ok { border-left-color: #22c55e; }
+  .flag-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .flag-title { font-size: 14px; font-weight: 700; color: #f9fafb; }
+  .flag-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 1px; }
+  .flag.critical .flag-tag { background: rgba(239,68,68,0.15); color: #f87171; }
+  .flag.watch .flag-tag { background: rgba(250,204,21,0.15); color: #facc15; }
+  .flag.ok .flag-tag { background: rgba(34,197,94,0.15); color: #4ade80; }
+  .flag-body { font-size: 13px; color: #d1d5db; line-height: 1.55; }
+  .flag-action { font-size: 12px; color: #9ca3af; margin-top: 6px; padding-top: 6px; border-top: 1px dashed #1f2937; }
+  .flag-action strong { color: #f9fafb; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #1f2937; }
+  th { color: #6b7280; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+  td { color: #e5e7eb; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Timeline */
+  .timeline-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #1f2937; }
+  .timeline-item:last-child { border: none; }
+  .t-date { min-width: 85px; font-size: 12px; font-weight: 700; color: #60a5fa; }
+  .t-body { flex: 1; }
+  .t-title { font-size: 14px; font-weight: 600; color: #f9fafb; margin-bottom: 2px; }
+  .t-desc { font-size: 12px; color: #9ca3af; }
+
+  /* Bottom line */
+  .bottom-line { background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(139,92,246,0.05)); border: 1px solid rgba(59,130,246,0.25); border-radius: 10px; padding: 16px; margin-top: 14px; }
+  .bottom-line h3 { color: #60a5fa; }
+  .bottom-line p { color: #e5e7eb; font-size: 13px; line-height: 1.6; }
+
+  /* START/STOP/CONTINUE */
+  .ssc-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 720px) { .ssc-grid { grid-template-columns: repeat(3, 1fr); } }
+  .ssc { background: #0a0f1e; border: 1px solid #1f2937; border-radius: 8px; padding: 12px; }
+  .ssc h4 { font-size: 11px; letter-spacing: 2px; font-weight: 700; margin-bottom: 8px; }
+  .ssc.start h4 { color: #4ade80; }
+  .ssc.stop h4 { color: #f87171; }
+  .ssc.cont h4 { color: #60a5fa; }
+  .ssc ul { list-style: none; padding: 0; margin: 0; }
+  .ssc li { font-size: 12px; color: #d1d5db; padding: 4px 0; border-bottom: 1px dashed #1f2937; }
+  .ssc li:last-child { border: none; }
+
+  /* Deploy */
+  .deploy-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid #1f2937; }
+  .deploy-row:last-child { border: none; }
+  .deploy-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .deploy-check.done { border-color: #22c55e; background: rgba(34,197,94,0.15); color: #4ade80; }
+  .deploy-check.pending { border-color: #facc15; background: rgba(250,204,21,0.12); color: #facc15; }
+  .deploy-check.blocked { border-color: #ef4444; background: rgba(239,68,68,0.12); color: #f87171; }
+  .deploy-text { flex: 1; font-size: 13px; color: #e5e7eb; }
+  .deploy-text small { display: block; color: #6b7280; font-size: 11px; margin-top: 2px; }
+
+  /* Sources */
+  .src-list { list-style: none; padding: 0; }
+  .src-list li { padding: 8px 0; border-bottom: 1px solid #1f2937; font-size: 12px; }
+  .src-list li:last-child { border: none; }
+  .src-list a { color: #60a5fa; word-break: break-all; }
+
+  footer { margin-top: 30px; padding-top: 16px; border-top: 1px solid #1f2937; font-size: 11px; color: #6b7280; text-align: center; }
 </style>
 </head>
 <body>
+
 <div id="auth-screen">
   <div class="auth-box">
-    <h1>C&G Brief</h1>
+    <h1>C&amp;G Brief</h1>
     <p>Enter password to continue</p>
     <input type="password" id="auth-password" class="auth-input" placeholder="Password" autocomplete="off" autofocus>
     <button class="auth-btn" id="auth-btn">Unlock</button>
     <div class="auth-error" id="auth-error"></div>
   </div>
 </div>
+
 <div id="app-content">
-<div class="container">
+<div class="wrap">
 
-<!-- HEADER -->
-<div class="header">
-  <h1>Compounds & Gains</h1>
-  <div class="date">Tuesday, April 14, 2026 &middot; 5:15 PM Dubai (GST)</div>
-  <div class="headline">Ceasefire talks collapse — Trump orders naval blockade of Iranian ports — Hormuz at crisis point</div>
+<header>
+  <div class="eyebrow">Compounds &amp; Gains · Friday 17 April 2026 · 17:15 GST</div>
+  <h1 class="head">Hormuz reopens, Brent crashes −10.7%, XLE breaches stop — rotate out of energy, lean into tech.</h1>
   <div class="badges">
-    <span class="badge badge-war">WAR: ESCALATING</span>
-    <span class="badge badge-deploy">DEPLOYMENT: LOCKED (0/3)</span>
+    <span class="badge badge-yellow"><span class="dot"></span>WAR: DE-ESCALATING</span>
+    <span class="badge badge-red"><span class="dot"></span>XLE STOP BREACHED</span>
+    <span class="badge badge-gray"><span class="dot"></span>DEPLOYMENT: LOCKED (trigger pending confirmation)</span>
+    <span class="badge badge-blue"><span class="dot"></span>GOAL 1M AED · T-257 days</span>
   </div>
-</div>
+</header>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="showTab('overview')">Overview</button>
-  <button class="tab" onclick="showTab('flags')">Flags</button>
-  <button class="tab" onclick="showTab('uae')">UAE Intel</button>
-  <button class="tab" onclick="showTab('calendar')">Calendar</button>
-  <button class="tab" onclick="showTab('deployment')">Deployment</button>
-  <button class="tab" onclick="showTab('sources')">Sources</button>
-</div>
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="overview">Overview</button>
+  <button class="tab" data-tab="flags">Flags</button>
+  <button class="tab" data-tab="uae">UAE Intel</button>
+  <button class="tab" data-tab="calendar">Calendar</button>
+  <button class="tab" data-tab="deploy">Deployment</button>
+  <button class="tab" data-tab="sources">Sources</button>
+</nav>
 
-<!-- TAB 1: OVERVIEW -->
-<div id="overview" class="panel active">
-
-<div class="cards">
+<!-- OVERVIEW -->
+<section class="tab-panel active" id="tab-overview">
   <div class="card">
-    <div class="card-label">S&P 500</div>
-    <div class="card-price">5,405</div>
-    <div class="card-change up">+1.02%</div>
-    <div class="card-note">Recovering on ceasefire optimism</div>
+    <h3>Live Markets · Close 17 Apr 2026</h3>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="ticker">S&amp;P 500</div>
+        <div class="price">7,041</div>
+        <div class="change up">+0.3%</div>
+        <div class="note">Fresh ATH territory as Iran war premium unwinds.</div>
+      </div>
+      <div class="price-card">
+        <div class="ticker">NASDAQ</div>
+        <div class="price">24,103</div>
+        <div class="change up">+0.4%</div>
+        <div class="note">12-session win streak — longest since 2009.</div>
+      </div>
+      <div class="price-card">
+        <div class="ticker">BRENT</div>
+        <div class="price">$88.73</div>
+        <div class="change down">−10.7%</div>
+        <div class="note">Biggest drop in 6 weeks — Hormuz reopening.</div>
+      </div>
+      <div class="price-card">
+        <div class="ticker">GOLD</div>
+        <div class="price">$4,868</div>
+        <div class="change up">+1.7%</div>
+        <div class="note">Your avg entry $4,611 → <strong>+5.6% in the green</strong>.</div>
+      </div>
+      <div class="price-card">
+        <div class="ticker">BTC</div>
+        <div class="price">$75,428</div>
+        <div class="change up">+0.5%</div>
+        <div class="note">$13.4K clear of $62K stop. Cruise mode.</div>
+      </div>
+      <div class="price-card">
+        <div class="ticker">ETH</div>
+        <div class="price">$2,350</div>
+        <div class="change down">−0.4%</div>
+        <div class="note">Well above re-entry zone $1,750–1,800. No signal.</div>
+      </div>
+      <div class="price-card">
+        <div class="ticker">XLE</div>
+        <div class="price">$56.58</div>
+        <div class="change down">−1.6%</div>
+        <div class="note"><strong style="color:#f87171">BELOW $57.50 STOP</strong> — execute today.</div>
+      </div>
+      <div class="price-card">
+        <div class="ticker">VTI</div>
+        <div class="price">$346.03</div>
+        <div class="change up">+0.2%</div>
+        <div class="note">DCA cadence continues — next transfer window open.</div>
+      </div>
+    </div>
   </div>
+
   <div class="card">
-    <div class="card-label">Nasdaq</div>
-    <div class="card-price">23,184</div>
-    <div class="card-change up">+1.23%</div>
-    <div class="card-note">Tech rallying on risk appetite</div>
+    <h3>Top 3 Flags</h3>
+    <div class="flag critical">
+      <div class="flag-header">
+        <div class="flag-title">XLE stop breached — exit the 65% energy position now</div>
+        <span class="flag-tag">CRITICAL</span>
+      </div>
+      <div class="flag-body">XLE closed $56.58, below your $57.50 stop. Brent −10.7% as Hormuz reopened for the ceasefire period. The oil premium that powered this trade has evaporated in a single session. Don't average down — the thesis was geopolitical, the geopolitics is reversing.</div>
+      <div class="flag-action"><strong>Action:</strong> Sell XLE at market Monday open. Park proceeds in cash/VUSXX, redeploy into QQQ/VTI per deployment plan once you confirm ceasefire holds past 21 Apr.</div>
+    </div>
+    <div class="flag watch">
+      <div class="flag-header">
+        <div class="flag-title">Gold +5.6% above entry — protect the win</div>
+        <span class="flag-tag">WATCH</span>
+      </div>
+      <div class="flag-body">Gold at $4,868 vs $4,611 entry. If peace talks accelerate and Hormuz stays open, gold risks a 3–5% pullback as safe-haven flows unwind. You haven't set a stop.</div>
+      <div class="flag-action"><strong>Action:</strong> Set a mental stop at $4,650 (roughly breakeven). Consider trimming 25% above $4,900 to lock in profit.</div>
+    </div>
+    <div class="flag watch">
+      <div class="flag-header">
+        <div class="flag-title">PINS earnings date moved — update calendar</div>
+        <span class="flag-tag">WATCH</span>
+      </div>
+      <div class="flag-body">Pinterest Q1'26 earnings are <strong>Mon 4 May</strong>, not 23 Apr as the plan has it. Your 1,429 RSU shares at $24.44 cost basis are underwater ($20.29 today = −17%). Q4 missed EPS by a penny; Q1 guide is 11–14% growth.</div>
+      <div class="flag-action"><strong>Action:</strong> Move PINS earnings to 4 May in your calendar. Decide pre-earnings: hold through print or trim half into strength if it rallies to $22 sell zone beforehand.</div>
+    </div>
   </div>
+
+  <div class="bottom-line">
+    <h3>Bottom line</h3>
+    <p>Two signals converged today: (1) Brent collapsed as Iran reopened Hormuz for the ceasefire window — your energy thesis is broken and XLE has hit its stop; (2) tech is ripping on the same news — S&amp;P and Nasdaq printing fresh ATHs. The trade is mechanical: exit XLE Monday, hold deployment cash, wait for the 21 Apr ceasefire extension before releasing the 115K AED to QQQ/VTI. Gold is a second-order decision — protect the 5.6% gain with a mental stop. Do nothing on BTC, ETH, or PINS today.</p>
+  </div>
+
   <div class="card">
-    <div class="card-label">Brent Crude</div>
-    <div class="card-price">$97.89</div>
-    <div class="card-change flat">Range $96-99</div>
-    <div class="card-note">Elevated — Hormuz blockade risk</div>
+    <h3>Start / Stop / Continue</h3>
+    <div class="ssc-grid">
+      <div class="ssc start">
+        <h4>START</h4>
+        <ul>
+          <li>Place XLE sell order for Monday open</li>
+          <li>Set mental stop on gold at $4,650</li>
+          <li>Update PINS earnings to 4 May</li>
+        </ul>
+      </div>
+      <div class="ssc stop">
+        <h4>STOP</h4>
+        <ul>
+          <li>Waiting on XLE — the stop has already hit</li>
+          <li>Adding to energy on the dip — thesis broke</li>
+          <li>Treating 23 Apr as a PINS catalyst date</li>
+        </ul>
+      </div>
+      <div class="ssc cont">
+        <h4>CONTINUE</h4>
+        <ul>
+          <li>Holding BTC / ETH-closed / VTI DCA</li>
+          <li>Tracking ceasefire extension past 21 Apr</li>
+          <li>Monthly surplus into liquid 1M AED pot</li>
+        </ul>
+      </div>
+    </div>
   </div>
+</section>
+
+<!-- FLAGS -->
+<section class="tab-panel" id="tab-flags">
   <div class="card">
-    <div class="card-label">Gold (XAU)</div>
-    <div class="card-price">$4,761</div>
-    <div class="card-change up">+0.33%</div>
-    <div class="card-note">Khaled entry $4,611 &mdash; +$150 above</div>
+    <h3>All Flags · Sorted by Severity</h3>
+
+    <div class="flag critical">
+      <div class="flag-header">
+        <div class="flag-title">XLE stop breached at $56.58 (stop $57.50)</div>
+        <span class="flag-tag">CRITICAL</span>
+      </div>
+      <div class="flag-body">Brent −10.7% on Hormuz reopening. Energy is the wrong side of the ceasefire trade. XLE is 65% of your tactical risk bucket — exiting preserves capital for the QQQ/VTI deployment.</div>
+      <div class="flag-action"><strong>Action:</strong> Market sell Monday 20 Apr open. Full exit — no partial.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-header">
+        <div class="flag-title">Gold near $4,900 resistance with unwind risk</div>
+        <span class="flag-tag">WATCH</span>
+      </div>
+      <div class="flag-body">Peace narrative is gold-negative. $4,868 is +5.6% on your entry — don't let a 5% pullback turn this into a round-trip.</div>
+      <div class="flag-action"><strong>Action:</strong> Mental stop $4,650. Trim 25% if $4,900 breaks with momentum.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-header">
+        <div class="flag-title">PINS at $20.29 — earnings 4 May (not 23 Apr)</div>
+        <span class="flag-tag">WATCH</span>
+      </div>
+      <div class="flag-body">Cost basis $24.44. Down 17%. Q1 guide was light. Sell zone was pegged at $22 — you're below it.</div>
+      <div class="flag-action"><strong>Action:</strong> Do nothing until earnings. Move date in calendar. Re-decide sell-zone post-print.</div>
+    </div>
+
+    <div class="flag watch">
+      <div class="flag-header">
+        <div class="flag-title">Emaar (EMAR) −7.6% to 12.38 AED</div>
+        <span class="flag-tag">WATCH</span>
+      </div>
+      <div class="flag-body">Sharp one-day drop from 13.40 close. Possible ex-dividend, possible war-peace rotation out of UAE defensives, possible profit-taking after Q1 DFM strength. No position today but if you're hunting for local yield entry, watch 12.00 support.</div>
+      <div class="flag-action"><strong>Action:</strong> Monitor only. Check dividend calendar before assuming price damage.</div>
+    </div>
+
+    <div class="flag ok">
+      <div class="flag-header">
+        <div class="flag-title">BTC $75,428 — $13K above stop</div>
+        <span class="flag-tag">OK</span>
+      </div>
+      <div class="flag-body">Ceasefire risk-on flows supporting crypto. Stop remains $62K.</div>
+      <div class="flag-action"><strong>Action:</strong> None. Hold.</div>
+    </div>
+
+    <div class="flag ok">
+      <div class="flag-header">
+        <div class="flag-title">ETH closed — re-entry zone $1,750–1,800 untouched</div>
+        <span class="flag-tag">OK</span>
+      </div>
+      <div class="flag-body">ETH at $2,350, 30%+ above your re-entry zone. No action required.</div>
+      <div class="flag-action"><strong>Action:</strong> Wait. Don't chase.</div>
+    </div>
+
+    <div class="flag ok">
+      <div class="flag-header">
+        <div class="flag-title">VTI DCA on track</div>
+        <span class="flag-tag">OK</span>
+      </div>
+      <div class="flag-body">$346.03 — compounding through the war. Keep feeding the machine.</div>
+      <div class="flag-action"><strong>Action:</strong> Keep next DCA transfer scheduled.</div>
+    </div>
   </div>
+</section>
+
+<!-- UAE INTEL -->
+<section class="tab-panel" id="tab-uae">
   <div class="card">
-    <div class="card-label">Bitcoin</div>
-    <div class="card-price">$74,445</div>
-    <div class="card-change up">+5.2%</div>
-    <div class="card-note">4-week high, stop $62K safe (+$12.4K)</div>
+    <h3>DFM / ADX Snapshot</h3>
+    <table>
+      <thead><tr><th>Ticker</th><th>Name</th><th>Price (AED)</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>EMAAR</td><td>Emaar Properties</td><td>12.38</td><td>−7.6% from prev close 13.40 — check for ex-div</td></tr>
+        <tr><td>EAND</td><td>e&amp; (Etisalat)</td><td>—</td><td>No fresh tape in source; treat as stable</td></tr>
+        <tr><td>FAB</td><td>First Abu Dhabi Bank</td><td>—</td><td>No fresh tape in source; treat as stable</td></tr>
+        <tr><td>ADNOCDIST</td><td>ADNOC Distribution</td><td>~3.77</td><td>Last print 6 Apr — monitor for energy drag</td></tr>
+      </tbody>
+    </table>
   </div>
+
   <div class="card">
-    <div class="card-label">Ethereum</div>
-    <div class="card-price">$2,378</div>
-    <div class="card-change up">+8.1%</div>
-    <div class="card-note">CLOSED — above $1,800 re-entry zone</div>
+    <h3>Dubai Real Estate Pulse — Q1 2026</h3>
+    <table>
+      <tbody>
+        <tr><td><strong>Q1'26 total sales</strong></td><td>AED 176.7B (record)</td></tr>
+        <tr><td><strong>Off-plan share</strong></td><td>~70% of transactions</td></tr>
+        <tr><td><strong>Avg gross yield</strong></td><td>6–9% (apartments 7.07%, villas 4.93%)</td></tr>
+        <tr><td><strong>JVC yield</strong></td><td>up to 8.5% — best mid-market ROI</td></tr>
+        <tr><td><strong>Entry ticket</strong></td><td>~AED 1M for a decent 1-bed, 7.5–8% net on handover, +15–20% uplift to completion</td></tr>
+      </tbody>
+    </table>
   </div>
+
   <div class="card">
-    <div class="card-label">XLE</div>
-    <div class="card-price">$57.04</div>
-    <div class="card-change flat">~flat</div>
-    <div class="card-note">65% position — near $57.50 stop</div>
+    <h3>This Week's Off-Plan Launches Worth Knowing</h3>
+    <div class="flag ok" style="border-left-color:#60a5fa;">
+      <div class="flag-body">
+        <strong>Emaar live pipeline:</strong> Montiva by Vida (Dubai Creek Harbour), Palace Residences Hillside (Dubai Hills Estate), Vida Baystar (Rashid Yachts &amp; Marina), Emaar South villas (near DWC). JVC and Dubai South remain the yield picks — Creek Harbour for capital appreciation.
+      </div>
+    </div>
   </div>
+
   <div class="card">
-    <div class="card-label">VTI</div>
-    <div class="card-price">$338.85</div>
-    <div class="card-change up">+0.9%</div>
-    <div class="card-note">DCA core — next transfer TBD</div>
+    <h3>Crowdfunding (Stake / Smart Crowd)</h3>
+    <p style="font-size:12px;color:#9ca3af;line-height:1.6">No new deal alerts in the feed today. Standard rules: only fund a new slice after XLE exit clears and the deployment trigger unlocks. Target allocation remains under 15K AED into tokenised Dubai residential at 8%+ net yield.</p>
   </div>
-</div>
+</section>
 
-<!-- TOP 3 FLAGS -->
-<div class="section">
-  <div class="section-title">Top Flags</div>
-  <div class="flag flag-critical">
-    <div class="flag-title">XLE AT STOP — $57.04 vs $57.50 stop</div>
-    <div class="flag-detail">Only $0.46 from stop loss. 65% of position. Hormuz blockade is double-edged: supports oil price but ceasefire would crash it. Monitor intraday — if $57.00 breaks, stop triggers.</div>
+<!-- CALENDAR -->
+<section class="tab-panel" id="tab-calendar">
+  <div class="card">
+    <h3>Upcoming Actions · Next 30 Days</h3>
+    <div class="timeline-item">
+      <div class="t-date">Mon 20 Apr</div>
+      <div class="t-body">
+        <div class="t-title">Execute XLE exit at market open</div>
+        <div class="t-desc">Full position. Park in VUSXX / eToro cash. No averaging down.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="t-date">Tue 21 Apr</div>
+      <div class="t-body">
+        <div class="t-title">Ceasefire expiry — deployment trigger check</div>
+        <div class="t-desc">If truce is extended and Hormuz stays open → unlock 115K AED tranche.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="t-date">Fri 24 Apr</div>
+      <div class="t-body">
+        <div class="t-title">VTI DCA transfer</div>
+        <div class="t-desc">Standard fortnightly cadence into VTI from Wio.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="t-date">Mon 28 Apr</div>
+      <div class="t-body">
+        <div class="t-title">Jaynemesis monthly review</div>
+        <div class="t-desc">Position accountability sync — bring XLE exit P&amp;L and deployment status.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="t-date">Mon 4 May</div>
+      <div class="t-body">
+        <div class="t-title">PINS Q1'26 earnings (after close)</div>
+        <div class="t-desc">Updated from 23 Apr. Decide hold / trim pre-print after 27 Apr.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="t-date">Fri 15 May</div>
+      <div class="t-body">
+        <div class="t-title">Rent pre-stage</div>
+        <div class="t-desc">Move rent buffer to ENBD current account by this date.</div>
+      </div>
+    </div>
   </div>
-  <div class="flag flag-critical">
-    <div class="flag-title">HORMUZ ESCALATION — Naval blockade announced</div>
-    <div class="flag-detail">Trump ordered US naval blockade of Iranian ports starting Apr 13. Iran warns any vessel approaching will be "eliminated." Strait at 10% normal traffic. This is the most dangerous Hormuz moment since war started.</div>
-  </div>
-  <div class="flag flag-watch">
-    <div class="flag-title">PINS EARNINGS — 9 days (Apr 23)</div>
-    <div class="flag-detail">$18.04 today. Cost basis $24.44. Decision needed: hold through earnings or cut before? Ad spend uncertainty + war = risk. But MAU growth thesis intact.</div>
-  </div>
-</div>
+</section>
 
-<div class="bottom-line">
-  <strong>Bottom Line:</strong> Markets rallying on hope but the Hormuz situation just got worse, not better. The 2-week ceasefire expired without a deal. Trump's naval blockade is an escalation, not a de-escalation. XLE is your most urgent position — it's pennies from your stop. BTC and Gold are both working. Keep deployment LOCKED. The next 48 hours on Hormuz are critical.
-</div>
-</div>
+<!-- DEPLOYMENT -->
+<section class="tab-panel" id="tab-deploy">
+  <div class="card">
+    <h3>115K AED Deployment — Trigger Checklist</h3>
+    <div class="deploy-row">
+      <div class="deploy-check done">✓</div>
+      <div class="deploy-text">Hormuz declared open for the remainder of the ceasefire <small>Iran statement 17 Apr — partial credit only, still conditional on truce</small></div>
+    </div>
+    <div class="deploy-row">
+      <div class="deploy-check pending">—</div>
+      <div class="deploy-text">Ceasefire extended past 21 Apr <small>Expected but not confirmed. Primary gating event.</small></div>
+    </div>
+    <div class="deploy-row">
+      <div class="deploy-check pending">—</div>
+      <div class="deploy-text">US–Iran signed agreement <small>Trump said "close" today. Not a binary yet — treat as bonus confirmation.</small></div>
+    </div>
+    <div class="deploy-row">
+      <div class="deploy-check blocked">!</div>
+      <div class="deploy-text">XLE position unwound <small>Stop breached. Must clear before redeploying to QQQ/VTI/ITA.</small></div>
+    </div>
+  </div>
 
-<!-- TAB 2: FLAGS -->
-<div id="flags" class="panel">
-<div class="section">
-  <div class="section-title" style="color:#ef4444">CRITICAL</div>
-  <div class="flag flag-critical">
-    <div class="flag-title">XLE: $57.04 — Stop at $57.50</div>
-    <div class="flag-detail">$0.46 from stop. Largest position (65%). Oil supported by Hormuz crisis but any ceasefire headline could tank XLE 5-8% in a session. If $57.00 breaks intraday, stop likely triggers. Do NOT lower the stop — this is exactly why stops exist.</div>
+  <div class="card">
+    <h3>Macro Paragraph — Why the trigger matters</h3>
+    <p style="font-size:13px;color:#d1d5db;line-height:1.65">Markets are pricing a soft de-escalation: S&amp;P new highs, Nasdaq 12 up in a row, Brent giving back the entire war premium in a single session. But the Hormuz reopening is <em>tied to the ceasefire window</em> — if the 21 Apr extension fails, Brent snaps back to $110+ and the Nasdaq run unwinds. Your 115K AED deployment into QQQ/VTI/ITA is a <strong>peace-trade</strong>, not a bottom-fish. Don't release it until the extension is confirmed and your XLE exposure is flat — otherwise you'd be doubling equity risk while still long the broken oil thesis.</p>
   </div>
-  <div class="flag flag-critical">
-    <div class="flag-title">HORMUZ NAVAL BLOCKADE — Maximum escalation</div>
-    <div class="flag-detail">US naval blockade of Iranian ports began Apr 13. Iran threatening to "eliminate" any vessel. Oil supply risk is extreme. This could push Brent to $110+ or crash to $80 on sudden deal. Either way, volatility is about to spike.</div>
-  </div>
-  <div class="flag flag-critical">
-    <div class="flag-title">CEASEFIRE TALKS COLLAPSED</div>
-    <div class="flag-detail">21+ hours of talks in Islamabad ended without deal. Key sticking points: Hormuz control, reparations, Lebanon inclusion. Ceasefire expired. Diplomacy is alive but fragile. No deployment triggers met.</div>
-  </div>
-</div>
-<div class="section">
-  <div class="section-title" style="color:#f59e0b">WATCH</div>
-  <div class="flag flag-watch">
-    <div class="flag-title">PINS: $18.04 — Earnings Apr 23 (9 days)</div>
-    <div class="flag-detail">1,429 RSU shares. Cost basis $24.44. Unrealized loss ~26%. Hold thesis: MAU growth +11.4% YoY, bad news priced in. Risk: ad pullback from war, macro uncertainty. Decision needed by Apr 22.</div>
-  </div>
-  <div class="flag flag-watch">
-    <div class="flag-title">CryptoPortfolio Copy — Unreviewed</div>
-    <div class="flag-detail">Last known: -$995 P/L. BTC rally today (+5.2%) may have improved picture. But copy remains unclassified — Khaled has not confirmed intent. DO NOT act without seeing current holdings.</div>
-  </div>
-  <div class="flag flag-watch">
-    <div class="flag-title">Jaynemesis Review — Apr 28 (14 days)</div>
-    <div class="flag-detail">6-month performance review due. Many micro-positions across defense/industrials. War status directly impacts these holdings. Wait for review date.</div>
-  </div>
-  <div class="flag flag-watch">
-    <div class="flag-title">ETH RE-ENTRY ZONE</div>
-    <div class="flag-detail">$2,378 today — well above $1,750-$1,800 re-entry zone. No action needed. Position closed at $1,978. Re-entry only if it pulls back to target zone.</div>
-  </div>
-</div>
-<div class="section">
-  <div class="section-title" style="color:#22c55e">OK</div>
-  <div class="flag flag-ok">
-    <div class="flag-title">Gold: $4,761 — Entry $4,611 — +3.3% unrealized</div>
-    <div class="flag-detail">Safe haven working as expected during escalation. War premium supporting price. No action needed.</div>
-  </div>
-  <div class="flag flag-ok">
-    <div class="flag-title">BTC: $74,445 — Stop $62K — cushion +$12.4K</div>
-    <div class="flag-detail">Strong momentum on risk-on sentiment. Stop well below at $62K. Long-term conviction hold. Let it run.</div>
-  </div>
-  <div class="flag flag-ok">
-    <div class="flag-title">VTI: $338.85 — DCA core</div>
-    <div class="flag-detail">Long-term accumulation vehicle. Next monthly transfer TBD. No action needed.</div>
-  </div>
-  <div class="flag flag-ok">
-    <div class="flag-title">SNAP RSU: 1,593 shares — +119% profit</div>
-    <div class="flag-detail">Cost basis $4.34, current ~$9.50. Significant unrealized gain. Hold — not counted toward liquid 1M goal.</div>
-  </div>
-</div>
-</div>
 
-<!-- TAB 3: UAE INTEL -->
-<div id="uae" class="panel">
-<div class="section">
-  <div class="section-title">DFM / ADX Markets</div>
-  <table>
-    <tr><th>Stock</th><th>Price (AED)</th><th>Change</th><th>Note</th></tr>
-    <tr><td>Emaar (EMAR)</td><td>11.70</td><td class="down">-1.34%</td><td>Strong Buy consensus; war discount</td></tr>
-    <tr><td>ADNOC Dist</td><td>3.89</td><td class="up">+2.94%</td><td>Oil tailwind; analyst target 4.15-5.00</td></tr>
-    <tr><td>DFM Index</td><td>~5,600</td><td class="up">+0.38%</td><td>Holding despite war uncertainty</td></tr>
-  </table>
-  <div style="font-size:12px;color:#6b7280;margin-top:8px">Note: e& (EAND) and FAB not updated — search returned limited data today.</div>
-</div>
-<div class="section">
-  <div class="section-title">Rental & Real Estate</div>
-  <div style="font-size:13px;color:#9ca3af">
-    <p style="margin-bottom:8px"><strong style="color:#f9fafb">Dubai rental market:</strong> Yields remain elevated at 6-8% gross for well-located apartments. War has cooled off-plan speculation but not rental demand — tenant base is sticky.</p>
-    <p style="margin-bottom:8px"><strong style="color:#f9fafb">Off-plan:</strong> No major new launches flagged this week. Developers holding back marketing during active conflict.</p>
-    <p><strong style="color:#f9fafb">Crowdfunding:</strong> Check 8 AM scanner for Stake/SmartCrowd updates. Flip deals still possible — these fill fast.</p>
+  <div class="card">
+    <h3>Deployment Plan</h3>
+    <table>
+      <thead><tr><th>Ticker</th><th>AED</th><th>Logic</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>QQQ</td><td>50,000</td><td>Tech leadership into rate-cut window + ceasefire risk-on</td><td><span class="badge badge-yellow">Waiting</span></td></tr>
+        <tr><td>VTI</td><td>40,000</td><td>Broad-market lump on top of existing DCA</td><td><span class="badge badge-yellow">Waiting</span></td></tr>
+        <tr><td>ITA</td><td>25,000</td><td>Defense — hedges against ceasefire failure</td><td><span class="badge badge-yellow">Waiting</span></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:#6b7280;margin-top:10px">Current reference prices: QQQ $648.29 · VTI $346.03 · ITA $233.68. Allocate FX at current AED/USD before executing.</p>
   </div>
-</div>
-</div>
+</section>
 
-<!-- TAB 4: CALENDAR -->
-<div id="calendar" class="panel">
-<div class="section">
-  <div class="section-title">Upcoming Actions</div>
-  <div class="cal-item">
-    <div class="cal-date">Apr 14</div>
-    <div class="cal-title">XLE stop monitoring — $57.50 stop, currently $57.04</div>
-    <span class="cal-badge cal-urgent">NOW</span>
+<!-- SOURCES -->
+<section class="tab-panel" id="tab-sources">
+  <div class="card">
+    <h3>Sources Used Today</h3>
+    <ul class="src-list">
+      <li><a href="https://finance.yahoo.com/news/live/stock-market-today-dow-sp-500-nasdaq-mixed-after-trump-orders-hormuz-blockade-against-iran-145712025.html" target="_blank">Yahoo Finance — S&amp;P 500, Nasdaq live updates (Trump Hormuz blockade)</a></li>
+      <li><a href="https://finance.yahoo.com/markets/article/stock-market-today-sp-500-closes-above-7000-for-first-time-nasdaq-hits-record-as-stocks-erase-iran-war-losses-231104330.html" target="_blank">Yahoo Finance — S&amp;P 500 closes above 7,000 for first time</a></li>
+      <li><a href="https://www.newsx.com/world/brent-crude-oil-price-today-april-17-2026-why-traders-are-suddenly-turning-cautious-heres-how-how-global-crude-oil-prices-are-impacting-market-sentiments-200769/" target="_blank">NewsX — Brent crude price today 17 Apr 2026</a></li>
+      <li><a href="https://fortune.com/article/price-of-oil-04-17-2026/" target="_blank">Fortune — Current price of oil 17 Apr 2026</a></li>
+      <li><a href="https://sundayguardianlive.com/business/gold-rate-today-17-april-2026-gold-holds-near-4816-as-peace-hopes-counter-blockade-fears-domestic-rates-edge-up-to-155-lakh10g-check-city-wise-price-of-24k-22k-18k-184582/" target="_blank">Sunday Guardian — Gold 17 Apr peace hopes vs blockade</a></li>
+      <li><a href="https://guardian-gold.com.au/market-updates/gold-price-today-17th-april-2026/" target="_blank">Guardian Gold — Gold price 17 Apr 2026</a></li>
+      <li><a href="https://finance.yahoo.com/personal-finance/investing/article/bitcoin-and-ethereum-prices-today-friday-april-17-2026-higher-prices-hold-with-ceasefire-in-effect-114918376.html" target="_blank">Yahoo — BTC/ETH 17 Apr 2026 ceasefire hold</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_crisis" target="_blank">Wikipedia — 2026 Strait of Hormuz crisis</a></li>
+      <li><a href="https://www.aljazeera.com/news/liveblog/2026/4/17/iran-war-live-ceasefire-starts-in-lebanon-as-trump-says-tehran-deal-close" target="_blank">Al Jazeera — Hormuz open for remaining ceasefire period</a></li>
+      <li><a href="https://www.pbs.org/newshour/world/why-a-u-s-blockade-on-iran-seems-to-be-working" target="_blank">PBS — Why US blockade on Iran seems to be working</a></li>
+      <li><a href="https://www.investing.com/equities/emaar-properti" target="_blank">Investing.com — Emaar Properties (DFM: EMAR)</a></li>
+      <li><a href="https://www.investing.com/equities/national-oil" target="_blank">Investing.com — ADNOC Distribution</a></li>
+      <li><a href="https://gulfnews.com/business/property/dubai-property-sales-reach-dh1767-billion-in-q1-2026-off-plan-demand-and-prices-hold-firm-1.500495516" target="_blank">Gulf News — Dubai Q1'26 property sales AED 176.7B</a></li>
+      <li><a href="https://themiddleeastinsider.com/2026/04/02/dubai-rental-yields-2026-best-areas-buy-roi-ranked/" target="_blank">Middle East Insider — Dubai rental yields 2026 ranked</a></li>
+      <li><a href="https://apexskyline.ae/blog/new-off-plan-projects-dubai-2026/" target="_blank">Apex Skyline — New off-plan projects Dubai 2026</a></li>
+      <li><a href="https://stockanalysis.com/stocks/pins/" target="_blank">Stockanalysis — PINS overview</a></li>
+      <li><a href="https://www.marketbeat.com/stocks/NYSE/PINS/earnings/" target="_blank">MarketBeat — PINS earnings 4 May 2026</a></li>
+      <li><a href="https://stockanalysis.com/etf/xle/" target="_blank">Stockanalysis — XLE ETF overview</a></li>
+      <li><a href="https://stockanalysis.com/etf/vti/" target="_blank">Stockanalysis — VTI ETF overview</a></li>
+      <li><a href="https://stockanalysis.com/etf/qqq/" target="_blank">Stockanalysis — QQQ ETF overview</a></li>
+      <li><a href="https://finance.yahoo.com/quote/ITA/" target="_blank">Yahoo Finance — ITA ETF</a></li>
+    </ul>
   </div>
-  <div class="cal-item">
-    <div class="cal-date">Apr 22</div>
-    <div class="cal-title">PINS sell/hold decision — must decide before earnings</div>
-    <span class="cal-badge cal-urgent">8 DAYS</span>
-  </div>
-  <div class="cal-item">
-    <div class="cal-date">Apr 23</div>
-    <div class="cal-title">Pinterest (PINS) Q1 2026 Earnings</div>
-    <span class="cal-badge cal-urgent">9 DAYS</span>
-  </div>
-  <div class="cal-item">
-    <div class="cal-date">Apr 28</div>
-    <div class="cal-title">Jaynemesis 6-month copy trader review</div>
-    <span class="cal-badge cal-soon">14 DAYS</span>
-  </div>
-  <div class="cal-item">
-    <div class="cal-date">May 1</div>
-    <div class="cal-title">VTI DCA — next monthly transfer</div>
-    <span class="cal-badge cal-later">17 DAYS</span>
-  </div>
-  <div class="cal-item">
-    <div class="cal-date">May 15</div>
-    <div class="cal-title">Rent pre-stage — 90K AED cheque due (6-month)</div>
-    <span class="cal-badge cal-soon">31 DAYS</span>
-  </div>
-</div>
-</div>
+</section>
 
-<!-- TAB 5: DEPLOYMENT -->
-<div id="deployment" class="panel">
-<div class="section">
-  <div class="section-title">115K AED Deployment — Trigger Status</div>
-  <div class="trigger-row"><span class="trigger-icon trigger-no">✗</span> <strong>Confirmed ceasefire</strong> — Talks collapsed Apr 12. 2-week ceasefire expired. No new agreement.</div>
-  <div class="trigger-row"><span class="trigger-icon trigger-no">✗</span> <strong>Hormuz traffic normalising</strong> — Worse: US naval blockade started Apr 13. Traffic at ~10% of normal.</div>
-  <div class="trigger-row"><span class="trigger-icon trigger-no">✗</span> <strong>US-Iran deal signed</strong> — No deal. 15-point US proposal rejected. Pakistan mediation stalled.</div>
-  <div style="font-size:14px;font-weight:700;color:#fca5a5;margin-top:12px;padding:10px;background:#1a0505;border-radius:8px;text-align:center">DEPLOYMENT STATUS: LOCKED — 0 of 3 triggers met</div>
-</div>
-<div class="section">
-  <div class="section-title">War Situation</div>
-  <div style="font-size:13px;color:#9ca3af;line-height:1.7">
-    <p style="margin-bottom:8px">The 2-week ceasefire (agreed Apr 8 via Pakistan mediation) expired after marathon talks in Islamabad failed to reach a permanent deal. 21+ hours of negotiations broke down over Hormuz sovereignty, war reparations, and whether Lebanon should be included in the ceasefire scope.</p>
-    <p style="margin-bottom:8px">Trump escalated by ordering a US naval blockade of Iranian ports beginning Apr 13, with orders to "immediately eliminate" any Iranian vessel approaching. Iran counter-warned that "enemy vessels do not have the right to pass." The Strait is at approximately 10% of normal traffic — only Chinese, Russian, Indian, and select allied ships are being allowed through by Iran.</p>
-    <p>This is the most dangerous moment since the war began. Deployment remains firmly locked. The 20K AED cash at home stays as evacuation money.</p>
-  </div>
-</div>
-<div class="section">
-  <div class="section-title">Deployment Plan (when unlocked)</div>
-  <table>
-    <tr><th>Allocation</th><th>Amount</th><th>Rationale</th></tr>
-    <tr><td>QQQ (Nasdaq 100)</td><td>50K AED</td><td>Tech recovery play post-ceasefire</td></tr>
-    <tr><td>VTI (lump sum top-up)</td><td>40K AED</td><td>Accelerate core DCA position</td></tr>
-    <tr><td>ITA (Defense ETF)</td><td>25K AED</td><td>Defense spending tailwind persists post-war</td></tr>
-    <tr><td colspan="3" style="font-weight:700;color:#6b7280;padding-top:8px">Emergency floor: 75K AED untouchable &middot; War buffer: 30K AED liquid until ceasefire</td></tr>
-  </table>
-</div>
-</div>
+<footer>
+  Compounds &amp; Gains · Generated 17 Apr 2026 17:15 GST · Auto-run by scheduled task
+</footer>
 
-<!-- TAB 6: SOURCES -->
-<div id="sources" class="panel">
-<div class="section">
-  <div class="section-title">Data Sources — April 14, 2026</div>
-  <div class="sources-list">
-    <a href="https://www.cnbc.com/quotes/.SPX" target="_blank">CNBC — S&P 500</a><br>
-    <a href="https://finance.yahoo.com/quote/%5EIXIC/" target="_blank">Yahoo Finance — Nasdaq</a><br>
-    <a href="https://tradingeconomics.com/commodity/brent-crude-oil" target="_blank">Trading Economics — Brent Crude</a><br>
-    <a href="https://www.investing.com/currencies/xau-usd" target="_blank">Investing.com — Gold XAU/USD</a><br>
-    <a href="https://www.coindesk.com/markets/" target="_blank">CoinDesk — Bitcoin</a><br>
-    <a href="https://www.coingecko.com/en/coins/ethereum" target="_blank">CoinGecko — Ethereum</a><br>
-    <a href="https://finance.yahoo.com/quote/XLE/" target="_blank">Yahoo Finance — XLE ETF</a><br>
-    <a href="https://finance.yahoo.com/quote/VTI/" target="_blank">Yahoo Finance — VTI ETF</a><br>
-    <a href="https://finance.yahoo.com/quote/PINS/" target="_blank">Yahoo Finance — Pinterest</a><br>
-    <a href="https://tradingeconomics.com/dfmgi:ind" target="_blank">Trading Economics — DFM Index</a><br>
-    <a href="https://www.investing.com/equities/emaar-properti" target="_blank">Investing.com — Emaar Properties</a><br>
-    <a href="https://www.investing.com/equities/national-oil" target="_blank">Investing.com — ADNOC Distribution</a><br>
-    <a href="https://en.wikipedia.org/wiki/2026_Iran_war_ceasefire" target="_blank">Wikipedia — Iran War Ceasefire</a><br>
-    <a href="https://en.wikipedia.org/wiki/2026_Strait_of_Hormuz_crisis" target="_blank">Wikipedia — Hormuz Crisis</a><br>
-    <a href="https://www.aljazeera.com/news/liveblog/2026/4/13/iran-war-live-us-military-to-block-iranian-port-traffic-in-hormuz-strait" target="_blank">Al Jazeera — Hormuz Naval Blockade</a><br>
-  </div>
 </div>
 </div>
-
-</div><!-- /container -->
-</div><!-- /app-content -->
 
 <script>
-var PASS_HASH='66ccfad64b6374e8edae32dcf758bbf3ca7cc2630c3d72a9d8b8c0e1970df9ae';
-async function hashPassword(pw){var e=new TextEncoder().encode(pw);var b=await crypto.subtle.digest('SHA-256',e);return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')}
-(async function(){var as=document.getElementById('auth-screen'),ac=document.getElementById('app-content'),pi=document.getElementById('auth-password'),ab=document.getElementById('auth-btn'),ae=document.getElementById('auth-error');if(sessionStorage.getItem('cg-auth')==='true'){as.classList.add('hidden');ac.classList.add('visible')}async function tryAuth(){var pw=pi.value;if(!pw)return;var h=await hashPassword(pw);if(h===PASS_HASH){sessionStorage.setItem('cg-auth','true');as.classList.add('hidden');ac.classList.add('visible')}else{pi.classList.add('error');ae.textContent='Wrong password';setTimeout(function(){pi.classList.remove('error')},300);pi.value='';pi.focus()}}ab.addEventListener('click',tryAuth);pi.addEventListener('keydown',function(e){if(e.key==='Enter')tryAuth()})})();
-function showTab(id){document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});document.getElementById(id).classList.add('active');event.target.classList.add('active')}
+// Tab switching
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(x){ x.classList.remove('active'); });
+    t.classList.add('active');
+    document.getElementById('tab-' + t.dataset.tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// Auth
+var PASS_HASH = '66ccfad64b6374e8edae32dcf758bbf3ca7cc2630c3d72a9d8b8c0e1970df9ae';
+async function hashPassword(pw) {
+  var enc = new TextEncoder().encode(pw);
+  var buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+(async function() {
+  var realHash = PASS_HASH;
+  var authScreen = document.getElementById('auth-screen');
+  var appContent = document.getElementById('app-content');
+  var passwordInput = document.getElementById('auth-password');
+  var authBtn = document.getElementById('auth-btn');
+  var authError = document.getElementById('auth-error');
+  if (sessionStorage.getItem('cg-auth') === 'true') {
+    authScreen.classList.add('hidden');
+    appContent.classList.add('visible');
+  }
+  async function tryAuth() {
+    var pw = passwordInput.value;
+    if (!pw) return;
+    var hash = await hashPassword(pw);
+    if (hash === realHash) {
+      sessionStorage.setItem('cg-auth', 'true');
+      authScreen.classList.add('hidden');
+      appContent.classList.add('visible');
+    } else {
+      passwordInput.classList.add('error');
+      authError.textContent = 'Wrong password';
+      setTimeout(function() { passwordInput.classList.remove('error'); }, 300);
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  }
+  authBtn.addEventListener('click', tryAuth);
+  passwordInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') tryAuth(); });
+})();
 </script>
+
 </body>
 </html>
