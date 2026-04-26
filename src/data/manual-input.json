@@ -1,41 +1,43 @@
 {
-  "lastUpdated": "2026-04-26",
+  "lastUpdated": "2026-04-27",
   "equity": {
     "beginningRealized": 38521.45,
     "endingRealized": 37710.08,
-    "endingUnrealized": 39417.02,
-    "cashIdle": 1062.94,
+    "endingUnrealized": 39431.21,
+    "cashIdle": 1478.02,
     "periodPnl": -786.99,
-    "statementPeriod": "APR 1–25, 2026"
+    "statementPeriod": "APR 1–25, 2026",
+    "currentTotalInvested": 36096.54,
+    "currentUnrealizedPnl": 1856.65
   },
   "strategistNote": {
-    "title": "You are bigger than your dashboard said — but messier than you thought",
-    "body": "The ceasefire broke the war thesis. XLE is closed (+20%), the energy risk premium is gone. MSFT fully closed Apr 24 at a loss — the AI thesis didn't hold at these levels. BTC reopened at $90K avg, now down ~15%. The winners (TSM +36%, ICLN +20%, VTI +9%) are doing the heavy lifting. $1,063 cash sits idle. The question now isn't whether to deploy — it's where. Copper rotation (FCX, SCCO) or stay defensive (GDX, VTI DCA)?",
+    "title": "PINS breached stop. GDX opened. BTC trimmed. Smart portfolios carrying the book.",
+    "body": "Sunday Apr 27 snapshot. PINS at $19.92 — stop breached at $20.00 (-18.5%). Post-COPPA deadline (Apr 22) and Q1 earnings (Apr 23) brought no catalyst. Decide at Monday open: honour stop or hold RSU hedge thesis. BTC leg trimmed: 0.047 @ $87K avg (was 0.056 @ $90.8K) — lower exposure, better avg, still -10.3%. VTI DCA'd to 20.47 sh @ $325. GDX opened at $99.28, currently -5% — gold miners lag bullion. Smart portfolios doing the heavy lifting: BigTech +14%, RenewableEnergy +17%, InTheGame +6.6%. TSM surged +5.2% today, +36% all-time — biggest direct winner. Cash at $1,478.",
     "edition": "Sunday Edition"
   },
   "positions": [
     {
       "symbol": "VTI",
       "label": "VTI (Total Market ETF)",
-      "quantity": 19.33113,
-      "avgCost": 323.51,
+      "quantity": 20.47349,
+      "avgCost": 324.99477,
       "stopLoss": 297.63,
       "takeProfit": 372.04,
       "takeProfit2": 404.39,
-      "entryDate": "DCA, latest 2026-04-06",
-      "notes": "DCA core. 19.33 sh @ $323.51 = $6,254 cost basis. Apr 6 added $1,309 (4.04 sh). SL -8% / TP1 +15% / TP2 +25%. Monthly DCA — TPs reduce, never exit.",
+      "entryDate": "DCA, latest 2026-04-27",
+      "notes": "DCA core. 20.47 sh @ $325.00. SL -8% / TP1 +15% / TP2 +25%. Monthly DCA — TPs reduce, never exit.",
       "status": "active"
     },
     {
       "symbol": "QQQ",
       "label": "QQQ (Nasdaq 100 ETF)",
-      "quantity": 2.269923,
+      "quantity": 2.26992,
       "avgCost": 607.95,
       "stopLoss": 559.31,
       "takeProfit": 729.54,
       "takeProfit2": 790.34,
       "entryDate": "2026-04-09",
-      "notes": "Tech recovery play. 2.27 sh @ $607.95 = $1,380 cost. SL -8% / TP1 +20% / TP2 +30%. Reassess if tech leadership breaks.",
+      "notes": "Tech recovery play. 2.27 sh @ $607.95. SL -8% / TP1 +20% / TP2 +30%. Reassess if tech leadership breaks.",
       "status": "active"
     },
     {
@@ -59,19 +61,20 @@
       "takeProfit": 32,
       "takeProfit2": 40,
       "entryDate": "earlier",
-      "notes": "eToro: 42.52 sh @ $24.44 = $1,039. SEPARATE: 1,429 sh RSU grant at employer broker — not eToro. Watch earnings catalyst.",
-      "status": "active"
+      "notes": "⚠️ STOP BREACHED: $19.92 < SL $20.00. 42.52 sh @ $24.44. Post-COPPA (Apr 22) and Q1 earnings (Apr 23) brought no catalyst. SEPARATE: 1,429 RSU shares at employer broker (not eToro). Decide Monday: honour stop or re-evaluate.",
+      "status": "active",
+      "alert": "STOP_BREACHED"
     },
     {
       "symbol": "BTC-USD",
-      "label": "Bitcoin (re-entered Apr 7)",
-      "quantity": 0.055714,
-      "avgCost": 90774.61,
+      "label": "Bitcoin",
+      "quantity": 0.046618,
+      "avgCost": 87059.37,
       "stopLoss": 70000,
       "takeProfit": 110000,
       "takeProfit2": 130000,
-      "entryDate": "after 2026-04-07 close",
-      "notes": "REOPENED after Apr 7 close. 0.0557 BTC @ $90,775 avg. New SL $70K (~-23%). Discipline question: second BTC trade in 2 weeks at higher avg.",
+      "entryDate": "2026-04-07",
+      "notes": "Trimmed from 0.0557 @ $90.8K to 0.0466 @ $87.1K avg. Lower exposure, better avg. SL $70K (~-20%) / TP1 $110K / TP2 $130K. Currently -10.3%.",
       "status": "active"
     },
     {
@@ -83,7 +86,7 @@
       "takeProfit": 22,
       "takeProfit2": 25,
       "entryDate": "earlier",
-      "notes": "57.76 sh @ $16.62. Renewable rotation. SL $15 / TP1 $22 (+13%) / TP2 $25 (+29%). Trim into strength.",
+      "notes": "57.76 sh @ $16.62. +20.2% unrealized. SL $15 / TP1 $22 (+32%) / TP2 $25 (+50%). Trim into strength.",
       "status": "active"
     },
     {
@@ -95,15 +98,30 @@
       "takeProfit": 380,
       "takeProfit2": 420,
       "entryDate": "older + jaynemesis adds",
-      "notes": "2.10 sh @ $295.14 avg = $620. Built up over many small jaynemesis lots — biggest jaynemesis winner. SL $265 / TP1 $380 (+29%) / TP2 $420 (+42%). Watch Taiwan-China geopolitics.",
+      "notes": "2.10 sh @ $295.14. +36.3% all-time winner, +5.2% today. SL $265 / TP1 $380 (+29%) / TP2 $420 (+42%). Watch Taiwan-China geopolitics.",
+      "status": "active"
+    },
+    {
+      "symbol": "GDX",
+      "label": "VanEck Gold Miners ETF",
+      "quantity": 3.02176,
+      "avgCost": 99.28,
+      "stopLoss": 88,
+      "takeProfit": 115,
+      "takeProfit2": 130,
+      "entryDate": "2026-04-26",
+      "notes": "NEW: 3.02 sh @ $99.28. Gold miners play alongside GC=F direct gold position. Currently -5%. SL ~$88 (-11%) / TP1 $115 (+16%) / TP2 $130 (+31%). Gold miners lagging bullion — watch for catch-up.",
       "status": "active"
     }
   ],
   "copyPortfolio": {
     "trader": "Jaynemesis",
     "totalAllocated": 21506,
+    "currentValue": 1993.56,
+    "currentPnl": 61.68,
+    "currentPnlPct": 3.20,
     "currency": "USD",
-    "note": "7 holdings (~$21.5K combined). Dividend-confirmed: LRCX, Saab AB, Wheaton Precious Metals, GE Vernova, Micron, Royal Gold, Nutrien. Individual cost basis unconfirmed. Treat as one allocation block.",
+    "note": "7 holdings. Current value $1,993.56 (+$61.68 / +3.2%). Dividend-confirmed: LRCX, Saab AB, Wheaton Precious Metals, GE Vernova, Micron, Royal Gold, Nutrien. Individual cost basis unconfirmed.",
     "positions": [
       { "symbol": "LRCX", "label": "Lam Research" },
       { "symbol": "SAAB-B.ST", "label": "Saab AB Ser. B" },
@@ -114,6 +132,50 @@
       { "symbol": "NTR", "label": "Nutrien" }
     ]
   },
+  "smartPortfolios": [
+    {
+      "name": "InTheGame",
+      "label": "Gaming Industry",
+      "currentValue": 5614.77,
+      "currentPnl": 350.41,
+      "currentPnlPct": 6.66
+    },
+    {
+      "name": "BigTech",
+      "label": "Large Tech Market Cap",
+      "currentValue": 5379.73,
+      "currentPnl": 665.30,
+      "currentPnlPct": 14.12
+    },
+    {
+      "name": "RenewableEnergy",
+      "label": "Future of Power",
+      "currentValue": 2757.02,
+      "currentPnl": 401.31,
+      "currentPnlPct": 17.07
+    },
+    {
+      "name": "GoldWorldWide",
+      "label": "Long Gold Industry",
+      "currentValue": 2528.74,
+      "currentPnl": 0.92,
+      "currentPnlPct": 0.04
+    },
+    {
+      "name": "EuropeDefense",
+      "label": "European Defense Players",
+      "currentValue": 2080.52,
+      "currentPnl": -108.81,
+      "currentPnlPct": -4.97
+    },
+    {
+      "name": "CyberSecurity",
+      "label": "Cyber Tech Stocks",
+      "currentValue": 1487.37,
+      "currentPnl": -12.86,
+      "currentPnlPct": -0.86
+    }
+  ],
   "closedPositions": [
     {
       "symbol": "MSFT",
@@ -162,7 +224,7 @@
       "closeDate": "2026-04-07",
       "closePrice": 68379,
       "pnl": -39.14,
-      "reason": "Tiny 0.000876 BTC lot closed. Re-opened position at $90,775 avg — see active book."
+      "reason": "Tiny 0.000876 BTC lot closed. Re-opened position at $87,059 avg — see active book."
     }
   ],
   "warStatus": {
@@ -178,14 +240,15 @@
     "deploymentAmountAED": 115000
   },
   "actionItems": [
-    { "label": "Pinterest (eToro) — below stop $20, decide: honour stop or re-evaluate thesis", "priority": "high", "done": false },
-    { "label": "Deploy $1,063 idle cash (VTI DCA / GDX / dry powder)", "priority": "high", "done": false },
+    { "label": "PINS — stop breached at $19.92 (SL: $20.00, -18.5%). Decide Monday open: honour stop or hold RSU hedge thesis.", "priority": "high", "done": false },
+    { "label": "BTC — at -10.3% ($78K vs $87K avg). SL at $70K. Monitor — hold unless stop approaches.", "priority": "medium", "done": false },
+    { "label": "GDX — new position at -5%. Watch gold price action for miners catch-up confirmation.", "priority": "medium", "done": false },
     { "label": "Redefine 115K AED deployment triggers — war thesis is dead", "priority": "medium", "done": false },
     { "label": "Move idle AED to Wio Fixed Saving Space (4% p.a.) if not deploying within 7 days", "priority": "low", "done": false }
   ],
   "events": [
-    { "date": "2026-04-22", "label": "FTC COPPA Deadline", "symbol": "PINS", "type": "regulatory", "priority": "high" },
-    { "date": "2026-04-23", "label": "Pinterest Q1 2026 Earnings", "symbol": "PINS", "type": "earnings", "priority": "high" }
+    { "date": "2026-04-22", "label": "FTC COPPA Deadline (passed)", "symbol": "PINS", "type": "regulatory", "priority": "passed" },
+    { "date": "2026-04-23", "label": "Pinterest Q1 2026 Earnings (passed)", "symbol": "PINS", "type": "earnings", "priority": "passed" }
   ],
   "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX"],
   "geopolitical": {
@@ -219,8 +282,16 @@
       "overnightFees": -17.39,
       "sdrtCharge": -0.06
     },
+    "currentSnapshot": {
+      "date": "2026-04-27",
+      "portfolioValue": 39431.21,
+      "totalInvested": 36096.54,
+      "unrealizedPnl": 1856.65,
+      "cashAvailable": 1478.02,
+      "assetCount": 17
+    },
     "closedTickersPeriod": ["MSFT", "KOG.OL", "ABBN", "TAN", "TTWO", "01211.HK", "BTC", "UBI.PA", "TRMB", "NFLX", "CRWD", "SNDK", "SMSN.L", "GAW", "AMD", "TSM", "TT", "UI", "GOOG", "ETOR", "CCL", "ENPH", "SEDG", "XLE", "TSLA", "XRP", "WDC"],
-    "notes": "Net period P&L: -$786.99 on closed positions. Unrealized equity recovered to $39,417 vs $35,790 start. Biggest drag: crypto (-$398) and CFDs (-$272). ETFs only positive asset class (+$66)."
+    "notes": "Apr 1-25 period P&L: -$786.99. Sunday Apr 27 snapshot: portfolio $39,431.21, unrealized P&L +$1,856.65. Smart portfolios (BigTech +14%, RenewableEnergy +17%) doing heavy lifting."
   },
   "portfolio": {
     "targetAED": 1000000,
