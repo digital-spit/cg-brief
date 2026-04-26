@@ -19,9 +19,20 @@ export interface CopyPortfolioPosition {
 export interface CopyPortfolio {
   trader: string;
   totalAllocated: number;
+  currentValue?: number;
+  currentPnl?: number;
+  currentPnlPct?: number;
   currency: string;
   note: string;
   positions: CopyPortfolioPosition[];
+}
+
+export interface SmartPortfolio {
+  name: string;
+  label: string;
+  currentValue: number;
+  currentPnl: number;
+  currentPnlPct: number;
 }
 
 export interface ClosedPosition {
@@ -51,7 +62,7 @@ export interface WarStatus {
 
 export interface ActionItem {
   label: string;
-  priority: "high" | "medium" | "low";
+  priority: "high" | "medium" | "low" | "critical";
   done: boolean;
 }
 
@@ -80,6 +91,7 @@ export interface ManualInput {
   };
   positions: Position[];
   copyPortfolio: CopyPortfolio;
+  smartPortfolios?: SmartPortfolio[];
   closedPositions: ClosedPosition[];
   warStatus: WarStatus;
   actionItems: ActionItem[];
