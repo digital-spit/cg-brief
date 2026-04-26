@@ -87,7 +87,13 @@
       "takeProfit2": 25,
       "entryDate": "earlier",
       "notes": "57.76 sh @ $16.62. +20.2% unrealized. SL $15 / TP1 $22 (+32%) / TP2 $25 (+50%). Trim into strength.",
-      "status": "active"
+      "status": "active",
+      "addZones": {
+        "uptrendAdd": { "price": 20.50, "note": "Breakout confirmed above $20.50 with volume — add on momentum" },
+        "dipLight": { "min": 18.50, "max": 19.00, "note": "Breakout retest — prior resistance now support" },
+        "dipMedium": { "min": 17.50, "max": 18.00, "note": "Structural mid-range support, ~10% off highs" },
+        "dipConviction": { "min": 16.50, "max": 17.00, "note": "Near avg cost, major base support — back up the truck" }
+      }
     },
     {
       "symbol": "TSM",
@@ -99,7 +105,13 @@
       "takeProfit2": 420,
       "entryDate": "older + jaynemesis adds",
       "notes": "2.10 sh @ $295.14. +36.3% all-time winner, +5.2% today. SL $265 / TP1 $380 (+29%) / TP2 $420 (+42%). Watch Taiwan-China geopolitics.",
-      "status": "active"
+      "status": "active",
+      "addZones": {
+        "uptrendAdd": { "price": 415, "note": "Fresh breakout above $415 — add on momentum continuation" },
+        "dipLight": { "min": 385, "max": 390, "note": "Breakout retest — prior resistance flipped support" },
+        "dipMedium": { "min": 360, "max": 370, "note": "Volume shelf, ~10% pullback from highs" },
+        "dipConviction": { "min": 340, "max": 350, "note": "Strong structural support, still +15% above avg cost" }
+      }
     },
     {
       "symbol": "GDX",
