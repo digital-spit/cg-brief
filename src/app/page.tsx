@@ -565,88 +565,6 @@ export default async function Dashboard() {
             </div>
           </div>
 
-            {/* Bull Run Watchlist */}
-            {(data as any).bullRunWatchlist && (data as any).bullRunWatchlist.length > 0 && (
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 pb-2 border-b border-gray-800">
-                  Bull Run Watchlist
-                </p>
-                <p className="text-xs text-gray-500 italic mb-4">
-                  Backed by: Goldman Sachs · JPMorgan · Institutional flows · Technical signals · Trader moves
-                </p>
-                <div className="space-y-3">
-                  {(data as any).bullRunWatchlist.map((item: any) => {
-                    const liveData = getMarketData(item.symbol, marketData);
-                    const typeColors: Record<string, string> = {
-                      stock: "bg-blue-900/40 text-blue-300 border-blue-700",
-                      etf: "bg-purple-900/40 text-purple-300 border-purple-700",
-                      crypto: "bg-orange-900/40 text-orange-300 border-orange-700",
-                    };
-                    const signalColors: Record<string, string> = {
-                      strong_buy: "bg-emerald-900 text-emerald-200 border-emerald-600",
-                      buy: "bg-green-900/50 text-green-300 border-green-700",
-                      watch: "bg-amber-900/40 text-amber-300 border-amber-700",
-                    };
-                    return (
-                      <div key={item.symbol} className="bg-gray-800/30 border border-gray-700 rounded-lg p-4 text-xs">
-                        {/* Header row */}
-                        <div className="flex justify-between items-start mb-2">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-base text-gray-100">{item.symbol}</span>
-                            <span className="text-gray-400 text-xs">{item.label}</span>
-                            <span className={`px-1.5 py-0.5 rounded text-xs font-bold border ${typeColors[item.type] || "bg-gray-700 text-gray-300 border-gray-600"}`}>
-                              {item.type.toUpperCase()}
-                            </span>
-                            <span className={`px-1.5 py-0.5 rounded text-xs font-bold border ${signalColors[item.signal] || "bg-gray-700 text-gray-300"}`}>
-                              {item.signal === "strong_buy" ? "STRONG BUY" : item.signal.toUpperCase()}
-                            </span>
-                          </div>
-                          {/* Conviction bar */}
-                          <div className="flex items-center gap-0.5 ml-2 shrink-0">
-                            {Array.from({ length: 10 }).map((_, i) => (
-                              <div
-                                key={i}
-                                className={`w-1.5 h-3 rounded-sm ${i < item.conviction ? "bg-emerald-400" : "bg-gray-700"}`}
-                              />
-                            ))}
-                            <span className="text-gray-400 text-xs ml-1">{item.conviction}/10</span>
-                          </div>
-                        </div>
-
-                        {/* Live price */}
-                        {liveData.price > 0 && (
-                          <div className="flex items-center gap-3 mb-2 font-mono text-xs">
-                            <span className="text-gray-300">Live: <span className="text-white font-bold">${formatPrice(liveData.price)}</span></span>
-                            <span className={liveData.changePercent >= 0 ? "text-emerald-400" : "text-red-400"}>
-                              {formatPercent(liveData.changePercent)}
-                            </span>
-                          </div>
-                        )}
-
-                        {/* Thesis */}
-                        <p className="text-gray-400 leading-relaxed mb-2">{item.thesis}</p>
-
-                        {/* Levels */}
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs mb-2">
-                          <span className="text-gray-500">Entry: <span className="text-amber-300">${item.entryZone.min}–${item.entryZone.max}</span></span>
-                          <span className="text-gray-500">↑ Trend Add: <span className="text-emerald-300">${item.uptrendAdd}</span></span>
-                          <span className="text-gray-500">T1: <span className="text-emerald-400">${item.target1}</span></span>
-                          <span className="text-gray-500">T2: <span className="text-emerald-400">${item.target2}</span></span>
-                          <span className="text-gray-500">SL: <span className="text-red-400">${item.stopLoss}</span></span>
-                        </div>
-
-                        {/* Catalyst + source */}
-                        {item.catalyst && <p className="text-gray-500 mb-0.5">📅 {item.catalyst}</p>}
-                        <p className="text-gray-600 italic">🏦 {item.source}</p>
-                        {item.traderSignal && <p className="text-gray-600 italic">👤 {item.traderSignal}</p>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* Right Column */}
           <div className="lg:col-span-1 space-y-5">
             {/* Wealth Progress */}
@@ -844,6 +762,88 @@ export default async function Dashboard() {
               </div>
             </div>
           </div>
+
+          {/* Bull Run Watchlist — full width */}
+          {(data as any).bullRunWatchlist && (data as any).bullRunWatchlist.length > 0 && (
+            <div className="lg:col-span-3 bg-gray-900 border border-gray-800 rounded-xl p-5">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
+                🔥 Bull Run Watchlist — Next Entries
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {(data as any).bullRunWatchlist.map((pick: any, idx: number) => {
+                  const signalColors: Record<string, string> = {
+                    strong_buy: "bg-emerald-500/20 border-emerald-500 text-emerald-300",
+                    buy: "bg-sky-500/20 border-sky-500 text-sky-300",
+                    watch: "bg-amber-500/20 border-amber-500 text-amber-300",
+                  };
+                  const signalLabel: Record<string, string> = {
+                    strong_buy: "STRONG BUY",
+                    buy: "BUY",
+                    watch: "WATCH",
+                  };
+                  const typeColors: Record<string, string> = {
+                    stock: "text-purple-400",
+                    etf: "text-sky-400",
+                    crypto: "text-amber-400",
+                    commodity: "text-orange-400",
+                  };
+                  const convictionBars = Array.from({ length: 10 }, (_, i) => i < pick.conviction);
+                  return (
+                    <div key={idx} className="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-mono font-bold text-white text-base">{pick.symbol}</p>
+                          <p className="text-xs text-gray-400">{pick.label}</p>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded border ${signalColors[pick.signal] || "bg-gray-700 border-gray-600 text-gray-400"}`}>
+                            {signalLabel[pick.signal] || pick.signal}
+                          </span>
+                          <span className={`text-xs font-semibold ${typeColors[pick.type] || "text-gray-500"}`}>
+                            {pick.type?.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Conviction bars */}
+                      <div className="flex items-center gap-1 mb-2">
+                        <span className="text-xs text-gray-600 mr-1">Conviction</span>
+                        {convictionBars.map((filled: boolean, i: number) => (
+                          <div key={i} className={`h-1.5 w-4 rounded-sm ${filled ? "bg-emerald-400" : "bg-gray-700"}`} />
+                        ))}
+                        <span className="text-xs text-gray-500 ml-1">{pick.conviction}/10</span>
+                      </div>
+
+                      {/* Thesis */}
+                      {pick.thesis && (
+                        <p className="text-xs text-gray-400 leading-relaxed mb-2">{pick.thesis}</p>
+                      )}
+
+                      {/* Catalysts */}
+                      {pick.catalysts && pick.catalysts.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {pick.catalysts.map((cat: string, ci: number) => (
+                            <span key={ci} className="text-xs bg-gray-700/60 text-gray-400 px-1.5 py-0.5 rounded">
+                              {cat}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Entry zone */}
+                      {pick.entryZone && (
+                        <p className="text-xs font-mono">
+                          <span className="text-gray-600">Entry: </span>
+                          <span className="text-emerald-400">${pick.entryZone.min}–${pick.entryZone.max}</span>
+                          {pick.stopLoss && <span className="text-gray-600"> · SL: <span className="text-red-400">${pick.stopLoss}</span></span>}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
