@@ -4,6 +4,7 @@ import type {
   PositionWithLive,
   Flag,
   MarketData,
+  SmartPortfolio,
 } from "@/lib/types";
 import manualInput from "@/data/manual-input.json";
 
@@ -131,10 +132,8 @@ export default async function Dashboard() {
     0
   );
 
-  const totalPortfolioValue =
-    currentPortfolioValue +
-    data.equity.cashIdle +
-    data.copyPortfolio.totalAllocated;
+  // Use eToro's reported portfolio value (includes smart portfolios, copy, cash)
+  const totalPortfolioValue = data.equity.endingUnrealized;
 
   const totalPnL = currentPortfolioValue - investedValue;
 
@@ -303,10 +302,17 @@ export default async function Dashboard() {
                 Copy Portfolio
               </p>
               <div className="bg-gray-800/30 border border-gray-700 rounded-lg p-4 text-sm">
-                <p className="font-bold text-gray-100 mb-2">
-                  {data.copyPortfolio.trader} — Total Allocated{" "}
-                  {formatCurrency(data.copyPortfolio.totalAllocated)}
-                </p>
+                <div className="flex justify-between items-center mb-2">
+                  <p className="font-bold text-gray-100">{data.copyPortfolio.trader}</p>
+                  {data.copyPortfolio.currentValue && (
+                    <div className="text-right">
+                      <p className="font-mono text-gray-100">{formatCurrency(data.copyPortfolio.currentValue)}</p>
+                      <p className={`text-xs font-mono ${(data.copyPortfolio.currentPnl ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                        {formatCurrency(data.copyPortfolio.currentPnl ?? 0)} ({formatPercent(data.copyPortfolio.currentPnlPct ?? 0)})
+                      </p>
+                    </div>
+                  )}
+                </div>
                 <div className="space-y-1 text-xs text-gray-400">
                   {data.copyPortfolio.positions.map((pos) => {
                     const mkt = getMarketData(pos.symbol, marketData);
@@ -328,6 +334,31 @@ export default async function Dashboard() {
                 </div>
               </div>
             </div>
+
+            {/* Smart Portfolios */}
+            {data.smartPortfolios && data.smartPortfolios.length > 0 && (
+              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
+                  Smart Portfolios
+                </p>
+                <div className="space-y-2">
+                  {(data.smartPortfolios as SmartPortfolio[]).map((sp) => (
+                    <div key={sp.name} className="flex justify-between items-center border-b border-gray-800/50 pb-2 last:border-0 text-sm">
+                      <div>
+                        <p className="font-bold text-gray-100">{sp.name}</p>
+                        <p className="text-xs text-gray-400">{sp.label}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-mono text-gray-100">{formatCurrency(sp.currentValue)}</p>
+                        <p className={`text-xs font-mono ${sp.currentPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                          {formatCurrency(sp.currentPnl)} ({formatPercent(sp.currentPnlPct)})
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Recently Closed */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
@@ -596,7 +627,7 @@ export default async function Dashboard() {
                     className={`rounded-lg p-2 text-xs border-l-4 ${
                       item.done
                         ? "bg-gray-800/50 border-gray-600 text-gray-500 line-through"
-                        : item.priority === "high"
+                        : item.priority === "critical" || item.priority === "high"
                           ? "bg-red-950/30 border-red-600"
                           : item.priority === "medium"
                             ? "bg-amber-950/30 border-amber-600"
