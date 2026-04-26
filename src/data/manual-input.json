@@ -1,0 +1,233 @@
+{
+  "lastUpdated": "2026-04-26",
+  "equity": {
+    "beginningRealized": 38521.45,
+    "endingRealized": 37710.08,
+    "endingUnrealized": 39417.02,
+    "cashIdle": 1062.94,
+    "periodPnl": -786.99,
+    "statementPeriod": "APR 1–25, 2026"
+  },
+  "strategistNote": {
+    "title": "You are bigger than your dashboard said — but messier than you thought",
+    "body": "The ceasefire broke the war thesis. XLE is closed (+20%), the energy risk premium is gone. MSFT fully closed Apr 24 at a loss — the AI thesis didn't hold at these levels. BTC reopened at $90K avg, now down ~15%. The winners (TSM +36%, ICLN +20%, VTI +9%) are doing the heavy lifting. $1,063 cash sits idle. The question now isn't whether to deploy — it's where. Copper rotation (FCX, SCCO) or stay defensive (GDX, VTI DCA)?",
+    "edition": "Sunday Edition"
+  },
+  "positions": [
+    {
+      "symbol": "VTI",
+      "label": "VTI (Total Market ETF)",
+      "quantity": 19.33113,
+      "avgCost": 323.51,
+      "stopLoss": 297.63,
+      "takeProfit": 372.04,
+      "takeProfit2": 404.39,
+      "entryDate": "DCA, latest 2026-04-06",
+      "notes": "DCA core. 19.33 sh @ $323.51 = $6,254 cost basis. Apr 6 added $1,309 (4.04 sh). SL -8% / TP1 +15% / TP2 +25%. Monthly DCA — TPs reduce, never exit.",
+      "status": "active"
+    },
+    {
+      "symbol": "QQQ",
+      "label": "QQQ (Nasdaq 100 ETF)",
+      "quantity": 2.269923,
+      "avgCost": 607.95,
+      "stopLoss": 559.31,
+      "takeProfit": 729.54,
+      "takeProfit2": 790.34,
+      "entryDate": "2026-04-09",
+      "notes": "Tech recovery play. 2.27 sh @ $607.95 = $1,380 cost. SL -8% / TP1 +20% / TP2 +30%. Reassess if tech leadership breaks.",
+      "status": "active"
+    },
+    {
+      "symbol": "GC=F",
+      "label": "Gold (Non-Expiry CFD)",
+      "quantity": 0.260188,
+      "avgCost": 4611.97,
+      "stopLoss": 4400,
+      "takeProfit": 5200,
+      "takeProfit2": 5800,
+      "entryDate": "earlier",
+      "notes": "0.26 oz @ $4,612. SL $4,400 (~-4.6%) / TP1 $5,200 (+12.8%) / TP2 $5,800 (+25.8%). NOTE: separate $393 loss on 20x CFD leg Apr 9-12 — never again.",
+      "status": "active"
+    },
+    {
+      "symbol": "PINS",
+      "label": "Pinterest (eToro)",
+      "quantity": 42.52158,
+      "avgCost": 24.44,
+      "stopLoss": 20,
+      "takeProfit": 32,
+      "takeProfit2": 40,
+      "entryDate": "earlier",
+      "notes": "eToro: 42.52 sh @ $24.44 = $1,039. SEPARATE: 1,429 sh RSU grant at employer broker — not eToro. Watch earnings catalyst.",
+      "status": "active"
+    },
+    {
+      "symbol": "BTC-USD",
+      "label": "Bitcoin (re-entered Apr 7)",
+      "quantity": 0.055714,
+      "avgCost": 90774.61,
+      "stopLoss": 70000,
+      "takeProfit": 110000,
+      "takeProfit2": 130000,
+      "entryDate": "after 2026-04-07 close",
+      "notes": "REOPENED after Apr 7 close. 0.0557 BTC @ $90,775 avg. New SL $70K (~-23%). Discipline question: second BTC trade in 2 weeks at higher avg.",
+      "status": "active"
+    },
+    {
+      "symbol": "ICLN",
+      "label": "iShares Global Clean Energy ETF",
+      "quantity": 57.76173,
+      "avgCost": 16.62,
+      "stopLoss": 15,
+      "takeProfit": 22,
+      "takeProfit2": 25,
+      "entryDate": "earlier",
+      "notes": "57.76 sh @ $16.62. Renewable rotation. SL $15 / TP1 $22 (+13%) / TP2 $25 (+29%). Trim into strength.",
+      "status": "active"
+    },
+    {
+      "symbol": "TSM",
+      "label": "Taiwan Semiconductor ADR",
+      "quantity": 2.10071,
+      "avgCost": 295.14,
+      "stopLoss": 265,
+      "takeProfit": 380,
+      "takeProfit2": 420,
+      "entryDate": "older + jaynemesis adds",
+      "notes": "2.10 sh @ $295.14 avg = $620. Built up over many small jaynemesis lots — biggest jaynemesis winner. SL $265 / TP1 $380 (+29%) / TP2 $420 (+42%). Watch Taiwan-China geopolitics.",
+      "status": "active"
+    }
+  ],
+  "copyPortfolio": {
+    "trader": "Jaynemesis",
+    "totalAllocated": 21506,
+    "currency": "USD",
+    "note": "7 holdings (~$21.5K combined). Dividend-confirmed: LRCX, Saab AB, Wheaton Precious Metals, GE Vernova, Micron, Royal Gold, Nutrien. Individual cost basis unconfirmed. Treat as one allocation block.",
+    "positions": [
+      { "symbol": "LRCX", "label": "Lam Research" },
+      { "symbol": "SAAB-B.ST", "label": "Saab AB Ser. B" },
+      { "symbol": "WPM", "label": "Wheaton Precious Metals" },
+      { "symbol": "GEV", "label": "GE Vernova" },
+      { "symbol": "MU", "label": "Micron Technology" },
+      { "symbol": "RGLD", "label": "Royal Gold" },
+      { "symbol": "NTR", "label": "Nutrien" }
+    ]
+  },
+  "closedPositions": [
+    {
+      "symbol": "MSFT",
+      "label": "Microsoft (remaining lot)",
+      "closeDate": "2026-04-24",
+      "closePrice": 423.42,
+      "pnl": -98,
+      "reason": "Jaynemesis closed remaining MSFT lots Apr 24. Entries from $532 (Oct 2025) and $390 (Mar 2026). Position fully exited."
+    },
+    {
+      "symbol": "KOG.OL",
+      "label": "Kongsberg Gruppen (EuropeDefense copier)",
+      "closeDate": "2026-04-22",
+      "closePrice": 374.90,
+      "pnl": 8,
+      "reason": "EuropeDefense copier exited all KOG.OL lots Apr 22 at ~374.90 NOK."
+    },
+    {
+      "symbol": "XLE",
+      "label": "XLE (Energy ETF)",
+      "closeDate": "2026-04-08",
+      "closePrice": 56.27,
+      "pnl": 194.18,
+      "pnlPct": 20.2,
+      "reason": "Thesis broken — Hormuz ceasefire killed energy risk premium. Clean exit."
+    },
+    {
+      "symbol": "GC=F-CFD",
+      "label": "Gold CFD (20x leverage)",
+      "closeDate": "2026-04-12",
+      "closePrice": 4672.74,
+      "pnl": -392.73,
+      "reason": "Opened Apr 9 at $4,774. Caught reversal in 3 days. Largest single loss — lesson: no 20x leverage."
+    },
+    {
+      "symbol": "NFLX",
+      "label": "Netflix (4 lots)",
+      "closeDate": "2026-04-16",
+      "closePrice": 99.34,
+      "pnl": 52.94,
+      "reason": "Jaynemesis closed all 4 NFLX lots Apr 16. Combined small profit."
+    },
+    {
+      "symbol": "BTC-USD-LOT1",
+      "label": "Bitcoin residual lot",
+      "closeDate": "2026-04-07",
+      "closePrice": 68379,
+      "pnl": -39.14,
+      "reason": "Tiny 0.000876 BTC lot closed. Re-opened position at $90,775 avg — see active book."
+    }
+  ],
+  "warStatus": {
+    "status": "CEASEFIRE — THESIS BROKEN",
+    "statusKey": "ceasefire_temporary",
+    "description": "US-Iran 2-week ceasefire effective April 7 (Trump-brokered). Strait of Hormuz dispute unresolved. XLE closed +20%. War risk premium gone from markets.",
+    "triggers": [
+      { "label": "Hormuz ceasefire confirmed", "state": "met", "detail": "Trump-brokered deal Apr 7, 2026" },
+      { "label": "XLE position closed profitably", "state": "met", "detail": "Closed Apr 8 at $56.27 (+$194 / +20%)" },
+      { "label": "New deployment thesis defined", "state": "not_met", "detail": "Reassess triggers — copper/tech rotation ongoing" }
+    ],
+    "deploymentLocked": true,
+    "deploymentAmountAED": 115000
+  },
+  "actionItems": [
+    { "label": "Pinterest (eToro) — below stop $20, decide: honour stop or re-evaluate thesis", "priority": "high", "done": false },
+    { "label": "Deploy $1,063 idle cash (VTI DCA / GDX / dry powder)", "priority": "high", "done": false },
+    { "label": "Redefine 115K AED deployment triggers — war thesis is dead", "priority": "medium", "done": false },
+    { "label": "Move idle AED to Wio Fixed Saving Space (4% p.a.) if not deploying within 7 days", "priority": "low", "done": false }
+  ],
+  "events": [
+    { "date": "2026-04-22", "label": "FTC COPPA Deadline", "symbol": "PINS", "type": "regulatory", "priority": "high" },
+    { "date": "2026-04-23", "label": "Pinterest Q1 2026 Earnings", "symbol": "PINS", "type": "earnings", "priority": "high" }
+  ],
+  "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX"],
+  "geopolitical": {
+    "warStatus": "ceasefire_temporary",
+    "notes": "US-Iran 2-week ceasefire effective April 7. Strait of Hormuz dispute unresolved. Monitor for expiry/escalation."
+  },
+  "etoro": {
+    "statementPeriod": "APR 1, 2026 to APR 25, 2026",
+    "accountSummaryUSD": {
+      "beginningRealizedEquity": 38521.45,
+      "endingRealizedEquity": 37710.08,
+      "endingUnrealizedEquity": 39417.02,
+      "deposits": 0.00,
+      "withdrawals": 0.00,
+      "adjustments": 5.85,
+      "pnlClosedPositions": -786.99,
+      "dividends": 7.51,
+      "overnightFees": -17.39,
+      "commission": -20.29,
+      "sdrtCharge": -0.06
+    },
+    "pnlBreakdownUSD": {
+      "cfds": -272.56,
+      "crypto": -398.17,
+      "stocks": -182.92,
+      "etfs": 66.66,
+      "dividends": 7.51,
+      "stakingIncome": 1.19,
+      "refunds": 1.24,
+      "spreadFeesCfds": -7.78,
+      "overnightFees": -17.39,
+      "sdrtCharge": -0.06
+    },
+    "closedTickersPeriod": ["MSFT", "KOG.OL", "ABBN", "TAN", "TTWO", "01211.HK", "BTC", "UBI.PA", "TRMB", "NFLX", "CRWD", "SNDK", "SMSN.L", "GAW", "AMD", "TSM", "TT", "UI", "GOOG", "ETOR", "CCL", "ENPH", "SEDG", "XLE", "TSLA", "XRP", "WDC"],
+    "notes": "Net period P&L: -$786.99 on closed positions. Unrealized equity recovered to $39,417 vs $35,790 start. Biggest drag: crypto (-$398) and CFDs (-$272). ETFs only positive asset class (+$66)."
+  },
+  "portfolio": {
+    "targetAED": 1000000,
+    "notes": "AED 1M goal — Flip target 25%+ net ROI, Hold target 8%+ yield"
+  },
+  "watchlist": {
+    "stake": "Monitor for new listings daily",
+    "smartcrowd": "Monitor for Flip deals (35%+ below market) and Hold deals (8%+ yield)"
+  }
+}
