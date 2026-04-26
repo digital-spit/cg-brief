@@ -1,3 +1,16 @@
+export interface AddZone {
+  min: number;
+  max: number;
+  note: string;
+}
+
+export interface AddZones {
+  dipLight?: AddZone;
+  dipMedium?: AddZone;
+  dipConviction?: AddZone;
+  uptrendAdd?: { price: number; note: string };
+}
+
 export interface Position {
   symbol: string;
   label: string;
@@ -9,6 +22,8 @@ export interface Position {
   entryDate: string;
   notes: string;
   status: "active" | "closed";
+  alert?: string;
+  addZones?: AddZones;
 }
 
 export interface CopyPortfolioPosition {
