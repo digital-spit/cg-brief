@@ -291,6 +291,50 @@ export default async function Dashboard() {
                         {pos.notes}
                       </p>
                     )}
+
+                    {(pos as any).addZones && (
+                      <div className="mt-3 pt-2 border-t border-gray-700/50">
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Add Zones</p>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs">
+                          {(pos as any).addZones.uptrendAdd && (
+                            <div className="col-span-2 flex justify-between items-center py-0.5">
+                              <span className="text-emerald-400 font-semibold">↑ Uptrend Add</span>
+                              <span className="font-mono text-emerald-300">
+                                above ${(pos as any).addZones.uptrendAdd.price.toFixed(2)}
+                                <span className="text-gray-500 ml-1 font-normal">— {(pos as any).addZones.uptrendAdd.note}</span>
+                              </span>
+                            </div>
+                          )}
+                          {(pos as any).addZones.dipLight && (
+                            <div className="col-span-2 flex justify-between items-center py-0.5">
+                              <span className="text-amber-400 font-semibold">↓ Dip (light)</span>
+                              <span className="font-mono text-amber-300">
+                                ${(pos as any).addZones.dipLight.min}–${(pos as any).addZones.dipLight.max}
+                                <span className="text-gray-500 ml-1 font-normal">— {(pos as any).addZones.dipLight.note}</span>
+                              </span>
+                            </div>
+                          )}
+                          {(pos as any).addZones.dipMedium && (
+                            <div className="col-span-2 flex justify-between items-center py-0.5">
+                              <span className="text-amber-400 font-semibold">↓ Dip (medium)</span>
+                              <span className="font-mono text-amber-300">
+                                ${(pos as any).addZones.dipMedium.min}–${(pos as any).addZones.dipMedium.max}
+                                <span className="text-gray-500 ml-1 font-normal">— {(pos as any).addZones.dipMedium.note}</span>
+                              </span>
+                            </div>
+                          )}
+                          {(pos as any).addZones.dipConviction && (
+                            <div className="col-span-2 flex justify-between items-center py-0.5">
+                              <span className="text-sky-400 font-semibold">↓ Dip (conviction)</span>
+                              <span className="font-mono text-sky-300">
+                                ${(pos as any).addZones.dipConviction.min}–${(pos as any).addZones.dipConviction.max}
+                                <span className="text-gray-500 ml-1 font-normal">— {(pos as any).addZones.dipConviction.note}</span>
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
