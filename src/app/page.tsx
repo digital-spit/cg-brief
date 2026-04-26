@@ -565,8 +565,168 @@ export default async function Dashboard() {
             </div>
           </div>
 
+            {/* Bull Run Watchlist */}
+            {(data as any).bullRunWatchlist && (data as any).bullRunWatchlist.length > 0 && (
+              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 pb-2 border-b border-gray-800">
+                  Bull Run Watchlist
+                </p>
+                <p className="text-xs text-gray-500 italic mb-4">
+                  Backed by: Goldman Sachs · JPMorgan · Institutional flows · Technical signals · Trader moves
+                </p>
+                <div className="space-y-3">
+                  {(data as any).bullRunWatchlist.map((item: any) => {
+                    const liveData = getMarketData(item.symbol, marketData);
+                    const typeColors: Record<string, string> = {
+                      stock: "bg-blue-900/40 text-blue-300 border-blue-700",
+                      etf: "bg-purple-900/40 text-purple-300 border-purple-700",
+                      crypto: "bg-orange-900/40 text-orange-300 border-orange-700",
+                    };
+                    const signalColors: Record<string, string> = {
+                      strong_buy: "bg-emerald-900 text-emerald-200 border-emerald-600",
+                      buy: "bg-green-900/50 text-green-300 border-green-700",
+                      watch: "bg-amber-900/40 text-amber-300 border-amber-700",
+                    };
+                    return (
+                      <div key={item.symbol} className="bg-gray-800/30 border border-gray-700 rounded-lg p-4 text-xs">
+                        {/* Header row */}
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bold text-base text-gray-100">{item.symbol}</span>
+                            <span className="text-gray-400 text-xs">{item.label}</span>
+                            <span className={`px-1.5 py-0.5 rounded text-xs font-bold border ${typeColors[item.type] || "bg-gray-700 text-gray-300 border-gray-600"}`}>
+                              {item.type.toUpperCase()}
+                            </span>
+                            <span className={`px-1.5 py-0.5 rounded text-xs font-bold border ${signalColors[item.signal] || "bg-gray-700 text-gray-300"}`}>
+                              {item.signal === "strong_buy" ? "STRONG BUY" : item.signal.toUpperCase()}
+                            </span>
+                          </div>
+                          {/* Conviction bar */}
+                          <div className="flex items-center gap-0.5 ml-2 shrink-0">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className={`w-1.5 h-3 rounded-sm ${i < item.conviction ? "bg-emerald-400" : "bg-gray-700"}`}
+                              />
+                            ))}
+                            <span className="text-gray-400 text-xs ml-1">{item.conviction}/10</span>
+                          </div>
+                        </div>
+
+                        {/* Live price */}
+                        {liveData.price > 0 && (
+                          <div className="flex items-center gap-3 mb-2 font-mono text-xs">
+                            <span className="text-gray-300">Live: <span className="text-white font-bold">${formatPrice(liveData.price)}</span></span>
+                            <span className={liveData.changePercent >= 0 ? "text-emerald-400" : "text-red-400"}>
+                              {formatPercent(liveData.changePercent)}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Thesis */}
+                        <p className="text-gray-400 leading-relaxed mb-2">{item.thesis}</p>
+
+                        {/* Levels */}
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs mb-2">
+                          <span className="text-gray-500">Entry: <span className="text-amber-300">${item.entryZone.min}–${item.entryZone.max}</span></span>
+                          <span className="text-gray-500">↑ Trend Add: <span className="text-emerald-300">${item.uptrendAdd}</span></span>
+                          <span className="text-gray-500">T1: <span className="text-emerald-400">${item.target1}</span></span>
+                          <span className="text-gray-500">T2: <span className="text-emerald-400">${item.target2}</span></span>
+                          <span className="text-gray-500">SL: <span className="text-red-400">${item.stopLoss}</span></span>
+                        </div>
+
+                        {/* Catalyst + source */}
+                        {item.catalyst && <p className="text-gray-500 mb-0.5">📅 {item.catalyst}</p>}
+                        <p className="text-gray-600 italic">🏦 {item.source}</p>
+                        {item.traderSignal && <p className="text-gray-600 italic">👤 {item.traderSignal}</p>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Right Column */}
           <div className="lg:col-span-1 space-y-5">
+            {/* Wealth Progress */}
+            {(data as any).wealthProgress && (
+              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
+                  AED 1M Progress
+                </p>
+                {(() => {
+                  const wp = (data as any).wealthProgress;
+                  const total = wp.components.reduce((s: number, c: any) => s + c.valueAED, 0);
+                  const pct = Math.min((total / wp.goalAED) * 100, 100);
+                  const segColors: Record<string, string> = {
+                    emerald: "bg-emerald-500",
+                    amber: "bg-amber-400",
+                    sky: "bg-sky-400",
+                    purple: "bg-purple-400",
+                  };
+                  return (
+                    <div>
+                      {/* Big number */}
+                      <div className="flex justify-between items-baseline mb-3">
+                        <p className="text-2xl font-mono font-bold text-white">
+                          {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(total).replace("$", "AED ")}
+                        </p>
+                        <p className="text-sm text-gray-400">/ AED 1,000,000</p>
+                      </div>
+
+                      {/* Stacked bar */}
+                      <div className="h-4 bg-gray-800 rounded-full overflow-hidden flex mb-3">
+                        {wp.components.map((c: any, i: number) => (
+                          <div
+                            key={i}
+                            className={`${segColors[c.color] || "bg-gray-500"} h-full transition-all`}
+                            style={{ width: `${(c.valueAED / wp.goalAED) * 100}%` }}
+                            title={`${c.label}: AED ${c.valueAED.toLocaleString()}`}
+                          />
+                        ))}
+                        {/* Unknown gap */}
+                        <div className="bg-gray-700/40 h-full flex-1 border-l border-dashed border-gray-600" />
+                      </div>
+
+                      {/* Percentage */}
+                      <p className="text-right text-xs text-gray-400 mb-4 font-mono">
+                        <span className="text-lg font-bold text-white">{pct.toFixed(1)}%</span> tracked toward goal
+                      </p>
+
+                      {/* Component breakdown */}
+                      <div className="space-y-2 text-xs">
+                        {wp.components.map((c: any, i: number) => (
+                          <div key={i} className="flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-2.5 h-2.5 rounded-sm ${segColors[c.color] || "bg-gray-500"}`} />
+                              <div>
+                                <p className="text-gray-300 font-semibold">{c.label}</p>
+                                <p className="text-gray-600">{c.note}</p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-mono text-gray-200">AED {c.valueAED.toLocaleString()}</p>
+                              <p className={`font-mono text-xs ${c.confidence === "high" ? "text-emerald-500" : c.confidence === "medium" ? "text-amber-500" : "text-gray-600"}`}>
+                                {c.confidence} confidence
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                        {/* Untracked */}
+                        <div className="mt-3 pt-2 border-t border-gray-800">
+                          <p className="text-gray-600 mb-1">⬜ Not yet tracked:</p>
+                          {wp.untracked.map((u: string, i: number) => (
+                            <p key={i} className="text-gray-700 ml-2">· {u}</p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+
             {/* Portfolio Flags */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
