@@ -262,7 +262,7 @@
     { "date": "2026-04-22", "label": "FTC COPPA Deadline (passed)", "symbol": "PINS", "type": "regulatory", "priority": "passed" },
     { "date": "2026-04-23", "label": "Pinterest Q1 2026 Earnings (passed)", "symbol": "PINS", "type": "earnings", "priority": "passed" }
   ],
-  "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX"],
+  "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX", "AVGO", "NVDA", "MRVL", "VRT", "SLV", "SOL-USD"],
   "geopolitical": {
     "warStatus": "ceasefire_temporary",
     "notes": "US-Iran 2-week ceasefire effective April 7. Strait of Hormuz dispute unresolved. Monitor for expiry/escalation."
@@ -304,6 +304,172 @@
     },
     "closedTickersPeriod": ["MSFT", "KOG.OL", "ABBN", "TAN", "TTWO", "01211.HK", "BTC", "UBI.PA", "TRMB", "NFLX", "CRWD", "SNDK", "SMSN.L", "GAW", "AMD", "TSM", "TT", "UI", "GOOG", "ETOR", "CCL", "ENPH", "SEDG", "XLE", "TSLA", "XRP", "WDC"],
     "notes": "Apr 1-25 period P&L: -$786.99. Sunday Apr 27 snapshot: portfolio $39,431.21, unrealized P&L +$1,856.65. Smart portfolios (BigTech +14%, RenewableEnergy +17%) doing heavy lifting."
+  },
+  "bullRunWatchlist": [
+    {
+      "symbol": "AVGO",
+      "label": "Broadcom",
+      "type": "stock",
+      "conviction": 8,
+      "signal": "strong_buy",
+      "thesis": "JPMorgan #1 AI infrastructure pick. Custom silicon for hyperscalers (Google, Meta, Apple). $571B AI capex flows through AVGO. Golden cross confirmed. Revenues up 50%+ YoY.",
+      "entryZone": { "min": 195, "max": 215 },
+      "uptrendAdd": 230,
+      "target1": 265,
+      "target2": 320,
+      "stopLoss": 175,
+      "catalyst": "Q2 earnings — AI networking pipeline, custom chip TAM expansion",
+      "source": "JPMorgan top pick Apr 2026, Goldman Sachs AI infrastructure thesis",
+      "traderSignal": "Cathie Wood ARK adding AI infrastructure; Buffett defensively in cash — contrarian signal for high-growth names"
+    },
+    {
+      "symbol": "FCX",
+      "label": "Freeport-McMoRan",
+      "type": "stock",
+      "conviction": 8,
+      "signal": "strong_buy",
+      "thesis": "Copper supercycle in full swing. AI data centers need 475kmt/yr copper by 2026 (JPMorgan). 330kmt structural deficit forecast. Grasberg ramp + global EV buildout. Stock +40% YoY, still in early supercycle innings.",
+      "entryZone": { "min": 38, "max": 44 },
+      "uptrendAdd": 50,
+      "target1": 62,
+      "target2": 78,
+      "stopLoss": 33,
+      "catalyst": "Q2 earnings, China infrastructure stimulus, AI data center capex announcements",
+      "source": "Goldman Sachs copper supercycle thesis, JPMorgan 330kmt deficit forecast, 24/7 Wall St institutional accumulation report"
+    },
+    {
+      "symbol": "NVDA",
+      "label": "Nvidia",
+      "type": "stock",
+      "conviction": 7,
+      "signal": "buy",
+      "thesis": "Undisputed AI GPU monopoly. $571B AI capex all flows through NVDA at some point. Bullish wedge breakout confirmed post-correction. Blackwell cycle still in early innings. Slight overbought — buy dips only.",
+      "entryZone": { "min": 100, "max": 118 },
+      "uptrendAdd": 132,
+      "target1": 155,
+      "target2": 195,
+      "stopLoss": 88,
+      "catalyst": "GTC conference follow-through, Blackwell H200/B200 shipment data, hyperscaler capex guidance",
+      "source": "Goldman Sachs 2026 AI infrastructure thesis, Zacks/Nasdaq top AI buy 2026"
+    },
+    {
+      "symbol": "VRT",
+      "label": "Vertiv Holdings",
+      "type": "stock",
+      "conviction": 7,
+      "signal": "buy",
+      "thesis": "The picks-and-shovels AI play nobody talks about. Powers and cools every AI data center. Margins expanding. Goldman Sachs and Zacks both flagged as top 2026 buy alongside NVDA/AVGO. Massively underpriced vs AI chip stocks.",
+      "entryZone": { "min": 88, "max": 108 },
+      "uptrendAdd": 118,
+      "target1": 145,
+      "target2": 175,
+      "stopLoss": 78,
+      "catalyst": "Q2 earnings, data center buildout contracts, power infrastructure policy support",
+      "source": "Goldman Sachs 2026 top picks, Zacks top AI infrastructure 2026"
+    },
+    {
+      "symbol": "SLV",
+      "label": "iShares Silver Trust",
+      "type": "etf",
+      "conviction": 7,
+      "signal": "buy",
+      "thesis": "Goldman target $85-100/oz for 2026. Silver underperformed gold YTD — massive catch-up trade. Green transition metal (solar panels, EVs). Dual demand: monetary store of value + industrial. Higher beta gold play.",
+      "entryZone": { "min": 28, "max": 33 },
+      "uptrendAdd": 38,
+      "target1": 50,
+      "target2": 65,
+      "stopLoss": 24,
+      "catalyst": "Gold breakout above $5,000, Fed rate cuts, green energy spending acceleration",
+      "source": "Goldman Sachs $85-100/oz silver forecast 2026, Finance Magnates analyst $375 silver prediction"
+    },
+    {
+      "symbol": "SCCO",
+      "label": "Southern Copper Corp",
+      "type": "stock",
+      "conviction": 7,
+      "signal": "buy",
+      "thesis": "World's lowest-cost copper producer. Peru + Mexico mines = lowest AISC globally. Trades near all-time highs but copper supercycle justifies premium. Higher quality play vs FCX with better dividend yield.",
+      "entryZone": { "min": 165, "max": 185 },
+      "uptrendAdd": 200,
+      "target1": 240,
+      "target2": 285,
+      "stopLoss": 150,
+      "catalyst": "Copper futures breakout above $6/lb, China demand data, AI capex announcements",
+      "source": "AInvest copper bull cycle analysis, Goldman Sachs copper demand forecast"
+    },
+    {
+      "symbol": "ETH-USD",
+      "label": "Ethereum",
+      "type": "crypto",
+      "conviction": 7,
+      "signal": "buy",
+      "thesis": "56% gap to cycle high of $4,953. Pectra upgrade live — improves staking and validator efficiency. Institutional ETF inflows accelerating. Base layer of DeFi, NFT, Layer 2 ecosystem. Underperformed BTC this cycle — mean reversion due.",
+      "entryZone": { "min": 2000, "max": 2400 },
+      "uptrendAdd": 2800,
+      "target1": 3800,
+      "target2": 5000,
+      "stopLoss": 1700,
+      "catalyst": "Pectra upgrade adoption, ETF inflow acceleration, BTC breakout above $90K (ETH follows)",
+      "source": "BeInCrypto Pectra analysis, CoinDCX bull run signals 2026, ETF institutional data"
+    },
+    {
+      "symbol": "MRVL",
+      "label": "Marvell Technology",
+      "type": "stock",
+      "conviction": 6,
+      "signal": "watch",
+      "thesis": "JPMorgan top pick for custom silicon + AI networking. Building custom AI ASICs for Amazon and Google. Near-term overbought (RSI 70+). Don't chase — wait for 10-15% pullback then buy aggressively.",
+      "entryZone": { "min": 60, "max": 72 },
+      "uptrendAdd": 82,
+      "target1": 98,
+      "target2": 120,
+      "stopLoss": 54,
+      "catalyst": "Q2 earnings, custom ASIC design win announcements, hyperscaler spending updates",
+      "source": "JPMorgan top picks April 2026, MarketBeat semiconductor top picks 2026"
+    },
+    {
+      "symbol": "SOL-USD",
+      "label": "Solana",
+      "type": "crypto",
+      "conviction": 6,
+      "signal": "buy",
+      "thesis": "48.8% institutional ownership of spot SOL ETF — highest of any crypto product. Fastest-growing Layer 1. $600M+ weekly DEX volume. 'Third Pillar' narrative after BTC + ETH. High risk, high reward.",
+      "entryZone": { "min": 125, "max": 155 },
+      "uptrendAdd": 175,
+      "target1": 240,
+      "target2": 380,
+      "stopLoss": 100,
+      "catalyst": "Spot ETF approval momentum, DeFi TVL growth, BTC-led crypto bull run",
+      "source": "CoinDCX institutional ownership data, MEXC bull run analysis 2026"
+    }
+  ],
+  "wealthProgress": {
+    "goalAED": 1000000,
+    "usdToAed": 3.6725,
+    "components": [
+      {
+        "label": "eToro Portfolio",
+        "valueAED": 144782,
+        "confidence": "high",
+        "color": "emerald",
+        "note": "$39,431 × 3.6725 — live Apr 27 snapshot"
+      },
+      {
+        "label": "AED Capital (locked)",
+        "valueAED": 115000,
+        "confidence": "high",
+        "color": "amber",
+        "note": "Awaiting deployment triggers — war thesis redefinition needed"
+      },
+      {
+        "label": "PINS RSU (employer)",
+        "valueAED": 104562,
+        "confidence": "medium",
+        "color": "sky",
+        "note": "1,429 sh × $19.92 est. × 3.6725 — employer broker, not eToro"
+      }
+    ],
+    "untracked": ["Wio / bank savings", "SmartCrowd holdings", "Stake holdings", "Other AED savings"]
   },
   "portfolio": {
     "targetAED": 1000000,
