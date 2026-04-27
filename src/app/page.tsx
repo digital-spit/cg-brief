@@ -568,14 +568,14 @@ export default async function Dashboard() {
           {/* Right Column */}
           <div className="lg:col-span-1 space-y-5">
             {/* Wealth Progress */}
-            {(data as any).wealthProgress && (
+            {data.wealthProgress && (
               <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
                 <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
                   AED 1M Progress
                 </p>
                 {(() => {
-                  const wp = (data as any).wealthProgress;
-                  const total = wp.components.reduce((s: number, c: any) => s + c.valueAED, 0);
+                  const wp = data.wealthProgress!;
+                  const total = wp.components.reduce((s, c) => s + c.valueAED, 0);
                   const pct = Math.min((total / wp.goalAED) * 100, 100);
                   const segColors: Record<string, string> = {
                     emerald: "bg-emerald-500",
@@ -595,7 +595,7 @@ export default async function Dashboard() {
 
                       {/* Stacked bar */}
                       <div className="h-4 bg-gray-800 rounded-full overflow-hidden flex mb-3">
-                        {wp.components.map((c: any, i: number) => (
+                        {wp.components.map((c, i) => (
                           <div
                             key={i}
                             className={`${segColors[c.color] || "bg-gray-500"} h-full transition-all`}
@@ -614,7 +614,7 @@ export default async function Dashboard() {
 
                       {/* Component breakdown */}
                       <div className="space-y-2 text-xs">
-                        {wp.components.map((c: any, i: number) => (
+                        {wp.components.map((c, i) => (
                           <div key={i} className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
                               <div className={`w-2.5 h-2.5 rounded-sm ${segColors[c.color] || "bg-gray-500"}`} />
@@ -634,7 +634,7 @@ export default async function Dashboard() {
                         {/* Untracked */}
                         <div className="mt-3 pt-2 border-t border-gray-800">
                           <p className="text-gray-600 mb-1">⬜ Not yet tracked:</p>
-                          {wp.untracked.map((u: string, i: number) => (
+                          {wp.untracked?.map((u, i) => (
                             <p key={i} className="text-gray-700 ml-2">· {u}</p>
                           ))}
                         </div>
@@ -764,13 +764,13 @@ export default async function Dashboard() {
           </div>
 
           {/* Bull Run Watchlist — full width */}
-          {(data as any).bullRunWatchlist && (data as any).bullRunWatchlist.length > 0 && (
+          {data.bullRunWatchlist && data.bullRunWatchlist.length > 0 && (
             <div className="lg:col-span-3 bg-gray-900 border border-gray-800 rounded-xl p-5">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
                 🔥 Bull Run Watchlist — Next Entries
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {(data as any).bullRunWatchlist.map((pick: any, idx: number) => {
+                {data.bullRunWatchlist!.map((pick, idx) => {
                   const signalColors: Record<string, string> = {
                     strong_buy: "bg-emerald-500/20 border-emerald-500 text-emerald-300",
                     buy: "bg-sky-500/20 border-sky-500 text-sky-300",
