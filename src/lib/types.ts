@@ -89,6 +89,33 @@ export interface Event {
   priority?: string;
 }
 
+export interface BullRunPick {
+  symbol: string;
+  label: string;
+  type: "stock" | "etf" | "crypto" | "commodity";
+  conviction: number; // 1–10
+  signal: "strong_buy" | "buy" | "watch";
+  thesis?: string;
+  catalysts?: string[];
+  entryZone?: { min: number; max: number };
+  stopLoss?: number;
+}
+
+export interface WealthComponent {
+  label: string;
+  valueAED: number;
+  confidence: "high" | "medium" | "low";
+  color: "emerald" | "amber" | "sky" | "purple" | string;
+  note?: string;
+}
+
+export interface WealthProgress {
+  goalAED: number;
+  usdToAed: number;
+  components: WealthComponent[];
+  untracked?: string[];
+}
+
 export interface ManualInput {
   lastUpdated: string;
   equity: {
@@ -112,6 +139,8 @@ export interface ManualInput {
   actionItems: ActionItem[];
   events: Event[];
   marketSymbols: string[];
+  bullRunWatchlist?: BullRunPick[];
+  wealthProgress?: WealthProgress;
 }
 
 export interface MarketData {
