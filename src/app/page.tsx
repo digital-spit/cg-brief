@@ -7,8 +7,9 @@ import type {
   SmartPortfolio,
 } from "@/lib/types";
 import manualInput from "@/data/manual-input.json";
+import RefreshButton from "./refresh-button";
 
-export const revalidate = 300; // 5 min ISR
+export const revalidate = 900; // 15 min ISR
 
 async function getDashboardData() {
   const data = manualInput as unknown as ManualInput;
@@ -173,8 +174,9 @@ export default async function Dashboard() {
                 {data.strategistNote.edition || "Edition"}
               </p>
             </div>
-            <div className="text-right text-xs text-gray-400">
-              <p>Last updated: {dateStr} {timeStr} Dubai</p>
+            <div className="flex flex-col items-end gap-2">
+              <RefreshButton />
+              <p className="text-xs text-gray-500">data as of {dateStr} {timeStr} Dubai</p>
             </div>
           </div>
 
@@ -851,7 +853,7 @@ export default async function Dashboard() {
       <div className="mt-12 text-center text-xs text-gray-500 border-t border-gray-800 pt-5">
         <p>
           C&G Brief · {data.strategistNote.edition || "Edition"} · Generated{" "}
-          {dateStr} {timeStr} Dubai · Market data refreshes every 5 min
+          {dateStr} {timeStr} Dubai · Market data refreshes every 15 min · hit Refresh for live prices
         </p>
       </div>
     </div>
