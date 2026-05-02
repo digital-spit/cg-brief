@@ -1,4 +1,5 @@
 import { fetchMarketData, calculateTrend, getRSIZone, getSignal } from "@/lib/market";
+import { fetchEtoroPortfolio } from "@/lib/etoro";
 import type {
   ManualInput,
   PositionWithLive,
@@ -9,12 +10,16 @@ import type {
 import manualInput from "@/data/manual-input.json";
 import RefreshButton from "./refresh-button";
 
-export const revalidate = 900; // 15 min ISR
+export const revalidate = 900; // 15 min ISR — Refresh button bypasses cache on demand
 
 async function getDashboardData() {
   const data = manualInput as unknown as ManualInput;
-  const marketData = await fetchMarketData(data.marketSymbols);
-  return { data, marketData };
+  // Fetch market prices (15 min) and eToro portfolio (1 hr) in parallel
+  const [marketData, etoroData] = await Promise.all([
+    fetchMarketData(data.marketSymbols),
+    fetchEtoroPortfolio(),
+  ]);
+  return { data, marketData, etoroData };
 }
 
 function formatCurrency(value: number): string {
@@ -52,18 +57,26 @@ function getMarketData(
 
 function enrichPositionWithLiveData(
   position: any,
-  marketDataMap: Map<string, MarketData>
+  marketDataMap: Map<string, MarketData>,
+  etoroAggregated?: Map<string, { units: number; avgCost: number }>
 ): PositionWithLive {
+  // Use live eToro units/avgCost if available, otherwise fall back to manual-input.json
+  const liveEtoro = etoroAggregated?.get(position.symbol);
+  const quantity = liveEtoro?.units ?? position.quantity;
+  const avgCost = liveEtoro?.avgCost ?? position.avgCost;
+
   const mkt = getMarketData(position.symbol, marketDataMap);
-  const livePrice = mkt.price || position.avgCost;
-  const currentValue = position.quantity * livePrice;
-  const costBasis = position.quantity * position.avgCost;
+  const livePrice = mkt.price || avgCost;
+  const currentValue = quantity * livePrice;
+  const costBasis = quantity * avgCost;
   const unrealizedPnl = currentValue - costBasis;
   const unrealizedPnlPercent =
     costBasis > 0 ? (unrealizedPnl / costBasis) * 100 : 0;
 
   return {
     ...position,
+    quantity,   // live from eToro if available
+    avgCost,    // live from eToro if available
     livePrice,
     changePercent: mkt.changePercent || 0,
     currentValue,
@@ -72,6 +85,7 @@ function enrichPositionWithLiveData(
     sma50: mkt.sma50,
     sma200: mkt.sma200,
     rsi14: mkt.rsi14,
+    dataSource: liveEtoro ? "etoro-live" : "manual",
   };
 }
 
@@ -108,10 +122,14 @@ function getPositionFlags(position: PositionWithLive): Flag[] {
 }
 
 export default async function Dashboard() {
-  const { data, marketData } = await getDashboardData();
+  const { data, marketData, etoroData } = await getDashboardData();
+
+  // Live cash from eToro API, falls back to manual-input.json
+  const cashIdle = etoroData?.credit ?? data.equity.cashIdle;
+  const isEtoroLive = etoroData !== null;
 
   const enrichedPositions = data.positions.map((pos) =>
-    enrichPositionWithLiveData(pos, marketData)
+    enrichPositionWithLiveData(pos, marketData, etoroData?.aggregated)
   );
 
   const copyPortfolioValue = enrichedPositions
@@ -133,8 +151,10 @@ export default async function Dashboard() {
     0
   );
 
-  // Use eToro's reported portfolio value (includes smart portfolios, copy, cash)
-  const totalPortfolioValue = data.equity.endingUnrealized;
+  // Portfolio value: live positions (Yahoo prices × live eToro units) + live cash
+  const totalPortfolioValue = isEtoroLive
+    ? currentPortfolioValue + cashIdle
+    : data.equity.endingUnrealized;
 
   const totalPnL = currentPortfolioValue - investedValue;
 
@@ -183,8 +203,11 @@ export default async function Dashboard() {
           {/* Stat Tiles */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
                 Portfolio
+                {isEtoroLive && (
+                  <span className="text-emerald-500 text-xs font-normal normal-case tracking-normal">● live</span>
+                )}
               </p>
               <p className="text-xl font-mono font-bold">
                 {formatCurrency(totalPortfolioValue)}
@@ -199,11 +222,14 @@ export default async function Dashboard() {
               </p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
                 Cash Idle
+                {isEtoroLive && (
+                  <span className="text-emerald-500 text-xs font-normal normal-case tracking-normal">● live</span>
+                )}
               </p>
               <p className="text-xl font-mono font-bold text-amber-400">
-                {formatCurrency(data.equity.cashIdle)}
+                {formatCurrency(cashIdle)}
               </p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
