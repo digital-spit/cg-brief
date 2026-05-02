@@ -263,10 +263,12 @@
     { "label": "Redefine 115K AED deployment triggers — Hormuz still blocked, ceasefire fragile", "priority": "medium", "done": false }
   ],
   "events": [
-    { "date": "2026-04-22", "label": "FTC COPPA Deadline (passed)", "symbol": "PINS", "type": "regulatory", "priority": "low", "status": "passed" },
-    { "date": "2026-04-23", "label": "Pinterest Q1 2026 Earnings (passed)", "symbol": "PINS", "type": "earnings", "priority": "low", "status": "passed" },
-    { "date": "2026-04-29", "label": "Fed Rate Decision — held as expected (passed)", "symbol": "^GSPC", "type": "macro", "priority": "low", "status": "passed" },
-    { "date": "2026-04-29", "label": "Mag7 Earnings: GOOG, AMZN, META — beat, QQQ +10.8% (passed)", "symbol": "QQQ", "type": "earnings", "priority": "low", "status": "passed" }
+    { "date": "2026-05-03", "label": "Wio AED Deadline — deploy or park 115K AED in Fixed Savings (4% p.a.)", "symbol": "AED", "type": "personal", "priority": "critical" },
+    { "date": "2026-05-07", "label": "FOMC Meeting — Fed rate decision, next market mover", "symbol": "^GSPC", "type": "macro", "priority": "high" },
+    { "date": "2026-05-15", "label": "US CPI Data Release — key for rate cut timeline", "symbol": "^GSPC", "type": "macro", "priority": "high" },
+    { "date": "2026-05-22", "label": "NVDA Q1 FY2027 Earnings — Blackwell demand signal, AI capex read-through", "symbol": "NVDA", "type": "earnings", "priority": "high" },
+    { "date": "2026-06-01", "label": "QQQ TP1 Watch — $729 target, currently +10.8% above avg. Monitor for trim trigger.", "symbol": "QQQ", "type": "portfolio", "priority": "medium" },
+    { "date": "2026-ongoing", "label": "Hormuz Monitoring — ceasefire fragile, US counter-blockade active. Reopen = 115K AED deployment trigger.", "symbol": "BZ=F", "type": "geopolitical", "priority": "medium" }
   ],
   "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX", "AVGO", "NVDA", "MRVL", "VRT", "SLV", "SOL-USD"],
   "geopolitical": {
