@@ -25,7 +25,7 @@ export async function fetchMarketData(symbols: string[]): Promise<Map<string, Ma
     try {
       const response = await fetch(
         `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=200d&includeAdjustedClose=true`,
-        { next: { revalidate: 300 } } as RequestInit
+        { next: { revalidate: 900 } } as RequestInit
       );
 
       if (!response.ok) {
