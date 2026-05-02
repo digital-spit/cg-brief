@@ -32,7 +32,8 @@ export interface AggregatedPosition {
 }
 
 export interface EtoroPortfolio {
-  credit: number;
+  cashAvailable: number;      // true free cash: credit minus pending limit orders
+  pendingOrdersValue: number; // cash locked in pending limit orders
   aggregated: Map<string, AggregatedPosition>;
 }
 
@@ -108,8 +109,16 @@ export async function fetchEtoroPortfolio(): Promise<EtoroPortfolio | null> {
       takeProfitRate: pos.takeProfitRate,
     }));
 
+    // Pending limit orders lock up cash — subtract from credit to get true free cash
+    const pendingOrdersValue = (p.orders ?? []).reduce(
+      (sum: number, o: Record<string, unknown>) => sum + ((o.amount as number) ?? 0),
+      0
+    );
+    const cashAvailable = (p.credit ?? 0) - pendingOrdersValue;
+
     return {
-      credit: p.credit ?? 0,
+      cashAvailable,
+      pendingOrdersValue,
       aggregated: aggregateLots(lots),
     };
   } catch (err) {
