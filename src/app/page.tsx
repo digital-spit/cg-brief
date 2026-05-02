@@ -124,8 +124,8 @@ function getPositionFlags(position: PositionWithLive): Flag[] {
 export default async function Dashboard() {
   const { data, marketData, etoroData } = await getDashboardData();
 
-  // Live cash from eToro API, falls back to manual-input.json
-  const cashIdle = etoroData?.credit ?? data.equity.cashIdle;
+  // Live cash from eToro API (credit minus pending orders), falls back to manual-input.json
+  const cashIdle = etoroData?.cashAvailable ?? data.equity.cashIdle;
   const isEtoroLive = etoroData !== null;
 
   const enrichedPositions = data.positions.map((pos) =>
@@ -151,9 +151,12 @@ export default async function Dashboard() {
     0
   );
 
-  // Portfolio value: live positions (Yahoo prices × live eToro units) + live cash
+  // Smart Portfolio mirror value from manual snapshot (eToro API doesn't expose SP values)
+  const smartPortfoliosValue = (data.equity as any).smartPortfoliosValue ?? 0;
+
+  // Portfolio value: live direct positions + smart portfolios snapshot + live cash
   const totalPortfolioValue = isEtoroLive
-    ? currentPortfolioValue + cashIdle
+    ? currentPortfolioValue + smartPortfoliosValue + cashIdle
     : data.equity.endingUnrealized;
 
   const totalPnL = currentPortfolioValue - investedValue;
