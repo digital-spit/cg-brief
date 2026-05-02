@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-04-27",
+  "lastUpdated": "2026-05-02",
   "equity": {
     "beginningRealized": 38521.45,
     "endingRealized": 37710.08,
@@ -11,9 +11,9 @@
     "currentUnrealizedPnl": 1856.65
   },
   "strategistNote": {
-    "title": "PINS breached stop. GDX opened. BTC trimmed. Smart portfolios carrying the book.",
-    "body": "Sunday Apr 27 snapshot. PINS at $19.92 — stop breached at $20.00 (-18.5%). Post-COPPA deadline (Apr 22) and Q1 earnings (Apr 23) brought no catalyst. Decide at Monday open: honour stop or hold RSU hedge thesis. BTC leg trimmed: 0.047 @ $87K avg (was 0.056 @ $90.8K) — lower exposure, better avg, still -10.3%. VTI DCA'd to 20.47 sh @ $325. GDX opened at $99.28, currently -5% — gold miners lag bullion. Smart portfolios doing the heavy lifting: BigTech +14%, RenewableEnergy +17%, InTheGame +6.6%. TSM surged +5.2% today, +36% all-time — biggest direct winner. Cash at $1,478.",
-    "edition": "Sunday Edition"
+    "title": "Mag7 delivered. QQQ near TP1. PINS cleared stop. Gold survived Apr 30 scare.",
+    "body": "Saturday May 2 update. Fed held rates Apr 29 as expected. Mag7 earnings (GOOG/AMZN/META) beat — QQQ surged to $674 vs $607.95 avg (+10.8%), approaching TP1 at $729. PINS recovered to $20.22, back above $20 stop — RSU hedge thesis intact. BTC climbing from $75.6K low to $78.4K, SL at $70K has ~10% cushion. Gold had a dangerous dip to $4,515 on Apr 30 (only $115 above SL $4,400) before recovering to $4,644 — watch Iran/oil volatility. Hormuz still blocked, ceasefire fragile. ⚠️ Wio AED deadline is May 3 — act today if not deploying the 115K AED.",
+    "edition": "Saturday Edition"
   },
   "positions": [
     {
@@ -49,7 +49,7 @@
       "takeProfit": 5200,
       "takeProfit2": 5800,
       "entryDate": "earlier",
-      "notes": "0.26 oz @ $4,612. SL $4,400 (~-4.6%) / TP1 $5,200 (+12.8%) / TP2 $5,800 (+25.8%). NOTE: separate $393 loss on 20x CFD leg Apr 9-12 — never again.",
+      "notes": "0.26 oz @ $4,612 avg. Now $4,644 (+0.7%). ⚠️ Dipped to $4,515 on Apr 30 — only $115 above SL $4,400. Recovered but watch Iran/oil. TP1 $5,200 / TP2 $5,800. NOTE: separate $393 loss on 20x CFD leg Apr 9-12 — never again.",
       "status": "active"
     },
     {
@@ -61,9 +61,8 @@
       "takeProfit": 32,
       "takeProfit2": 40,
       "entryDate": "earlier",
-      "notes": "⚠️ STOP BREACHED: $19.92 < SL $20.00. 42.52 sh @ $24.44. Post-COPPA (Apr 22) and Q1 earnings (Apr 23) brought no catalyst. SEPARATE: 1,429 RSU shares at employer broker (not eToro). Decide Monday: honour stop or re-evaluate.",
-      "status": "active",
-      "alert": "STOP_BREACHED"
+      "notes": "Recovered above $20 stop — now $20.22. 42.52 sh @ $24.44 avg = $1,039 cost. Still -17.3% below avg cost. SEPARATE: 1,429 RSU shares at employer broker (not eToro). SL $20 / TP1 $32 / TP2 $40. Monitor for continuation.",
+      "status": "active"
     },
     {
       "symbol": "BTC-USD",
@@ -74,7 +73,7 @@
       "takeProfit": 110000,
       "takeProfit2": 130000,
       "entryDate": "2026-04-07",
-      "notes": "Trimmed from 0.0557 @ $90.8K to 0.0466 @ $87.1K avg. Lower exposure, better avg. SL $70K (~-20%) / TP1 $110K / TP2 $130K. Currently -10.3%.",
+      "notes": "0.0466 BTC @ $87.1K avg. Recovering — now $78.4K (-9.9% from avg). Touched $74.9K low Apr 28, SL at $70K has ~10% cushion. TP1 $110K / TP2 $130K. Hold unless macro worsens.",
       "status": "active"
     },
     {
@@ -240,32 +239,38 @@
     }
   ],
   "warStatus": {
-    "status": "CEASEFIRE — THESIS BROKEN",
-    "statusKey": "ceasefire_temporary",
-    "description": "US-Iran 2-week ceasefire effective April 7 (Trump-brokered). Strait of Hormuz dispute unresolved. XLE closed +20%. War risk premium gone from markets.",
+    "status": "CEASEFIRE EXTENDED — FRAGILE / HORMUZ STILL BLOCKED",
+    "statusKey": "ceasefire_extended_fragile",
+    "description": "Original 2-week ceasefire (Apr 7) expired. Trump extended it ~Apr 21 but only briefly. US counter-blockade of Hormuz launched Apr 13. Iran seized ships Apr 22. Peace talks stalling as of Apr 29+. Oil prices rising again on renewed risk premium. XLE thesis remains dead but war risk is creeping back.",
     "triggers": [
       { "label": "Hormuz ceasefire confirmed", "state": "met", "detail": "Trump-brokered deal Apr 7, 2026" },
       { "label": "XLE position closed profitably", "state": "met", "detail": "Closed Apr 8 at $56.27 (+$194 / +20%)" },
+      { "label": "Ceasefire extended post-expiry", "state": "met", "detail": "Trump extended ~Apr 21, but fragile — US counter-blockade active" },
+      { "label": "Hormuz fully reopened", "state": "not_met", "detail": "Strait still blocked as of May 2. Iran/US talks stalled." },
       { "label": "New deployment thesis defined", "state": "not_met", "detail": "Reassess triggers — copper/tech rotation ongoing" }
     ],
     "deploymentLocked": true,
     "deploymentAmountAED": 115000
   },
   "actionItems": [
-    { "label": "PINS — stop breached at $19.92 (SL: $20.00, -18.5%). Decide Monday open: honour stop or hold RSU hedge thesis.", "priority": "high", "done": false },
-    { "label": "BTC — at -10.3% ($78K vs $87K avg). SL at $70K. Monitor — hold unless stop approaches.", "priority": "medium", "done": false },
-    { "label": "GDX — new position at -5%. Watch gold price action for miners catch-up confirmation.", "priority": "medium", "done": false },
-    { "label": "Redefine 115K AED deployment triggers — war thesis is dead", "priority": "medium", "done": false },
-    { "label": "Move idle AED to Wio Fixed Saving Space (4% p.a.) if not deploying within 7 days", "priority": "low", "done": false }
+    { "label": "⚠️ Wio AED deadline TODAY (May 3) — move 115K AED to Wio Fixed Saving Space (4% p.a.) if not deploying. Act now.", "priority": "high", "done": false },
+    { "label": "Gold $4,644 — survived Apr 30 scare ($4,515, 115 above SL). Still vulnerable to Iran/oil swings. Monitor daily.", "priority": "high", "done": false },
+    { "label": "QQQ $674 — now +10.8% above avg cost $607.95. TP1 at $729 is 8% away. Consider partial trim if macro softens.", "priority": "medium", "done": false },
+    { "label": "PINS $20.22 — cleared $20 stop, now hold. RSU hedge thesis intact. Still -17% below avg $24.44.", "priority": "medium", "done": false },
+    { "label": "BTC $78,445 — recovering from $74.9K low. SL $70K has ~10% cushion. Hold.", "priority": "medium", "done": false },
+    { "label": "GDX — watch gold price action for miners catch-up confirmation.", "priority": "medium", "done": false },
+    { "label": "Redefine 115K AED deployment triggers — Hormuz still blocked, ceasefire fragile", "priority": "medium", "done": false }
   ],
   "events": [
-    { "date": "2026-04-22", "label": "FTC COPPA Deadline (passed)", "symbol": "PINS", "type": "regulatory", "priority": "passed" },
-    { "date": "2026-04-23", "label": "Pinterest Q1 2026 Earnings (passed)", "symbol": "PINS", "type": "earnings", "priority": "passed" }
+    { "date": "2026-04-22", "label": "FTC COPPA Deadline (passed)", "symbol": "PINS", "type": "regulatory", "priority": "low", "status": "passed" },
+    { "date": "2026-04-23", "label": "Pinterest Q1 2026 Earnings (passed)", "symbol": "PINS", "type": "earnings", "priority": "low", "status": "passed" },
+    { "date": "2026-04-29", "label": "Fed Rate Decision — held as expected (passed)", "symbol": "^GSPC", "type": "macro", "priority": "low", "status": "passed" },
+    { "date": "2026-04-29", "label": "Mag7 Earnings: GOOG, AMZN, META — beat, QQQ +10.8% (passed)", "symbol": "QQQ", "type": "earnings", "priority": "low", "status": "passed" }
   ],
   "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX", "AVGO", "NVDA", "MRVL", "VRT", "SLV", "SOL-USD"],
   "geopolitical": {
-    "warStatus": "ceasefire_temporary",
-    "notes": "US-Iran 2-week ceasefire effective April 7. Strait of Hormuz dispute unresolved. Monitor for expiry/escalation."
+    "warStatus": "ceasefire_extended_fragile",
+    "notes": "Original ceasefire expired ~Apr 21, Trump extended briefly. US counter-blockade of Hormuz active since Apr 13. Iran seized ships Apr 22. Peace talks stalling. Oil prices rising on renewed risk premium. Monitor daily."
   },
   "etoro": {
     "statementPeriod": "APR 1, 2026 to APR 25, 2026",
@@ -463,10 +468,10 @@
       },
       {
         "label": "PINS RSU (employer)",
-        "valueAED": 104562,
+        "valueAED": 106129,
         "confidence": "medium",
         "color": "sky",
-        "note": "1,429 sh × $19.92 est. × 3.6725 — employer broker, not eToro"
+        "note": "1,429 sh × $20.22 × 3.6725 — employer broker, not eToro. Back above $20."
       }
     ],
     "untracked": ["Wio / bank savings", "SmartCrowd holdings", "Stake holdings", "Other AED savings"]
