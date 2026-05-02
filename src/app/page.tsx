@@ -163,6 +163,15 @@ export default async function Dashboard() {
 
   const allFlags = enrichedPositions.flatMap(getPositionFlags);
 
+  // Live AED conversions for wealth progress
+  const usdToAed = data.wealthProgress?.usdToAed ?? 3.6725;
+  const etoroPortfolioAED = Math.round(totalPortfolioValue * usdToAed);
+  const pinsLivePrice = marketData.get("PINS")?.price ?? 0;
+  const pinsRsuAED = pinsLivePrice > 0 ? Math.round(pinsLivePrice * 1429 * usdToAed) : 0;
+
+  // Filter to only upcoming events (hide passed ones)
+  const upcomingEvents = (data.events ?? []).filter((evt: any) => evt.status !== "passed");
+
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-US", {
     year: "numeric",
@@ -236,18 +245,18 @@ export default async function Dashboard() {
               </p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
-                Period P/L
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
+                Direct P/L
+                {isEtoroLive && (
+                  <span className="text-emerald-500 text-xs font-normal normal-case tracking-normal">● live</span>
+                )}
               </p>
-              <p
-                className={`text-xl font-mono font-bold ${
-                  data.equity.periodPnl >= 0
-                    ? "text-emerald-400"
-                    : "text-red-400"
-                }`}
-              >
-                {formatCurrency(data.equity.periodPnl)}
+              <p className={`text-xl font-mono font-bold ${(isEtoroLive ? totalPnL : data.equity.periodPnl) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                {formatCurrency(isEtoroLive ? totalPnL : data.equity.periodPnl)}
               </p>
+              {isEtoroLive && (
+                <p className="text-xs text-gray-600 mt-0.5">excl. Smart Portfolios</p>
+              )}
             </div>
           </div>
         </div>
@@ -606,7 +615,15 @@ export default async function Dashboard() {
                 </p>
                 {(() => {
                   const wp = data.wealthProgress!;
-                  const total = wp.components.reduce((s, c) => s + c.valueAED, 0);
+                  // Override eToro and PINS RSU with live values when available
+                  const liveComponents = wp.components.map((c: any) => {
+                    if (c.label === "eToro Portfolio" && isEtoroLive && etoroPortfolioAED > 0)
+                      return { ...c, valueAED: etoroPortfolioAED, note: `$${totalPortfolioValue.toFixed(0)} × ${usdToAed} — live now` };
+                    if (c.label === "PINS RSU (employer)" && pinsRsuAED > 0)
+                      return { ...c, valueAED: pinsRsuAED, note: `1,429 sh × $${pinsLivePrice.toFixed(2)} × ${usdToAed} — live` };
+                    return c;
+                  });
+                  const total = liveComponents.reduce((s: number, c: any) => s + c.valueAED, 0);
                   const pct = Math.min((total / wp.goalAED) * 100, 100);
                   const segColors: Record<string, string> = {
                     emerald: "bg-emerald-500",
@@ -626,7 +643,7 @@ export default async function Dashboard() {
 
                       {/* Stacked bar */}
                       <div className="h-4 bg-gray-800 rounded-full overflow-hidden flex mb-3">
-                        {wp.components.map((c, i) => (
+                        {liveComponents.map((c: any, i: number) => (
                           <div
                             key={i}
                             className={`${segColors[c.color] || "bg-gray-500"} h-full transition-all`}
@@ -645,7 +662,7 @@ export default async function Dashboard() {
 
                       {/* Component breakdown */}
                       <div className="space-y-2 text-xs">
-                        {wp.components.map((c, i) => (
+                        {liveComponents.map((c: any, i: number) => (
                           <div key={i} className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
                               <div className={`w-2.5 h-2.5 rounded-sm ${segColors[c.color] || "bg-gray-500"}`} />
@@ -713,17 +730,21 @@ export default async function Dashboard() {
                 Upcoming Catalysts
               </p>
               <div className="space-y-2 text-xs">
-                {data.events.map((evt, idx) => (
-                  <div
-                    key={idx}
-                    className="border-b border-gray-800 pb-2 last:border-0"
-                  >
-                    <p className="text-gray-300 font-semibold">{evt.label}</p>
-                    <p className="text-gray-500">
-                      {evt.date} · {evt.symbol} · {evt.type}
-                    </p>
-                  </div>
-                ))}
+                {upcomingEvents.length === 0 ? (
+                  <p className="text-gray-600 italic">No upcoming events queued — update manual-input.json to add catalysts.</p>
+                ) : (
+                  upcomingEvents.map((evt: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className="border-b border-gray-800 pb-2 last:border-0"
+                    >
+                      <p className="text-gray-300 font-semibold">{evt.label}</p>
+                      <p className="text-gray-500">
+                        {evt.date} · {evt.symbol} · {evt.type}
+                      </p>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
@@ -802,6 +823,10 @@ export default async function Dashboard() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {data.bullRunWatchlist!.map((pick, idx) => {
+                  const mkt = getMarketData(pick.symbol, marketData);
+                  const hasPrice = mkt.price > 0;
+                  const inZone = hasPrice && pick.entryZone && mkt.price >= pick.entryZone.min && mkt.price <= pick.entryZone.max;
+                  const aboveEntry = hasPrice && pick.entryZone && mkt.price > pick.entryZone.max;
                   const signalColors: Record<string, string> = {
                     strong_buy: "bg-emerald-500/20 border-emerald-500 text-emerald-300",
                     buy: "bg-sky-500/20 border-sky-500 text-sky-300",
@@ -825,6 +850,11 @@ export default async function Dashboard() {
                         <div>
                           <p className="font-mono font-bold text-white text-base">{pick.symbol}</p>
                           <p className="text-xs text-gray-400">{pick.label}</p>
+                          {hasPrice && (
+                            <p className={`text-xs font-mono mt-0.5 ${mkt.changePercent >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                              ${mkt.price > 100 ? mkt.price.toFixed(2) : mkt.price.toFixed(3)} ({formatPercent(mkt.changePercent)})
+                            </p>
+                          )}
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <span className={`text-xs font-bold px-2 py-0.5 rounded border ${signalColors[pick.signal] || "bg-gray-700 border-gray-600 text-gray-400"}`}>
@@ -833,6 +863,15 @@ export default async function Dashboard() {
                           <span className={`text-xs font-semibold ${typeColors[pick.type] || "text-gray-500"}`}>
                             {pick.type?.toUpperCase()}
                           </span>
+                          {hasPrice && (
+                            <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+                              inZone ? "bg-emerald-900/50 text-emerald-300 border border-emerald-700" :
+                              aboveEntry ? "bg-amber-900/50 text-amber-300 border border-amber-700" :
+                              "bg-gray-800 text-gray-500 border border-gray-700"
+                            }`}>
+                              {inZone ? "🎯 IN ZONE" : aboveEntry ? "↑ ABOVE ENTRY" : "⏳ WAITING"}
+                            </span>
+                          )}
                         </div>
                       </div>
 
