@@ -729,30 +729,40 @@ export default async function Dashboard() {
                   const liveComponents = wp.components.map((c: any) => {
                     if (c.label === "eToro Portfolio" && isEtoroLive && etoroPortfolioAED > 0)
                       return { ...c, valueAED: etoroPortfolioAED, note: `$${totalPortfolioValue.toFixed(0)} × ${usdToAed} — live now` };
-                    if (c.label === "PINS RSU (employer)" && pinsRsuAED > 0)
+                    if (c.label === "PINS RSU (Snap)" && pinsRsuAED > 0)
                       return { ...c, valueAED: pinsRsuAED, note: `1,429 sh × $${pinsLivePrice.toFixed(2)} × ${usdToAed} — live` };
                     return c;
                   });
-                  const total = liveComponents.reduce((s: number, c: any) => s + c.valueAED, 0);
-                  const pct = Math.min((total / wp.goalAED) * 100, 100);
+                  const grossAssets = liveComponents.reduce((s: number, c: any) => s + c.valueAED, 0);
+                  const totalLiabilities = (wp.liabilities ?? []).reduce((s: number, l: any) => s + l.balanceAED, 0);
+                  const netWorth = grossAssets - totalLiabilities;
+                  const pct = Math.min((netWorth / wp.goalAED) * 100, 100);
+                  const grossPct = Math.min((grossAssets / wp.goalAED) * 100, 100);
                   const segColors: Record<string, string> = {
                     emerald: "bg-emerald-500",
                     amber: "bg-amber-400",
                     sky: "bg-sky-400",
+                    indigo: "bg-indigo-400",
                     purple: "bg-purple-400",
+                    slate: "bg-slate-500",
                   };
                   return (
                     <div>
-                      {/* Big number */}
-                      <div className="flex justify-between items-baseline mb-3">
-                        <p className="text-2xl font-mono font-bold text-white">
-                          {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(total).replace("$", "AED ")}
-                        </p>
+                      {/* Net wealth headline */}
+                      <div className="flex justify-between items-baseline mb-1">
+                        <div>
+                          <p className="text-2xl font-mono font-bold text-white">
+                            AED {netWorth.toLocaleString()}
+                          </p>
+                          <p className="text-[10px] text-gray-600 mt-0.5">
+                            gross {grossAssets.toLocaleString()} − liabilities {totalLiabilities.toLocaleString()}
+                          </p>
+                        </div>
                         <p className="text-sm text-gray-400">/ AED 1,000,000</p>
                       </div>
 
-                      {/* Stacked bar */}
-                      <div className="h-4 bg-gray-800 rounded-full overflow-hidden flex mb-3">
+                      {/* Stacked bar — gross assets (liabilities visually reduce at end) */}
+                      <div className="h-4 bg-gray-800 rounded-full overflow-hidden flex mb-1 mt-3">
                         {liveComponents.map((c: any, i: number) => (
                           <div
                             key={i}
@@ -761,17 +771,27 @@ export default async function Dashboard() {
                             title={`${c.label}: AED ${c.valueAED.toLocaleString()}`}
                           />
                         ))}
-                        {/* Unknown gap */}
+                        {/* Liabilities shown as a red notch cutting into the bar */}
+                        {totalLiabilities > 0 && (
+                          <div
+                            className="bg-red-900/70 h-full border-l border-red-700"
+                            style={{ width: `${(totalLiabilities / wp.goalAED) * 100}%` }}
+                            title={`Liabilities: AED ${totalLiabilities.toLocaleString()}`}
+                          />
+                        )}
+                        {/* Remaining gap */}
                         <div className="bg-gray-700/40 h-full flex-1 border-l border-dashed border-gray-600" />
                       </div>
 
                       {/* Percentage */}
                       <p className="text-right text-xs text-gray-400 mb-4 font-mono">
-                        <span className="text-lg font-bold text-white">{pct.toFixed(1)}%</span> tracked toward goal
+                        <span className="text-lg font-bold text-white">{pct.toFixed(1)}%</span> net toward goal
+                        <span className="text-gray-600 ml-2">({grossPct.toFixed(1)}% gross)</span>
                       </p>
 
-                      {/* Component breakdown */}
+                      {/* Asset breakdown */}
                       <div className="space-y-2 text-xs">
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Assets</p>
                         {liveComponents.map((c: any, i: number) => (
                           <div key={i} className="flex justify-between items-center">
                             <div className="flex items-center gap-2">
@@ -789,13 +809,55 @@ export default async function Dashboard() {
                             </div>
                           </div>
                         ))}
+
+                        {/* Liabilities */}
+                        {wp.liabilities && wp.liabilities.length > 0 && (
+                          <div className="mt-3 pt-2 border-t border-gray-800">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Liabilities</p>
+                            {wp.liabilities.map((l: any, i: number) => (
+                              <div key={i} className="flex justify-between items-center mb-1.5">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-2.5 h-2.5 rounded-sm bg-red-900" />
+                                  <div>
+                                    <p className="text-gray-400 font-semibold">{l.label}</p>
+                                    <p className="text-gray-700">{l.note}</p>
+                                  </div>
+                                </div>
+                                <p className="font-mono text-red-400 text-xs">− AED {l.balanceAED.toLocaleString()}</p>
+                              </div>
+                            ))}
+                            <div className="flex justify-between items-center mt-1 pt-1 border-t border-gray-800/60">
+                              <p className="text-gray-500 text-xs">Total liabilities</p>
+                              <p className="font-mono text-red-500 text-xs font-bold">− AED {totalLiabilities.toLocaleString()}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Income sources */}
+                        {wp.incomeSources && wp.incomeSources.length > 0 && (
+                          <div className="mt-3 pt-2 border-t border-gray-800">
+                            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Active Income</p>
+                            {wp.incomeSources.map((s: any, i: number) => (
+                              <div key={i} className="flex justify-between items-center mb-1">
+                                <div>
+                                  <p className="text-gray-400 font-semibold">{s.label}</p>
+                                  <p className="text-gray-700">{s.note}</p>
+                                </div>
+                                <p className="font-mono text-emerald-600 text-xs">+AED {s.monthlyAED.toLocaleString()}/mo</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
                         {/* Untracked */}
-                        <div className="mt-3 pt-2 border-t border-gray-800">
-                          <p className="text-gray-600 mb-1">⬜ Not yet tracked:</p>
-                          {wp.untracked?.map((u, i) => (
-                            <p key={i} className="text-gray-700 ml-2">· {u}</p>
-                          ))}
-                        </div>
+                        {wp.untracked && wp.untracked.length > 0 && (
+                          <div className="mt-3 pt-2 border-t border-gray-800">
+                            <p className="text-gray-600 mb-1">⬜ Not yet tracked / estimated:</p>
+                            {wp.untracked.map((u: string, i: number) => (
+                              <p key={i} className="text-gray-700 ml-2">· {u}</p>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
