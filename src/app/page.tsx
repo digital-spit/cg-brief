@@ -836,24 +836,37 @@ export default async function Dashboard() {
 
             {/* Upcoming Catalysts */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                Upcoming Catalysts
-              </p>
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Upcoming Catalysts
+                </p>
+                {upcomingEvents.length > 8 && (
+                  <p className="text-xs text-gray-600">{upcomingEvents.length} total</p>
+                )}
+              </div>
               <div className="space-y-2 text-xs">
                 {upcomingEvents.length === 0 ? (
                   <p className="text-gray-600 italic">No upcoming events queued — update manual-input.json to add catalysts.</p>
                 ) : (
-                  upcomingEvents.map((evt: any, idx: number) => (
+                  upcomingEvents.slice(0, 8).map((evt: any, idx: number) => (
                     <div
                       key={idx}
-                      className="border-b border-gray-800 pb-2 last:border-0"
+                      className={`border-b border-gray-800 pb-2 last:border-0 ${
+                        evt.priority === "critical" ? "border-l-2 border-l-red-700 pl-2" :
+                        evt.priority === "high" ? "border-l-2 border-l-amber-700 pl-2" : ""
+                      }`}
                     >
-                      <p className="text-gray-300 font-semibold">{evt.label}</p>
-                      <p className="text-gray-500">
+                      <p className="text-gray-300 font-semibold leading-snug">{evt.label}</p>
+                      <p className="text-gray-500 mt-0.5">
                         {evt.date} · {evt.symbol} · {evt.type}
                       </p>
                     </div>
                   ))
+                )}
+                {upcomingEvents.length > 8 && (
+                  <p className="text-gray-600 text-xs pt-1 border-t border-gray-800">
+                    +{upcomingEvents.length - 8} more events through Aug 2026
+                  </p>
                 )}
               </div>
             </div>

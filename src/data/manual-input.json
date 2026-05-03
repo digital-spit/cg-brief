@@ -6,15 +6,15 @@
     "endingUnrealized": 39431.21,
     "cashIdle": 1478.02,
     "periodPnl": -786.99,
-    "statementPeriod": "APR 1–25, 2026",
+    "statementPeriod": "APR 1\u201325, 2026",
     "currentTotalInvested": 36096.54,
     "currentUnrealizedPnl": 1856.65,
     "smartPortfoliosValue": 22433.76
   },
   "strategistNote": {
     "title": "PINS earnings tomorrow (May 4). Warsh replaces Powell May 15. AED 115K deployment pending Hormuz.",
-    "body": "May 3, 2026. ⚠️ CRITICAL: PINS Q1 earnings Monday May 4 after close — 1,429 RSU shares carry binary risk + active securities fraud lawsuit. UAE zero CGT = full proceeds deployable. Decide before Monday open. MSTR Q1 reports May 5 — proxy BTC sentiment signal (holds 818K BTC @ $75.5K avg). Kevin Warsh replaces Powell May 15: near-term USD rebound expected, hawkish inflation focus, 2 cuts priced H2 2026. Wait for dollar peak before deploying AED 115K. BTC $78K: April ETF inflows hit $1.97B record — cycle intact, accumulate on dips to $74-76K. Gold $4,612: strongest position, hold through Warsh transition — TP1 $5,200. QQQ $674 at 52wk high — TP1 $729 is 8% away, do not chase. AED 115K deployment trigger: Hormuz fully reopened + 2 confirmed weeks. Staking: start ETH (Lido 3-4%) and SOL (Jito 7-8%) when capital unlocks.",
-    "edition": "Live Intelligence Update — May 3, 2026",
+    "body": "May 3, 2026. \u26a0\ufe0f CRITICAL: PINS Q1 earnings Monday May 4 after close \u2014 1,429 RSU shares carry binary risk + active securities fraud lawsuit. UAE zero CGT = full proceeds deployable. Decide before Monday open. MSTR Q1 reports May 5 \u2014 proxy BTC sentiment signal (holds 818K BTC @ $75.5K avg). Kevin Warsh replaces Powell May 15: near-term USD rebound expected, hawkish inflation focus, 2 cuts priced H2 2026. Wait for dollar peak before deploying AED 115K. BTC $78K: April ETF inflows hit $1.97B record \u2014 cycle intact, accumulate on dips to $74-76K. Gold $4,612: strongest position, hold through Warsh transition \u2014 TP1 $5,200. QQQ $674 at 52wk high \u2014 TP1 $729 is 8% away, do not chase. AED 115K deployment trigger: Hormuz fully reopened + 2 confirmed weeks. Staking: start ETH (Lido 3-4%) and SOL (Jito 7-8%) when capital unlocks.",
+    "edition": "Live Intelligence Update \u2014 May 3, 2026",
     "stalenessWarning": "This note is manually updated. Use 'Regenerate Analysis' for AI-generated live analysis."
   },
   "positions": [
@@ -27,7 +27,7 @@
       "takeProfit": 372.04,
       "takeProfit2": 404.39,
       "entryDate": "DCA, latest 2026-04-27",
-      "notes": "DCA core. 20.47 sh @ $325.00. SL -8% / TP1 +15% / TP2 +25%. Monthly DCA — TPs reduce, never exit.",
+      "notes": "DCA core. 20.47 sh @ $325.00. SL -8% / TP1 +15% / TP2 +25%. Monthly DCA \u2014 TPs reduce, never exit.",
       "status": "active"
     },
     {
@@ -51,7 +51,7 @@
       "takeProfit": 5200,
       "takeProfit2": 5800,
       "entryDate": "earlier",
-      "notes": "0.26 oz @ $4,612 avg. TP1 $5,200 / TP2 $5,800. SL $4,400 — hold through Warsh transition, bullish for gold.",
+      "notes": "0.26 oz @ $4,612 avg. TP1 $5,200 / TP2 $5,800. SL $4,400 \u2014 hold through Warsh transition, bullish for gold.",
       "status": "active"
     },
     {
@@ -87,13 +87,28 @@
       "takeProfit": 22,
       "takeProfit2": 25,
       "entryDate": "earlier",
-      "notes": "57.76 sh @ $16.62. SL $15 / TP1 $22 (+32%) / TP2 $25 (+50%). IRA policy headwind — reassess vs watchlist alternatives.",
+      "notes": "57.76 sh @ $16.62. SL $15 / TP1 $22 (+32%) / TP2 $25 (+50%). IRA policy headwind \u2014 reassess vs watchlist alternatives.",
       "status": "active",
       "addZones": {
-        "uptrendAdd": { "price": 20.50, "note": "Breakout confirmed above $20.50 with volume — add on momentum" },
-        "dipLight": { "min": 18.50, "max": 19.00, "note": "Breakout retest — prior resistance now support" },
-        "dipMedium": { "min": 17.50, "max": 18.00, "note": "Structural mid-range support, ~10% off highs" },
-        "dipConviction": { "min": 16.50, "max": 17.00, "note": "Near avg cost, major base support — back up the truck" }
+        "uptrendAdd": {
+          "price": 20.5,
+          "note": "Breakout confirmed above $20.50 with volume \u2014 add on momentum"
+        },
+        "dipLight": {
+          "min": 18.5,
+          "max": 19.0,
+          "note": "Breakout retest \u2014 prior resistance now support"
+        },
+        "dipMedium": {
+          "min": 17.5,
+          "max": 18.0,
+          "note": "Structural mid-range support, ~10% off highs"
+        },
+        "dipConviction": {
+          "min": 16.5,
+          "max": 17.0,
+          "note": "Near avg cost, major base support \u2014 back up the truck"
+        }
       }
     },
     {
@@ -108,10 +123,25 @@
       "notes": "2.10 sh @ $295.14. +36%+ unrealized. SL $265 / TP1 $380 (+29%) / TP2 $420 (+42%). Q2 earnings July (est).",
       "status": "active",
       "addZones": {
-        "uptrendAdd": { "price": 415, "note": "Fresh breakout above $415 — add on momentum continuation" },
-        "dipLight": { "min": 385, "max": 390, "note": "Breakout retest — prior resistance flipped support" },
-        "dipMedium": { "min": 360, "max": 370, "note": "Volume shelf, ~10% pullback from highs" },
-        "dipConviction": { "min": 340, "max": 350, "note": "Strong structural support, still +15% above avg cost" }
+        "uptrendAdd": {
+          "price": 415,
+          "note": "Fresh breakout above $415 \u2014 add on momentum continuation"
+        },
+        "dipLight": {
+          "min": 385,
+          "max": 390,
+          "note": "Breakout retest \u2014 prior resistance flipped support"
+        },
+        "dipMedium": {
+          "min": 360,
+          "max": 370,
+          "note": "Volume shelf, ~10% pullback from highs"
+        },
+        "dipConviction": {
+          "min": 340,
+          "max": 350,
+          "note": "Strong structural support, still +15% above avg cost"
+        }
       }
     },
     {
@@ -132,17 +162,38 @@
     "totalAllocated": 21506,
     "currentValue": 1993.56,
     "currentPnl": 61.68,
-    "currentPnlPct": 3.20,
+    "currentPnlPct": 3.2,
     "currency": "USD",
     "note": "7 holdings. Current value $1,993.56 (+$61.68 / +3.2%). Dividend-confirmed: LRCX, Saab AB, Wheaton Precious Metals, GE Vernova, Micron, Royal Gold, Nutrien.",
     "positions": [
-      { "symbol": "LRCX", "label": "Lam Research" },
-      { "symbol": "SAAB-B.ST", "label": "Saab AB Ser. B" },
-      { "symbol": "WPM", "label": "Wheaton Precious Metals" },
-      { "symbol": "GEV", "label": "GE Vernova" },
-      { "symbol": "MU", "label": "Micron Technology" },
-      { "symbol": "RGLD", "label": "Royal Gold" },
-      { "symbol": "NTR", "label": "Nutrien" }
+      {
+        "symbol": "LRCX",
+        "label": "Lam Research"
+      },
+      {
+        "symbol": "SAAB-B.ST",
+        "label": "Saab AB Ser. B"
+      },
+      {
+        "symbol": "WPM",
+        "label": "Wheaton Precious Metals"
+      },
+      {
+        "symbol": "GEV",
+        "label": "GE Vernova"
+      },
+      {
+        "symbol": "MU",
+        "label": "Micron Technology"
+      },
+      {
+        "symbol": "RGLD",
+        "label": "Royal Gold"
+      },
+      {
+        "symbol": "NTR",
+        "label": "Nutrien"
+      }
     ]
   },
   "smartPortfolios": [
@@ -157,7 +208,7 @@
       "name": "BigTech",
       "label": "Large Tech Market Cap",
       "currentValue": 5379.73,
-      "currentPnl": 665.30,
+      "currentPnl": 665.3,
       "currentPnlPct": 14.12
     },
     {
@@ -202,7 +253,7 @@
       "symbol": "KOG.OL",
       "label": "Kongsberg Gruppen (EuropeDefense copier)",
       "closeDate": "2026-04-22",
-      "closePrice": 374.90,
+      "closePrice": 374.9,
       "pnl": 8,
       "reason": "EuropeDefense copier exited all KOG.OL lots Apr 22 at ~374.90 NOK."
     },
@@ -213,7 +264,7 @@
       "closePrice": 56.27,
       "pnl": 194.18,
       "pnlPct": 20.2,
-      "reason": "Thesis broken — Hormuz ceasefire killed energy risk premium. Clean exit."
+      "reason": "Thesis broken \u2014 Hormuz ceasefire killed energy risk premium. Clean exit."
     },
     {
       "symbol": "GC=F-CFD",
@@ -221,7 +272,7 @@
       "closeDate": "2026-04-12",
       "closePrice": 4672.74,
       "pnl": -392.73,
-      "reason": "Opened Apr 9 at $4,774. Caught reversal in 3 days. Largest single loss — lesson: no 20x leverage."
+      "reason": "Opened Apr 9 at $4,774. Caught reversal in 3 days. Largest single loss \u2014 lesson: no 20x leverage."
     },
     {
       "symbol": "NFLX",
@@ -237,57 +288,263 @@
       "closeDate": "2026-04-07",
       "closePrice": 68379,
       "pnl": -39.14,
-      "reason": "Tiny 0.000876 BTC lot closed. Re-opened position at $87,059 avg — see active book."
+      "reason": "Tiny 0.000876 BTC lot closed. Re-opened position at $87,059 avg \u2014 see active book."
     }
   ],
   "warStatus": {
-    "status": "CEASEFIRE EXTENDED — FRAGILE / HORMUZ STILL BLOCKED",
+    "status": "CEASEFIRE EXTENDED \u2014 FRAGILE / HORMUZ STILL BLOCKED",
     "statusKey": "ceasefire_extended_fragile",
     "description": "Original 2-week ceasefire (Apr 7) expired. Trump extended ~Apr 21 but briefly. US counter-blockade of Hormuz active since Apr 13. Iran seized ships Apr 22. Peace talks stalling as of May 2026. Oil storage nearly full. Iran losing ~$500M/day. No diplomatic resolution in sight.",
     "triggers": [
-      { "label": "Hormuz ceasefire confirmed", "state": "met", "detail": "Trump-brokered deal Apr 7, 2026" },
-      { "label": "XLE position closed profitably", "state": "met", "detail": "Closed Apr 8 at $56.27 (+$194 / +20%)" },
-      { "label": "Ceasefire extended post-expiry", "state": "met", "detail": "Trump extended ~Apr 21, but fragile — US counter-blockade active" },
-      { "label": "Hormuz fully reopened", "state": "not_met", "detail": "Strait still blocked as of May 3. Iran/US talks stalled." },
-      { "label": "New deployment thesis defined", "state": "not_met", "detail": "40% BTC/ETH + 30% quality tech (TSM/AVGO) + 20% stables + 10% SOL staking" }
+      {
+        "label": "Hormuz ceasefire confirmed",
+        "state": "met",
+        "detail": "Trump-brokered deal Apr 7, 2026"
+      },
+      {
+        "label": "XLE position closed profitably",
+        "state": "met",
+        "detail": "Closed Apr 8 at $56.27 (+$194 / +20%)"
+      },
+      {
+        "label": "Ceasefire extended post-expiry",
+        "state": "met",
+        "detail": "Trump extended ~Apr 21, but fragile \u2014 US counter-blockade active"
+      },
+      {
+        "label": "Hormuz fully reopened",
+        "state": "not_met",
+        "detail": "Strait still blocked as of May 3. Iran/US talks stalled."
+      },
+      {
+        "label": "New deployment thesis defined",
+        "state": "not_met",
+        "detail": "40% BTC/ETH + 30% quality tech (TSM/AVGO) + 20% stables + 10% SOL staking"
+      }
     ],
     "deploymentLocked": true,
     "deploymentAmountAED": 115000
   },
   "actionItems": [
-    { "label": "🚨 PINS RSU — Decide before Monday open. Q1 earnings May 4 after close. Binary risk + fraud lawsuit. UAE = zero CGT, ~$28K fully deployable. Options: sell all, sell 50%, or hold.", "priority": "critical", "done": false },
-    { "label": "🏛️ Powell exits May 15, Warsh takes over. Near-term USD rebound expected — do NOT rush AED 115K deployment. Wait for dollar peak signal post May 15.", "priority": "high", "done": false },
-    { "label": "📊 MSTR Q1 earnings May 5 — BTC sentiment signal. Holds 818K BTC @ $75.5K avg. Watch for BTC reaction and possible $80K breakout attempt.", "priority": "high", "done": false },
-    { "label": "🥇 Gold $4,612 — strongest position. Hold conviction through Warsh transition. TP1 $5,200 / TP2 $5,800. GDX high-beta leverage on gold move.", "priority": "high", "done": false },
-    { "label": "₿ BTC $78K — accumulate at $74-76K dip. ETF inflows $1.97B April record. Cycle intact. SL $70K. Target: 0.1 BTC total before year end.", "priority": "medium", "done": false },
-    { "label": "📈 QQQ $674 at 52wk high — TP1 $729 is 8% away. Do not buy at the high. Wait for 5-7% pullback. Next FOMC June 17 is Warsh's first decision.", "priority": "medium", "done": false },
-    { "label": "🔑 Smart Portfolio consolidation — collapse from 6 to 2 (BigTech + GoldWorldWide). Liquidate RenewableEnergy, CyberSecurity, InTheGame, EuropeDefense.", "priority": "medium", "done": false },
-    { "label": "📡 Start staking once capital unlocks: ETH via Lido (3-4% APR), SOL via Jito (7-8% APR). UAE zero CGT = all yield is yours.", "priority": "low", "done": false }
+    {
+      "label": "\ud83d\udea8 PINS RSU \u2014 Decide before Monday open. Q1 earnings May 4 after close. Binary risk + fraud lawsuit. UAE = zero CGT, ~$28K fully deployable. Options: sell all, sell 50%, or hold.",
+      "priority": "critical",
+      "done": false
+    },
+    {
+      "label": "\ud83c\udfdb\ufe0f Powell exits May 15, Warsh takes over. Near-term USD rebound expected \u2014 do NOT rush AED 115K deployment. Wait for dollar peak signal post May 15.",
+      "priority": "high",
+      "done": false
+    },
+    {
+      "label": "\ud83d\udcca MSTR Q1 earnings May 5 \u2014 BTC sentiment signal. Holds 818K BTC @ $75.5K avg. Watch for BTC reaction and possible $80K breakout attempt.",
+      "priority": "high",
+      "done": false
+    },
+    {
+      "label": "\ud83e\udd47 Gold $4,612 \u2014 strongest position. Hold conviction through Warsh transition. TP1 $5,200 / TP2 $5,800. GDX high-beta leverage on gold move.",
+      "priority": "high",
+      "done": false
+    },
+    {
+      "label": "\u20bf BTC $78K \u2014 accumulate at $74-76K dip. ETF inflows $1.97B April record. Cycle intact. SL $70K. Target: 0.1 BTC total before year end.",
+      "priority": "medium",
+      "done": false
+    },
+    {
+      "label": "\ud83d\udcc8 QQQ $674 at 52wk high \u2014 TP1 $729 is 8% away. Do not buy at the high. Wait for 5-7% pullback. Next FOMC June 17 is Warsh's first decision.",
+      "priority": "medium",
+      "done": false
+    },
+    {
+      "label": "\ud83d\udd11 Smart Portfolio consolidation \u2014 collapse from 6 to 2 (BigTech + GoldWorldWide). Liquidate RenewableEnergy, CyberSecurity, InTheGame, EuropeDefense.",
+      "priority": "medium",
+      "done": false
+    },
+    {
+      "label": "\ud83d\udce1 Start staking once capital unlocks: ETH via Lido (3-4% APR), SOL via Jito (7-8% APR). UAE zero CGT = all yield is yours.",
+      "priority": "low",
+      "done": false
+    }
   ],
   "events": [
-    { "date": "2026-05-04", "label": "🚨 PINS Q1 2026 Earnings — after close. RSU decision must happen BEFORE open. Fraud lawsuit active. UAE = zero CGT.", "symbol": "PINS", "type": "earnings", "priority": "critical" },
-    { "date": "2026-05-05", "label": "📊 MSTR Q1 Earnings — holds 818K BTC @ $75.5K avg. Key BTC sentiment signal. Watch overnight BTC reaction.", "symbol": "BTC-USD", "type": "earnings", "priority": "high" },
-    { "date": "2026-05-07", "label": "🏦 BOE Rate Decision — Expected hold at 4.5%. UK sticky inflation. GBP volatility watch.", "symbol": "GBPUSD", "type": "macro", "priority": "medium" },
-    { "date": "2026-05-08", "label": "📉 US PPI April — Producer prices. Warsh's inflation read. Higher = more hawkish near-term.", "symbol": "^GSPC", "type": "macro", "priority": "medium" },
-    { "date": "2026-05-13", "label": "🔥 US CPI April 2026 — Warsh's incoming inflation baseline. Critical for USD trajectory and rate cut timeline.", "symbol": "^GSPC", "type": "macro", "priority": "high" },
-    { "date": "2026-05-14", "label": "🛒 Walmart Q1 FY2027 Earnings — consumer health read. Discretionary spending signal for QQQ thesis.", "symbol": "WMT", "type": "earnings", "priority": "medium" },
-    { "date": "2026-05-15", "label": "🏛️ Powell exits Fed — Kevin Warsh takes over as Chair. USD regime change watch. Near-term rebound expected before eventual cuts.", "symbol": "^GSPC", "type": "macro", "priority": "high" },
-    { "date": "2026-05-20", "label": "🤖 NVDA Q1 FY2027 Earnings — $78B guide, consensus $78.8B. Bar high. Only pops on Q2 guide >$85B. Watchlist entry signal.", "symbol": "NVDA", "type": "earnings", "priority": "high" },
-    { "date": "2026-05-22", "label": "📊 S&P Global PMI Flash US+EU — Business activity. TSM and AVGO sensitive to manufacturing PMI read.", "symbol": "^GSPC", "type": "macro", "priority": "medium" },
-    { "date": "2026-05-28", "label": "📉 US GDP Q1 2026 Final Revision — Tariff impact. Advance estimate -0.3%. Deeper revision = Fed pivot pressure.", "symbol": "^GSPC", "type": "macro", "priority": "medium" },
-    { "date": "2026-06-04", "label": "🏦 ECB Rate Decision — Cut expected -25bps to 2.0%. USD/EUR divergence if Warsh holds rates.", "symbol": "EURUSD", "type": "macro", "priority": "medium" },
-    { "date": "2026-06-11", "label": "🔥 US CPI May 2026 — Last inflation data before Warsh's first FOMC decision June 17. Critical.", "symbol": "^GSPC", "type": "macro", "priority": "high" },
-    { "date": "2026-06-17", "label": "📅 FOMC June — Warsh's FIRST rate decision + press conference. Market pricing 0-25bps cut. Watch USD, gold, BTC reaction.", "symbol": "^GSPC", "type": "macro", "priority": "high" },
-    { "date": "2026-06-25", "label": "🤖 AVGO Q2 FY2026 Earnings (est.) — Watchlist. Custom AI silicon revenue, hyperscaler pipeline update.", "symbol": "AVGO", "type": "earnings", "priority": "high" },
-    { "date": "2026-07-09", "label": "🔥 US CPI June 2026 — Pre-July FOMC. Gold and BTC sensitive to this print.", "symbol": "^GSPC", "type": "macro", "priority": "medium" },
-    { "date": "2026-07-14", "label": "📌 PINS Q2 2026 Earnings (est.) — Q1 inflection will define Q2 trajectory. Active position.", "symbol": "PINS", "type": "earnings", "priority": "high" },
-    { "date": "2026-07-22", "label": "🔧 TSM Q2 2026 Earnings (est.) — AI chip order flow. Direct impact on TSM position (+34%). Watch NVIDIA data center demand commentary.", "symbol": "TSM", "type": "earnings", "priority": "high" },
-    { "date": "2026-07-29", "label": "📅 FOMC July — Second Warsh decision. 1st cut likely if CPI cooperates. 2 total H2 cuts in consensus.", "symbol": "^GSPC", "type": "macro", "priority": "high" },
-    { "date": "2026-08-13", "label": "🔥 US CPI July 2026 — Mid-cycle check. Will determine if Sept FOMC is live.", "symbol": "^GSPC", "type": "macro", "priority": "medium" },
-    { "date": "2026-08-27", "label": "🤖 NVDA Q2 FY2027 Earnings (est.) — Blackwell ramp cycle data. Watchlist entry catalyst if guides >$90B.", "symbol": "NVDA", "type": "earnings", "priority": "medium" },
-    { "date": "2026-ongoing", "label": "⚔️ Hormuz Active War — 5% of pre-war traffic. US Navy blockade since Apr 13. Iran losing $500M/day. Reopen = AED 115K deployment trigger.", "symbol": "BZ=F", "type": "geopolitical", "priority": "medium" }
+    {
+      "date": "2026-05-04",
+      "label": "\ud83d\udea8 PINS Q1 2026 Earnings \u2014 after close. RSU decision must happen BEFORE open. Fraud lawsuit active. UAE = zero CGT.",
+      "symbol": "PINS",
+      "type": "earnings",
+      "priority": "critical"
+    },
+    {
+      "date": "2026-05-05",
+      "label": "\ud83d\udcca MSTR Q1 Earnings \u2014 holds 818K BTC @ $75.5K avg. Key BTC sentiment signal. Watch overnight BTC reaction.",
+      "symbol": "BTC-USD",
+      "type": "earnings",
+      "priority": "high"
+    },
+    {
+      "date": "2026-05-07",
+      "label": "\ud83c\udfe6 BOE Rate Decision \u2014 Expected hold at 4.5%. UK sticky inflation. GBP volatility watch.",
+      "symbol": "GBPUSD",
+      "type": "macro",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-05-08",
+      "label": "\ud83d\udcc9 US PPI April \u2014 Producer prices. Warsh's inflation read. Higher = more hawkish near-term.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-05-13",
+      "label": "\ud83d\udd25 US CPI April 2026 \u2014 Warsh's incoming inflation baseline. Critical for USD trajectory and rate cut timeline.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "high"
+    },
+    {
+      "date": "2026-05-14",
+      "label": "\ud83d\uded2 Walmart Q1 FY2027 Earnings \u2014 consumer health read. Discretionary spending signal for QQQ thesis.",
+      "symbol": "WMT",
+      "type": "earnings",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-05-15",
+      "label": "\ud83c\udfdb\ufe0f Powell exits Fed \u2014 Kevin Warsh takes over as Chair. USD regime change watch. Near-term rebound expected before eventual cuts.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "high"
+    },
+    {
+      "date": "2026-05-20",
+      "label": "\ud83e\udd16 NVDA Q1 FY2027 Earnings \u2014 $78B guide, consensus $78.8B. Bar high. Only pops on Q2 guide >$85B. Watchlist entry signal.",
+      "symbol": "NVDA",
+      "type": "earnings",
+      "priority": "high"
+    },
+    {
+      "date": "2026-05-22",
+      "label": "\ud83d\udcca S&P Global PMI Flash US+EU \u2014 Business activity. TSM and AVGO sensitive to manufacturing PMI read.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-05-28",
+      "label": "\ud83d\udcc9 US GDP Q1 2026 Final Revision \u2014 Tariff impact. Advance estimate -0.3%. Deeper revision = Fed pivot pressure.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-06-04",
+      "label": "\ud83c\udfe6 ECB Rate Decision \u2014 Cut expected -25bps to 2.0%. USD/EUR divergence if Warsh holds rates.",
+      "symbol": "EURUSD",
+      "type": "macro",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-06-11",
+      "label": "\ud83d\udd25 US CPI May 2026 \u2014 Last inflation data before Warsh's first FOMC decision June 17. Critical.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "high"
+    },
+    {
+      "date": "2026-06-17",
+      "label": "\ud83d\udcc5 FOMC June \u2014 Warsh's FIRST rate decision + press conference. Market pricing 0-25bps cut. Watch USD, gold, BTC reaction.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "high"
+    },
+    {
+      "date": "2026-06-25",
+      "label": "\ud83e\udd16 AVGO Q2 FY2026 Earnings (est.) \u2014 Watchlist. Custom AI silicon revenue, hyperscaler pipeline update.",
+      "symbol": "AVGO",
+      "type": "earnings",
+      "priority": "high"
+    },
+    {
+      "date": "2026-07-09",
+      "label": "\ud83d\udd25 US CPI June 2026 \u2014 Pre-July FOMC. Gold and BTC sensitive to this print.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-07-14",
+      "label": "\ud83d\udccc PINS Q2 2026 Earnings (est.) \u2014 Q1 inflection will define Q2 trajectory. Active position.",
+      "symbol": "PINS",
+      "type": "earnings",
+      "priority": "high"
+    },
+    {
+      "date": "2026-07-22",
+      "label": "\ud83d\udd27 TSM Q2 2026 Earnings (est.) \u2014 AI chip order flow. Direct impact on TSM position (+34%). Watch NVIDIA data center demand commentary.",
+      "symbol": "TSM",
+      "type": "earnings",
+      "priority": "high"
+    },
+    {
+      "date": "2026-07-29",
+      "label": "\ud83d\udcc5 FOMC July \u2014 Second Warsh decision. 1st cut likely if CPI cooperates. 2 total H2 cuts in consensus.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "high"
+    },
+    {
+      "date": "2026-08-13",
+      "label": "\ud83d\udd25 US CPI July 2026 \u2014 Mid-cycle check. Will determine if Sept FOMC is live.",
+      "symbol": "^GSPC",
+      "type": "macro",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-08-27",
+      "label": "\ud83e\udd16 NVDA Q2 FY2027 Earnings (est.) \u2014 Blackwell ramp cycle data. Watchlist entry catalyst if guides >$90B.",
+      "symbol": "NVDA",
+      "type": "earnings",
+      "priority": "medium"
+    },
+    {
+      "date": "2026-ongoing",
+      "label": "\u2694\ufe0f Hormuz Active War \u2014 5% of pre-war traffic. US Navy blockade since Apr 13. Iran losing $500M/day. Reopen = AED 115K deployment trigger.",
+      "symbol": "BZ=F",
+      "type": "geopolitical",
+      "priority": "medium"
+    }
   ],
-  "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "^VIX", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX", "AVBO", "NVDA", "MRVL", "VRT", "SLV", "SOL-USD"],
+  "marketSymbols": [
+    "^GSPC",
+    "^IXIC",
+    "GC=F",
+    "BZ=F",
+    "BTC-USD",
+    "ETH-USD",
+    "^VIX",
+    "VTI",
+    "QQQ",
+    "PINS",
+    "ICLN",
+    "TSM",
+    "LRCX",
+    "WPM",
+    "GEV",
+    "MU",
+    "RGLD",
+    "NTR",
+    "FCX",
+    "SCCO",
+    "GDX",
+    "AVGO",
+    "NVDA",
+    "MRVL",
+    "VRT",
+    "SLV",
+    "SOL-USD"
+  ],
   "geopolitical": {
     "warStatus": "ceasefire_extended_fragile",
     "notes": "Original ceasefire expired ~Apr 21, Trump extended briefly. US counter-blockade of Hormuz active since Apr 13. Iran seized ships Apr 22. Peace talks stalling. Oil prices rising on renewed risk premium. Monitor daily."
@@ -298,8 +555,8 @@
       "beginningRealizedEquity": 38521.45,
       "endingRealizedEquity": 37710.08,
       "endingUnrealizedEquity": 39417.02,
-      "deposits": 0.00,
-      "withdrawals": 0.00,
+      "deposits": 0.0,
+      "withdrawals": 0.0,
       "adjustments": 5.85,
       "pnlClosedPositions": -786.99,
       "dividends": 7.51,
@@ -327,24 +584,58 @@
       "cashAvailable": 1478.02,
       "assetCount": 17
     },
-    "closedTickersPeriod": ["MSFT", "KOG.OL", "ABBN", "TAN", "TTWO", "01211.HK", "BTC", "UBI.PA", "TRMB", "NFLX", "CRWD", "SNDK", "SMSN.L", "GAW", "AMD", "TSM", "TT", "UI", "GOOG", "ETOR", "CCL", "ENPH", "SEDG", "XLE", "TSLA", "XRP", "WDC"],
+    "closedTickersPeriod": [
+      "MSFT",
+      "KOG.OL",
+      "ABBN",
+      "TAN",
+      "TTWO",
+      "01211.HK",
+      "BTC",
+      "UBI.PA",
+      "TRMB",
+      "NFLX",
+      "CRWD",
+      "SNDK",
+      "SMSN.L",
+      "GAW",
+      "AMD",
+      "TSM",
+      "TT",
+      "UI",
+      "GOOG",
+      "ETOR",
+      "CCL",
+      "ENPH",
+      "SEDG",
+      "XLE",
+      "TSLA",
+      "XRP",
+      "WDC"
+    ],
     "notes": "Apr 1-25 period P&L: -$786.99. Sunday Apr 27 snapshot: portfolio $39,431.21, unrealized P&L +$1,856.65. Smart portfolios (BigTech +14%, RenewableEnergy +17%) doing heavy lifting."
   },
   "bullRunWatchlist": [
     {
-      "symbol": "AVBO",
+      "symbol": "AVGO",
       "label": "Broadcom",
       "type": "stock",
       "conviction": 8,
       "signal": "strong_buy",
       "thesis": "JPMorgan #1 AI infrastructure pick. Custom silicon for hyperscalers (Google, Meta, Apple). $571B AI capex flows through AVGO. Golden cross confirmed. Revenues up 50%+ YoY.",
-      "entryZone": { "min": 195, "max": 215 },
+      "entryZone": {
+        "min": 195,
+        "max": 215
+      },
       "uptrendAdd": 230,
       "target1": 265,
       "target2": 320,
       "stopLoss": 175,
-      "catalyst": "Q2 earnings June 25 (est.) — AI networking pipeline, custom chip TAM expansion",
-      "source": "JPMorgan top pick Apr 2026, Goldman Sachs AI infrastructure thesis"
+      "source": "JPMorgan top pick Apr 2026, Goldman Sachs AI infrastructure thesis",
+      "catalysts": [
+        "Q2 earnings June 25 (est.) \u2014 AI networking pipeline",
+        "custom chip TAM expansion"
+      ]
     },
     {
       "symbol": "FCX",
@@ -353,13 +644,20 @@
       "conviction": 8,
       "signal": "strong_buy",
       "thesis": "Copper supercycle in full swing. AI data centers need 475kmt/yr copper by 2026 (JPMorgan). 330kmt structural deficit forecast. Grasberg ramp + global EV buildout. Stock +40% YoY, still in early supercycle innings.",
-      "entryZone": { "min": 38, "max": 44 },
+      "entryZone": {
+        "min": 38,
+        "max": 44
+      },
       "uptrendAdd": 50,
       "target1": 62,
       "target2": 78,
       "stopLoss": 33,
-      "catalyst": "Q2 earnings, China infrastructure stimulus, AI data center capex announcements",
-      "source": "Goldman Sachs copper supercycle thesis, JPMorgan 330kmt deficit forecast"
+      "source": "Goldman Sachs copper supercycle thesis, JPMorgan 330kmt deficit forecast",
+      "catalysts": [
+        "Q2 earnings",
+        "China infrastructure stimulus",
+        "AI data center capex announcements"
+      ]
     },
     {
       "symbol": "NVDA",
@@ -367,14 +665,20 @@
       "type": "stock",
       "conviction": 7,
       "signal": "buy",
-      "thesis": "Undisputed AI GPU monopoly. $571B AI capex all flows through NVDA at some point. Bullish wedge breakout confirmed post-correction. Blackwell cycle still in early innings. Slight overbought — buy dips only.",
-      "entryZone": { "min": 100, "max": 118 },
+      "thesis": "Undisputed AI GPU monopoly. $571B AI capex all flows through NVDA at some point. Bullish wedge breakout confirmed post-correction. Blackwell cycle still in early innings. Slight overbought \u2014 buy dips only.",
+      "entryZone": {
+        "min": 100,
+        "max": 118
+      },
       "uptrendAdd": 132,
       "target1": 155,
       "target2": 195,
       "stopLoss": 88,
-      "catalyst": "Q1 FY2027 earnings May 20, Blackwell H200/B200 shipment data",
-      "source": "Goldman Sachs 2026 AI infrastructure thesis"
+      "source": "Goldman Sachs 2026 AI infrastructure thesis",
+      "catalysts": [
+        "Q1 FY2027 earnings May 20",
+        "Blackwell H200/B200 shipment data"
+      ]
     },
     {
       "symbol": "VRT",
@@ -383,13 +687,20 @@
       "conviction": 7,
       "signal": "buy",
       "thesis": "The picks-and-shovels AI play nobody talks about. Powers and cools every AI data center. Margins expanding. Goldman Sachs and Zacks both flagged as top 2026 buy alongside NVDA/AVGO. Massively underpriced vs AI chip stocks.",
-      "entryZone": { "min": 88, "max": 108 },
+      "entryZone": {
+        "min": 88,
+        "max": 108
+      },
       "uptrendAdd": 118,
       "target1": 145,
       "target2": 175,
       "stopLoss": 78,
-      "catalyst": "Q2 earnings, data center buildout contracts, power infrastructure policy support",
-      "source": "Goldman Sachs 2026 top picks, Zacks top AI infrastructure 2026"
+      "source": "Goldman Sachs 2026 top picks, Zacks top AI infrastructure 2026",
+      "catalysts": [
+        "Q2 earnings",
+        "data center buildout contracts",
+        "power infrastructure policy support"
+      ]
     },
     {
       "symbol": "SLV",
@@ -397,15 +708,22 @@
       "type": "etf",
       "conviction": 7,
       "signal": "watch",
-      "thesis": "SLV has ALREADY RUN — now at $68 (entry zone was $28-33, fully expired). Do not chase. Wait for 10-15% pullback to $58-62 before entering. War/inflation premium baked in. Warsh Fed transition could extend the metals run.",
-      "entryZone": { "min": 58, "max": 65 },
+      "thesis": "SLV has ALREADY RUN \u2014 now at $68 (entry zone was $28-33, fully expired). Do not chase. Wait for 10-15% pullback to $58-62 before entering. War/inflation premium baked in. Warsh Fed transition could extend the metals run.",
+      "entryZone": {
+        "min": 58,
+        "max": 65
+      },
       "uptrendAdd": 72,
       "target1": 85,
       "target2": 100,
       "stopLoss": 52,
-      "catalyst": "Gold breakout above $5,000, Warsh Fed rate cut expectations",
-      "source": "Entry zone updated May 3, 2026 — original $28-33 zone expired. SLV now at $68.",
-      "entryZoneStale": true
+      "source": "Entry zone updated May 3, 2026 \u2014 original $28-33 zone expired. SLV now at $68.",
+      "entryZoneStale": true,
+      "catalysts": [
+        "Gold breakout above $5,000",
+        "Warsh Fed rate cut expectations",
+        "Silver industrial demand + war premium"
+      ]
     },
     {
       "symbol": "SCCO",
@@ -414,13 +732,20 @@
       "conviction": 7,
       "signal": "buy",
       "thesis": "World's lowest-cost copper producer. Peru + Mexico mines = lowest AISC globally. Trades near all-time highs but copper supercycle justifies premium. Higher quality play vs FCX with better dividend yield.",
-      "entryZone": { "min": 165, "max": 185 },
+      "entryZone": {
+        "min": 165,
+        "max": 185
+      },
       "uptrendAdd": 200,
       "target1": 240,
       "target2": 285,
       "stopLoss": 150,
-      "catalyst": "Copper futures breakout above $6/lb, China demand data, AI capex announcements",
-      "source": "AInvest copper bull cycle analysis, Goldman Sachs copper demand forecast"
+      "source": "AInvest copper bull cycle analysis, Goldman Sachs copper demand forecast",
+      "catalysts": [
+        "Copper futures breakout above $6/lb",
+        "China demand data",
+        "AI capex announcements"
+      ]
     },
     {
       "symbol": "ETH-USD",
@@ -428,14 +753,21 @@
       "type": "crypto",
       "conviction": 7,
       "signal": "buy",
-      "thesis": "56% gap to cycle high of $4,953. Pectra upgrade live — improves staking and validator efficiency. Institutional ETF inflows accelerating. Underperformed BTC this cycle — mean reversion due. Lido staking 3-4% APR while waiting.",
-      "entryZone": { "min": 2000, "max": 2400 },
+      "thesis": "56% gap to cycle high of $4,953. Pectra upgrade live \u2014 improves staking and validator efficiency. Institutional ETF inflows accelerating. Underperformed BTC this cycle \u2014 mean reversion due. Lido staking 3-4% APR while waiting.",
+      "entryZone": {
+        "min": 2000,
+        "max": 2400
+      },
       "uptrendAdd": 2800,
       "target1": 3800,
       "target2": 5000,
       "stopLoss": 1700,
-      "catalyst": "Pectra upgrade adoption, ETF inflow acceleration, BTC breakout above $90K",
-      "source": "BeInCrypto Pectra analysis, CoinDCX bull run signals 2026"
+      "source": "BeInCrypto Pectra analysis, CoinDCX bull run signals 2026",
+      "catalysts": [
+        "Pectra upgrade adoption",
+        "ETF inflow acceleration",
+        "BTC breakout above $90K"
+      ]
     },
     {
       "symbol": "MRVL",
@@ -443,14 +775,21 @@
       "type": "stock",
       "conviction": 6,
       "signal": "watch",
-      "thesis": "JPMorgan top pick for custom silicon + AI networking. Building custom AI ASICs for Amazon and Google. Near-term overbought (RSI 70+). Don't chase — wait for 10-15% pullback then buy aggressively.",
-      "entryZone": { "min": 60, "max": 72 },
+      "thesis": "JPMorgan top pick for custom silicon + AI networking. Building custom AI ASICs for Amazon and Google. Near-term overbought (RSI 70+). Don't chase \u2014 wait for 10-15% pullback then buy aggressively.",
+      "entryZone": {
+        "min": 60,
+        "max": 72
+      },
       "uptrendAdd": 82,
       "target1": 98,
       "target2": 120,
       "stopLoss": 54,
-      "catalyst": "Q2 earnings, custom ASIC design win announcements, hyperscaler spending updates",
-      "source": "JPMorgan top picks April 2026"
+      "source": "JPMorgan top picks April 2026",
+      "catalysts": [
+        "Q2 earnings",
+        "custom ASIC design win announcements",
+        "hyperscaler spending updates"
+      ]
     },
     {
       "symbol": "SOL-USD",
@@ -458,14 +797,21 @@
       "type": "crypto",
       "conviction": 6,
       "signal": "buy",
-      "thesis": "48.8% institutional ownership of spot SOL ETF — highest of any crypto product. Fastest-growing Layer 1. $600M+ weekly DEX volume. Jito staking 7-8% APR (MEV-boosted). High risk, high reward.",
-      "entryZone": { "min": 125, "max": 155 },
+      "thesis": "48.8% institutional ownership of spot SOL ETF \u2014 highest of any crypto product. Fastest-growing Layer 1. $600M+ weekly DEX volume. Jito staking 7-8% APR (MEV-boosted). High risk, high reward.",
+      "entryZone": {
+        "min": 125,
+        "max": 155
+      },
       "uptrendAdd": 175,
       "target1": 240,
       "target2": 380,
       "stopLoss": 100,
-      "catalyst": "Spot ETF approval momentum, DeFi TVL growth, BTC-led crypto bull run",
-      "source": "CoinDCX institutional ownership data, MEXC bull run analysis 2026"
+      "source": "CoinDCX institutional ownership data, MEXC bull run analysis 2026",
+      "catalysts": [
+        "Spot ETF approval momentum",
+        "DeFi TVL growth",
+        "BTC-led crypto bull run"
+      ]
     }
   ],
   "wealthProgress": {
@@ -477,27 +823,30 @@
         "valueAED": 144782,
         "confidence": "high",
         "color": "emerald",
-        "note": "$39,431 × 3.6725 — live Apr 27 snapshot"
+        "note": "$39,431 \u00d7 3.6725 \u2014 live Apr 27 snapshot"
       },
       {
         "label": "AED Capital (locked)",
         "valueAED": 115000,
         "confidence": "high",
         "color": "amber",
-        "note": "Awaiting Hormuz resolution — deployment trigger not yet met"
+        "note": "Awaiting Hormuz resolution \u2014 deployment trigger not yet met"
       },
       {
         "label": "PINS RSU (employer)",
         "valueAED": 106129,
         "confidence": "medium",
         "color": "sky",
-        "note": "1,429 sh × $20.22 × 3.6725 — employer broker, not eToro"
+        "note": "1,429 sh \u00d7 $20.22 \u00d7 3.6725 \u2014 employer broker, not eToro"
       }
     ],
-    "untracked": ["Wio / bank savings", "Other AED savings"]
+    "untracked": [
+      "Wio / bank savings",
+      "Other AED savings"
+    ]
   },
   "portfolio": {
     "targetAED": 1000000,
-    "notes": "AED 1M goal — eToro equity + locked AED capital + PINS RSU. Staking and crypto yield to compound over 2026."
+    "notes": "AED 1M goal \u2014 eToro equity + locked AED capital + PINS RSU. Staking and crypto yield to compound over 2026."
   }
 }
