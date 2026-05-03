@@ -64,6 +64,7 @@ export default function StrategistPanel({
   const [generatedAt, setGeneratedAt] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLive, setIsLive] = useState(false);
+  const [isFallback, setIsFallback] = useState(false);
 
   async function regenerate() {
     setLoading(true);
@@ -86,15 +87,10 @@ export default function StrategistPanel({
       setActionItems(data.actionItems ?? []);
       setGeneratedAt(data.generatedAt);
       setIsLive(true);
+      setIsFallback(!!data._fallback);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Unknown error";
-      if (msg.includes("ANTHROPIC_API_KEY")) {
-        setError(
-          "Add ANTHROPIC_API_KEY to Vercel → Settings → Environment Variables to enable live analysis."
-        );
-      } else {
-        setError(`Generation failed: ${msg}`);
-      }
+      setError(`Analysis error: ${msg}`);
     } finally {
       setLoading(false);
     }
@@ -113,10 +109,11 @@ export default function StrategistPanel({
               Strategist Note
             </p>
             {isLive ? (
-              <span className="text-emerald-500 text-xs">
-                ● live ·{" "}
-                {minsAgo === 0 ? "just now" : `${minsAgo}m ago`}
-              </span>
+              isFallback ? (
+                <span className="text-amber-400 text-xs">⚡ rule-based · {minsAgo === 0 ? "just now" : `${minsAgo}m ago`}</span>
+              ) : (
+                <span className="text-emerald-500 text-xs">● AI live · {minsAgo === 0 ? "just now" : `${minsAgo}m ago`}</span>
+              )
             ) : (
               <span className="text-amber-500 text-xs">⚠ manual — may be stale</span>
             )}
