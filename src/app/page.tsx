@@ -14,14 +14,34 @@ import StrategistPanel from "./components/StrategistPanel";
 
 export const revalidate = 900; // 15 min ISR — Refresh button bypasses cache on demand
 
+interface FearGreedEntry {
+  value: string;
+  value_classification: string;
+  timestamp: string;
+}
+
+async function fetchFearGreed(): Promise<FearGreedEntry | null> {
+  try {
+    const res = await fetch("https://api.alternative.me/fng/?limit=1", {
+      next: { revalidate: 3600 },
+    } as RequestInit);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.data?.[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 async function getDashboardData() {
   const data = manualInput as unknown as ManualInput;
-  // Fetch market prices (15 min) and eToro portfolio (1 hr) in parallel
-  const [marketData, etoroData] = await Promise.all([
+  // Fetch market prices (15 min), eToro portfolio (1 hr), and Fear & Greed (1 hr) in parallel
+  const [marketData, etoroData, fearGreed] = await Promise.all([
     fetchMarketData(data.marketSymbols),
     fetchEtoroPortfolio(),
+    fetchFearGreed(),
   ]);
-  return { data, marketData, etoroData };
+  return { data, marketData, etoroData, fearGreed };
 }
 
 function formatCurrency(value: number): string {
@@ -124,7 +144,7 @@ function getPositionFlags(position: PositionWithLive): Flag[] {
 }
 
 export default async function Dashboard() {
-  const { data, marketData, etoroData } = await getDashboardData();
+  const { data, marketData, etoroData, fearGreed } = await getDashboardData();
 
   // Live cash from eToro API (credit minus pending orders), falls back to manual-input.json
   const cashIdle = etoroData?.cashAvailable ?? data.equity.cashIdle;
@@ -196,6 +216,7 @@ export default async function Dashboard() {
     "BZ=F",
     "BTC-USD",
     "ETH-USD",
+    "^VIX",
   ];
   const marketTiles = marketSymbols.map((sym) => getMarketData(sym, marketData));
 
@@ -515,7 +536,7 @@ export default async function Dashboard() {
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
                 Market Context
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-3">
                 {marketTiles.map((mkt) => {
                   const labels: Record<string, string> = {
                     "^GSPC": "S&P 500",
@@ -524,37 +545,86 @@ export default async function Dashboard() {
                     "BZ=F": "Brent Crude",
                     "BTC-USD": "BTC",
                     "ETH-USD": "ETH",
+                    "^VIX": "VIX Fear",
                   };
+                  const isVix = mkt.symbol === "^VIX";
+                  // VIX coloring: <15 green (complacent), 15-20 gray, 20-30 amber, >30 red
+                  const vixColor = isVix
+                    ? mkt.price >= 30 ? "text-red-400"
+                    : mkt.price >= 20 ? "text-amber-400"
+                    : mkt.price >= 15 ? "text-gray-300"
+                    : "text-emerald-400"
+                    : mkt.changePercent >= 0 ? "text-emerald-400" : "text-red-400";
+                  const vixLabel = isVix
+                    ? mkt.price >= 30 ? "FEAR"
+                    : mkt.price >= 20 ? "ELEVATED"
+                    : mkt.price >= 15 ? "NORMAL"
+                    : "COMPLACENT"
+                    : null;
                   return (
                     <div
                       key={mkt.symbol}
-                      className="bg-gray-800/30 border border-gray-700 rounded-lg p-3"
+                      className={`bg-gray-800/30 border rounded-lg p-3 ${
+                        isVix && mkt.price >= 30 ? "border-red-800" :
+                        isVix && mkt.price >= 20 ? "border-amber-800" :
+                        "border-gray-700"
+                      }`}
                     >
                       <p className="text-xs font-bold text-gray-400 mb-1">
                         {labels[mkt.symbol] || mkt.symbol}
                       </p>
                       <p className="font-mono font-bold text-gray-100">
                         {mkt.price > 0
-                          ? mkt.price > 100
-                            ? mkt.price.toFixed(0)
-                            : mkt.price.toFixed(4)
+                          ? isVix
+                            ? mkt.price.toFixed(1)
+                            : mkt.price > 100
+                              ? mkt.price.toFixed(0)
+                              : mkt.price.toFixed(4)
                           : "—"}
                       </p>
-                      <p
-                        className={`text-xs font-mono ${
-                          mkt.changePercent >= 0
-                            ? "text-emerald-400"
-                            : "text-red-400"
-                        }`}
-                      >
+                      <p className={`text-xs font-mono ${vixColor}`}>
                         {mkt.price > 0
-                          ? formatPercent(mkt.changePercent)
+                          ? isVix
+                            ? vixLabel
+                            : formatPercent(mkt.changePercent)
                           : "—"}
                       </p>
                     </div>
                   );
                 })}
               </div>
+
+              {/* Crypto Fear & Greed Index */}
+              {fearGreed && (
+                <div className={`flex items-center justify-between rounded-lg p-3 border ${
+                  Number(fearGreed.value) >= 75 ? "bg-red-950/20 border-red-800" :
+                  Number(fearGreed.value) >= 55 ? "bg-emerald-950/20 border-emerald-800" :
+                  Number(fearGreed.value) >= 45 ? "bg-gray-800/40 border-gray-700" :
+                  Number(fearGreed.value) >= 25 ? "bg-amber-950/20 border-amber-800" :
+                  "bg-red-950/30 border-red-700"
+                }`}>
+                  <div>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Crypto Fear & Greed</p>
+                    <p className="text-xs text-gray-500 mt-0.5">alternative.me · updates daily</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-2xl font-mono font-bold ${
+                      Number(fearGreed.value) >= 75 ? "text-red-400" :
+                      Number(fearGreed.value) >= 55 ? "text-emerald-400" :
+                      Number(fearGreed.value) >= 45 ? "text-gray-300" :
+                      Number(fearGreed.value) >= 25 ? "text-amber-400" :
+                      "text-red-500"
+                    }`}>{fearGreed.value}</p>
+                    <p className={`text-xs font-semibold ${
+                      Number(fearGreed.value) >= 75 ? "text-red-400" :
+                      Number(fearGreed.value) >= 55 ? "text-emerald-400" :
+                      Number(fearGreed.value) >= 45 ? "text-gray-400" :
+                      Number(fearGreed.value) >= 25 ? "text-amber-400" :
+                      "text-red-500"
+                    }`}>{fearGreed.value_classification}</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Technical Signals */}
