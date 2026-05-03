@@ -833,16 +833,54 @@
         "note": "Awaiting Hormuz resolution \u2014 deployment trigger not yet met"
       },
       {
-        "label": "PINS RSU (employer)",
+        "label": "PINS RSU (Snap)",
         "valueAED": 106129,
         "confidence": "medium",
         "color": "sky",
         "note": "1,429 sh \u00d7 $20.22 \u00d7 3.6725 \u2014 employer broker, not eToro"
+      },
+      {
+        "label": "Wio Bank (USD)",
+        "valueAED": 368869,
+        "confidence": "low",
+        "color": "indigo",
+        "note": "$100,468 \u00d7 3.6725 \u2014 Sep 30, 2025 snapshot. Verify current balance."
+      },
+      {
+        "label": "AED / EUR Cash",
+        "valueAED": 69568,
+        "confidence": "low",
+        "color": "purple",
+        "note": "ENBD AED 55,363 + Wio AED 261 + Wio EUR 3,361 \u2014 Sep 30, 2025 snapshot"
+      }
+    ],
+    "liabilities": [
+      {
+        "label": "Emirates NBD Personal Loan",
+        "balanceAED": 86362,
+        "note": "103,981 Sep 2025 \u2212 7 \u00d7 2,517 AED repayments = est. 86,362 outstanding"
+      },
+      {
+        "label": "Emirates NBD Credit Card",
+        "balanceAED": 29348,
+        "note": "29,348 AED \u2014 Sep 30, 2025. Current balance unknown."
+      }
+    ],
+    "incomeSources": [
+      {
+        "label": "Snap Middle East salary",
+        "monthlyAED": 53202,
+        "note": "212,809 AED over Jun\u2013Sep 2025 \u2248 53,202 AED/month avg"
+      },
+      {
+        "label": "NP10 Consulting (EUR)",
+        "monthlyAED": 9329,
+        "note": "2,250 EUR/month \u00d7 4.15 AED/EUR \u2248 9,329 AED/month"
       }
     ],
     "untracked": [
-      "Wio / bank savings",
-      "Other AED savings"
+      "Wio Bank savings pot \u2018New house\u2019 (0 AED Sep 2025)",
+      "Post-Sep 2025 salary accumulation \u2014 estimate ~196K AED over 7 months"
     ]
   },
   "portfolio": {
