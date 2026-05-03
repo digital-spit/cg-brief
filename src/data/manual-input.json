@@ -12,9 +12,10 @@
     "smartPortfoliosValue": 22433.76
   },
   "strategistNote": {
-    "title": "Mag7 delivered. QQQ near TP1. PINS cleared stop. Gold survived Apr 30 scare.",
-    "body": "Saturday May 2 update. Fed held rates Apr 29 as expected. Mag7 earnings (GOOG/AMZN/META) beat — QQQ surged to $674 vs $607.95 avg (+10.8%), approaching TP1 at $729. PINS recovered to $20.22, back above $20 stop — RSU hedge thesis intact. BTC climbing from $75.6K low to $78.4K, SL at $70K has ~10% cushion. Gold had a dangerous dip to $4,515 on Apr 30 (only $115 above SL $4,400) before recovering to $4,644 — watch Iran/oil volatility. Hormuz still blocked, ceasefire fragile. ⚠️ Wio AED deadline is May 3 — act today if not deploying the 115K AED.",
-    "edition": "Saturday Edition"
+    "title": "PINS earnings tomorrow. Powell exits May 15. No FOMC until June 17. QQQ at 52-week high.",
+    "body": "Sunday May 2 update. ⚠️ CRITICAL: PINS Q1 earnings Monday May 4 after close — sell RSU shares before Monday open, NOT after (binary risk + active securities fraud lawsuit). Next FOMC is June 16-17, NOT May 7 (that meeting does not exist). Kevin Warsh confirmed as Powell's replacement effective May 15 — expect USD weakness and rate cut repricing, bullish for gold and BTC. QQQ at $674.78, its 52-week high — TP1 $729 is 8% away but do not chase at the high; buy pullbacks. BTC at $78.3K, up 14% in April but stuck below $80K resistance — MSTR reports May 5, watch for BTC sentiment signal. Gold $4,612 — NOT a hope position, this is the portfolio's strongest hold. GDX near all-time high. Wio AED 115K deadline TODAY (May 3).",
+    "edition": "Live Intelligence Update — May 2, 2026",
+    "stalenessWarning": "This note is manually updated. Use 'Regenerate Analysis' for AI-generated live analysis."
   },
   "positions": [
     {
@@ -254,21 +255,26 @@
     "deploymentAmountAED": 115000
   },
   "actionItems": [
-    { "label": "⚠️ Wio AED deadline TODAY (May 3) — move 115K AED to Wio Fixed Saving Space (4% p.a.) if not deploying. Act now.", "priority": "high", "done": false },
-    { "label": "Gold $4,644 — survived Apr 30 scare ($4,515, 115 above SL). Still vulnerable to Iran/oil swings. Monitor daily.", "priority": "high", "done": false },
-    { "label": "QQQ $674 — now +10.8% above avg cost $607.95. TP1 at $729 is 8% away. Consider partial trim if macro softens.", "priority": "medium", "done": false },
-    { "label": "PINS $20.22 — cleared $20 stop, now hold. RSU hedge thesis intact. Still -17% below avg $24.44.", "priority": "medium", "done": false },
-    { "label": "BTC $78,445 — recovering from $74.9K low. SL $70K has ~10% cushion. Hold.", "priority": "medium", "done": false },
-    { "label": "GDX — watch gold price action for miners catch-up confirmation.", "priority": "medium", "done": false },
-    { "label": "Redefine 115K AED deployment triggers — Hormuz still blocked, ceasefire fragile", "priority": "medium", "done": false }
+    { "label": "🚨 PINS RSU — SELL Monday pre-market open. Q1 earnings Monday May 4 after close. Binary risk + fraud lawsuit. UAE = zero CGT, full $28.9K deployable. Do NOT hold through earnings.", "priority": "critical", "done": false },
+    { "label": "⚠️ Wio AED 115K — deadline TODAY May 3. Move to Wio Fixed Savings (4% p.a.) if not deploying into markets. Decision cannot wait.", "priority": "critical", "done": false },
+    { "label": "📅 FOMC CORRECTION — no FOMC on May 7. Next meeting is June 16-17. Remove from timing logic for QQQ entry.", "priority": "high", "done": false },
+    { "label": "🏛️ Powell exits May 15, Warsh takes over. Watch USD reaction — Warsh promised 'regime change' at Fed. Bullish for gold, BTC, soft for USD.", "priority": "high", "done": false },
+    { "label": "📊 MSTR Q1 earnings May 5 — BTC sentiment signal. Strategy holds 818K BTC @ $75.5K avg. Watch for BTC reaction.", "priority": "high", "done": false },
+    { "label": "🥇 Gold $4,612 — strongest position in portfolio. GDX near all-time high. Hold conviction. Watch Powell exit May 15 for further gold bid.", "priority": "high", "done": false },
+    { "label": "📈 QQQ $674 at 52-week high — TP1 $729 is 8% away. Do not buy at the high. Wait for 5-7% pullback before adding. Next FOMC is June 17.", "priority": "medium", "done": false },
+    { "label": "₿ BTC $78.3K — can't break $80K after +14% in April. MSTR earnings May 5 next catalyst. SL $70K intact, hold but no add.", "priority": "medium", "done": false },
+    { "label": "🔑 Smart Portfolio consolidation — collapse from 6 to 2 (BigTech + GoldWorldWide). Liquidate RenewableEnergy, CyberSecurity, InTheGame, EuropeDefense.", "priority": "medium", "done": false }
   ],
   "events": [
-    { "date": "2026-05-03", "label": "Wio AED Deadline — deploy or park 115K AED in Fixed Savings (4% p.a.)", "symbol": "AED", "type": "personal", "priority": "critical" },
-    { "date": "2026-05-07", "label": "FOMC Meeting — Fed rate decision, next market mover", "symbol": "^GSPC", "type": "macro", "priority": "high" },
-    { "date": "2026-05-15", "label": "US CPI Data Release — key for rate cut timeline", "symbol": "^GSPC", "type": "macro", "priority": "high" },
-    { "date": "2026-05-22", "label": "NVDA Q1 FY2027 Earnings — Blackwell demand signal, AI capex read-through", "symbol": "NVDA", "type": "earnings", "priority": "high" },
-    { "date": "2026-06-01", "label": "QQQ TP1 Watch — $729 target, currently +10.8% above avg. Monitor for trim trigger.", "symbol": "QQQ", "type": "portfolio", "priority": "medium" },
-    { "date": "2026-ongoing", "label": "Hormuz Monitoring — ceasefire fragile, US counter-blockade active. Reopen = 115K AED deployment trigger.", "symbol": "BZ=F", "type": "geopolitical", "priority": "medium" }
+    { "date": "2026-05-03", "label": "🚨 Wio AED Deadline — TODAY. Deploy or park 115K AED in Fixed Savings (4% p.a.). Cannot wait.", "symbol": "AED", "type": "personal", "priority": "critical" },
+    { "date": "2026-05-04", "label": "🚨 PINS Q1 2026 Earnings — after close. Sell RSU shares BEFORE open. Fraud lawsuit active, earnings decline expected. UAE = zero CGT.", "symbol": "PINS", "type": "earnings", "priority": "critical" },
+    { "date": "2026-05-05", "label": "📊 MSTR Q1 Earnings — Strategy holds 818K BTC @ $75.5K avg. Key BTC sentiment signal for your position.", "symbol": "BTC-USD", "type": "earnings", "priority": "high" },
+    { "date": "2026-05-15", "label": "🏛️ Powell exits Fed — Kevin Warsh takes over as Chair. 'Regime change' at Fed. Watch USD, gold, rate expectations.", "symbol": "^GSPC", "type": "macro", "priority": "high" },
+    { "date": "2026-05-15", "label": "📉 US CPI Data Release — inflation print, key input for Warsh's first policy signal", "symbol": "^GSPC", "type": "macro", "priority": "high" },
+    { "date": "2026-05-20", "label": "🤖 NVDA Q1 FY2027 Earnings — $78B guide, consensus $78.8B. Bar is high. Only pops on Q2 guide >$85B.", "symbol": "NVDA", "type": "earnings", "priority": "high" },
+    { "date": "2026-06-17", "label": "📅 Next FOMC Meeting — June 16-17 (NOT May 7, that meeting does not exist). Warsh's first decision.", "symbol": "^GSPC", "type": "macro", "priority": "medium" },
+    { "date": "2026-06-01", "label": "📈 QQQ TP1 Watch — $729 target, currently +10.8% above avg. Do not buy at 52-week high. Wait for pullback.", "symbol": "QQQ", "type": "portfolio", "priority": "medium" },
+    { "date": "2026-ongoing", "label": "⚔️ Hormuz Active War — 5% of pre-war traffic. US Navy blockade since Apr 13. Deadlocked talks. Reopen = 115K AED deployment trigger.", "symbol": "BZ=F", "type": "geopolitical", "priority": "medium" }
   ],
   "marketSymbols": ["^GSPC", "^IXIC", "GC=F", "BZ=F", "BTC-USD", "ETH-USD", "VTI", "QQQ", "PINS", "ICLN", "TSM", "LRCX", "WPM", "GEV", "MU", "RGLD", "NTR", "FCX", "SCCO", "GDX", "AVGO", "NVDA", "MRVL", "VRT", "SLV", "SOL-USD"],
   "geopolitical": {
@@ -380,15 +386,16 @@
       "label": "iShares Silver Trust",
       "type": "etf",
       "conviction": 7,
-      "signal": "buy",
-      "thesis": "Goldman target $85-100/oz for 2026. Silver underperformed gold YTD — massive catch-up trade. Green transition metal (solar panels, EVs). Dual demand: monetary store of value + industrial. Higher beta gold play.",
-      "entryZone": { "min": 28, "max": 33 },
-      "uptrendAdd": 38,
-      "target1": 50,
-      "target2": 65,
-      "stopLoss": 24,
-      "catalyst": "Gold breakout above $5,000, Fed rate cuts, green energy spending acceleration",
-      "source": "Goldman Sachs $85-100/oz silver forecast 2026, Finance Magnates analyst $375 silver prediction"
+      "signal": "watch",
+      "thesis": "SLV has ALREADY RUN — now at $68 (entry zone was $28-33, fully expired). Do not chase. Wait for 10-15% pullback to $58-62 before entering. War/inflation premium baked in. Warsh Fed transition could extend the metals run. Still a strong longer-term hold if you're already in.",
+      "entryZone": { "min": 58, "max": 65 },
+      "uptrendAdd": 72,
+      "target1": 85,
+      "target2": 100,
+      "stopLoss": 52,
+      "catalyst": "Gold breakout above $5,000, Warsh Fed rate cut expectations, green energy spending acceleration",
+      "source": "Entry zone updated May 2, 2026 — original $28-33 zone was hit and expired. SLV now at $68.",
+      "entryZoneStale": true
     },
     {
       "symbol": "SCCO",

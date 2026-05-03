@@ -9,6 +9,8 @@ import type {
 } from "@/lib/types";
 import manualInput from "@/data/manual-input.json";
 import RefreshButton from "./refresh-button";
+import LiveNewsFeed from "./components/LiveNewsFeed";
+import StrategistPanel from "./components/StrategistPanel";
 
 export const revalidate = 900; // 15 min ISR — Refresh button bypasses cache on demand
 
@@ -169,8 +171,11 @@ export default async function Dashboard() {
   const pinsLivePrice = marketData.get("PINS")?.price ?? 0;
   const pinsRsuAED = pinsLivePrice > 0 ? Math.round(pinsLivePrice * 1429 * usdToAed) : 0;
 
-  // Filter to only upcoming events (hide passed ones)
-  const upcomingEvents = (data.events ?? []).filter((evt: any) => evt.status !== "passed");
+  // Filter to only upcoming/today events — compare date string to today in Dubai time
+  const todayDubai = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dubai" }); // YYYY-MM-DD
+  const upcomingEvents = (data.events ?? []).filter(
+    (evt: any) => evt.status !== "passed" && evt.date >= todayDubai
+  );
 
   const now = new Date();
   const dateStr = now.toLocaleDateString("en-US", {
@@ -193,6 +198,38 @@ export default async function Dashboard() {
     "ETH-USD",
   ];
   const marketTiles = marketSymbols.map((sym) => getMarketData(sym, marketData));
+
+  // Portfolio snapshot — passed to StrategistPanel for AI regeneration
+  const portfolioSnapshot = {
+    portfolioValue: totalPortfolioValue,
+    cashIdle,
+    totalPnL,
+    isEtoroLive,
+    positions: enrichedPositions.map((p) => ({
+      symbol: p.symbol,
+      livePrice: p.livePrice,
+      avgCost: p.avgCost,
+      unrealizedPnlPercent: p.unrealizedPnlPercent,
+      stopLoss: p.stopLoss,
+      takeProfit: p.takeProfit,
+    })),
+    events: upcomingEvents.slice(0, 6).map((e: any) => ({
+      date: e.date,
+      label: e.label,
+      priority: e.priority ?? "medium",
+    })),
+    warStatus: {
+      status: data.warStatus.status,
+      description: data.warStatus.description,
+    },
+    marketContext: marketTiles
+      .filter((m) => m.price > 0)
+      .map((m) => ({
+        symbol: m.symbol,
+        price: m.price,
+        changePercent: m.changePercent,
+      })),
+  };
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 p-5">
@@ -261,15 +298,8 @@ export default async function Dashboard() {
           </div>
         </div>
 
-        {/* Strategist Note */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 mb-8">
-          <p className="text-sm italic text-gray-300 font-semibold mb-2">
-            {data.strategistNote.title}
-          </p>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            {data.strategistNote.body}
-          </p>
-        </div>
+        {/* Live Intelligence Feed */}
+        <LiveNewsFeed />
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
@@ -422,9 +452,12 @@ export default async function Dashboard() {
             {/* Smart Portfolios */}
             {data.smartPortfolios && data.smartPortfolios.length > 0 && (
               <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                  Smart Portfolios
-                </p>
+                <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-800">
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    Smart Portfolios
+                  </p>
+                  <span className="text-amber-500 text-xs">⚠ snapshot</span>
+                </div>
                 <div className="space-y-2">
                   {(data.smartPortfolios as SmartPortfolio[]).map((sp) => (
                     <div key={sp.name} className="flex justify-between items-center border-b border-gray-800/50 pb-2 last:border-0 text-sm">
@@ -607,6 +640,13 @@ export default async function Dashboard() {
 
           {/* Right Column */}
           <div className="lg:col-span-1 space-y-5">
+            {/* Strategist Note + Action Items */}
+            <StrategistPanel
+              initialNote={data.strategistNote}
+              initialActionItems={data.actionItems}
+              portfolioSnapshot={portfolioSnapshot}
+            />
+
             {/* Wealth Progress */}
             {data.wealthProgress && (
               <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
@@ -789,30 +829,6 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            {/* Action Items */}
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                Action Items
-              </p>
-              <div className="space-y-2">
-                {data.actionItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className={`rounded-lg p-2 text-xs border-l-4 ${
-                      item.done
-                        ? "bg-gray-800/50 border-gray-600 text-gray-500 line-through"
-                        : item.priority === "critical" || item.priority === "high"
-                          ? "bg-red-950/30 border-red-600"
-                          : item.priority === "medium"
-                            ? "bg-amber-950/30 border-amber-600"
-                            : "bg-gray-800/30 border-gray-600"
-                    }`}
-                  >
-                    <p>{item.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Bull Run Watchlist — full width */}
