@@ -109,10 +109,24 @@ export interface WealthComponent {
   note?: string;
 }
 
+export interface WealthLiability {
+  label: string;
+  balanceAED: number;
+  note?: string;
+}
+
+export interface WealthIncomeSource {
+  label: string;
+  monthlyAED: number;
+  note?: string;
+}
+
 export interface WealthProgress {
   goalAED: number;
   usdToAed: number;
   components: WealthComponent[];
+  liabilities?: WealthLiability[];
+  incomeSources?: WealthIncomeSource[];
   untracked?: string[];
 }
 

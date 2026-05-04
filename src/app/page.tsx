@@ -149,39 +149,48 @@ export default async function Dashboard() {
   // Live cash from eToro API (credit minus pending orders), falls back to manual-input.json
   const cashIdle = etoroData?.cashAvailable ?? data.equity.cashIdle;
   const isEtoroLive = etoroData !== null;
+  const hasLiveMirrors = isEtoroLive && (etoroData?.mirrors.length ?? 0) > 0;
 
   const enrichedPositions = data.positions.map((pos) =>
     enrichPositionWithLiveData(pos, marketData, etoroData?.aggregated)
   );
 
-  const copyPortfolioValue = enrichedPositions
-    .filter(
-      (pos) =>
-        data.copyPortfolio.positions.some(
-          (cp) => cp.symbol === pos.symbol
-        ) && pos.avgCost === 0
-    )
-    .reduce((sum, pos) => sum + pos.currentValue, 0);
-
-  const investedValue = enrichedPositions.reduce(
-    (sum, pos) => sum + pos.quantity * pos.avgCost,
-    0
-  );
-
-  const currentPortfolioValue = enrichedPositions.reduce(
+  // Direct book — sum from positions joined to live Yahoo prices + live eToro units/cost
+  const directBookValue = enrichedPositions.reduce(
     (sum, pos) => sum + pos.currentValue,
     0
   );
+  const directBookInvested = isEtoroLive
+    ? (etoroData!.directInvested || enrichedPositions.reduce((s, p) => s + p.quantity * p.avgCost, 0))
+    : enrichedPositions.reduce((s, p) => s + p.quantity * p.avgCost, 0);
 
-  // Smart Portfolio mirror value from manual snapshot (eToro API doesn't expose SP values)
-  const smartPortfoliosValue = (data.equity as any).smartPortfoliosValue ?? 0;
+  // Mirrors (Copy traders + Smart Portfolios) — live from eToro when available,
+  // otherwise fall back to manual smartPortfolios + copyPortfolio snapshots
+  const liveMirrorsInvested = etoroData?.mirrorsInvested ?? 0;
+  const liveMirrorsValue = etoroData?.mirrorsValue ?? 0;
 
-  // Portfolio value: live direct positions + smart portfolios snapshot + live cash
-  const totalPortfolioValue = isEtoroLive
-    ? currentPortfolioValue + smartPortfoliosValue + cashIdle
-    : data.equity.endingUnrealized;
+  const manualMirrorsInvested =
+    (data.smartPortfolios?.reduce((s, sp) => s + (sp.currentValue - sp.currentPnl), 0) ?? 0) +
+    ((data.copyPortfolio.currentValue ?? 0) - (data.copyPortfolio.currentPnl ?? 0));
+  const manualMirrorsValue =
+    (data.smartPortfolios?.reduce((s, sp) => s + sp.currentValue, 0) ?? 0) +
+    (data.copyPortfolio.currentValue ?? 0);
 
-  const totalPnL = currentPortfolioValue - investedValue;
+  const mirrorsInvested = hasLiveMirrors ? liveMirrorsInvested : manualMirrorsInvested;
+  const mirrorsValue = hasLiveMirrors ? liveMirrorsValue : manualMirrorsValue;
+
+  // Headline totals — single source of truth, matches eToro's app totals
+  const investedValue = directBookInvested + mirrorsInvested;
+  const totalPortfolioValue = directBookValue + mirrorsValue + cashIdle;
+  const totalPnL = totalPortfolioValue - investedValue - cashIdle; // P/L excludes cash
+  const totalPnLPct = investedValue > 0 ? (totalPnL / investedValue) * 100 : 0;
+
+  // Diagnostic banner: show divergence vs eToro's own portfolio summary if available
+  const dataSourceLabel = hasLiveMirrors
+    ? "eToro API · live"
+    : isEtoroLive
+      ? "eToro API (cash + direct only) · mirrors from manual snapshot"
+      : "manual snapshot — eToro API unreachable";
 
   const allFlags = enrichedPositions.flatMap(getPositionFlags);
 
@@ -261,12 +270,19 @@ export default async function Dashboard() {
             <div>
               <h1 className="text-3xl font-bold tracking-tight">C&G Brief</h1>
               <p className="text-sm text-gray-400">
-                {data.strategistNote.edition || "Edition"}
+                Live Dashboard · {dateStr} {timeStr} Dubai
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
               <RefreshButton />
-              <p className="text-xs text-gray-500">data as of {dateStr} {timeStr} Dubai</p>
+              <p className={`text-xs font-mono ${hasLiveMirrors ? "text-emerald-500" : isEtoroLive ? "text-amber-500" : "text-red-500"}`}>
+                ● {dataSourceLabel}
+              </p>
+              {etoroData?.fetchedAt && (
+                <p className="text-[10px] text-gray-600 font-mono">
+                  eToro synced {new Date(etoroData.fetchedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "Asia/Dubai" })} Dubai
+                </p>
+              )}
             </div>
           </div>
 
@@ -275,20 +291,29 @@ export default async function Dashboard() {
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
                 Portfolio
-                {isEtoroLive && (
-                  <span className="text-emerald-500 text-xs font-normal normal-case tracking-normal">● live</span>
-                )}
+                <span className={`text-xs font-normal normal-case tracking-normal ${hasLiveMirrors ? "text-emerald-500" : "text-amber-500"}`}>
+                  {hasLiveMirrors ? "● live" : "⚠ partial"}
+                </span>
               </p>
               <p className="text-xl font-mono font-bold">
                 {formatCurrency(totalPortfolioValue)}
               </p>
+              <p className="text-[10px] text-gray-600 mt-0.5 font-mono">
+                direct {formatCurrency(directBookValue)} · mirrors {formatCurrency(mirrorsValue)} · cash {formatCurrency(cashIdle)}
+              </p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
                 Invested
+                <span className={`text-xs font-normal normal-case tracking-normal ${hasLiveMirrors ? "text-emerald-500" : "text-amber-500"}`}>
+                  {hasLiveMirrors ? "● live" : "⚠ partial"}
+                </span>
               </p>
               <p className="text-xl font-mono font-bold">
                 {formatCurrency(investedValue)}
+              </p>
+              <p className="text-[10px] text-gray-600 mt-0.5 font-mono">
+                direct {formatCurrency(directBookInvested)} · mirrors {formatCurrency(mirrorsInvested)}
               </p>
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
@@ -301,20 +326,25 @@ export default async function Dashboard() {
               <p className="text-xl font-mono font-bold text-amber-400">
                 {formatCurrency(cashIdle)}
               </p>
+              {(etoroData?.pendingOrdersValue ?? 0) > 0 && (
+                <p className="text-[10px] text-gray-600 mt-0.5 font-mono">
+                  +{formatCurrency(etoroData!.pendingOrdersValue)} locked in pending orders
+                </p>
+              )}
             </div>
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-1">
-                Direct P/L
-                {isEtoroLive && (
-                  <span className="text-emerald-500 text-xs font-normal normal-case tracking-normal">● live</span>
-                )}
+                Total P/L
+                <span className={`text-xs font-normal normal-case tracking-normal ${hasLiveMirrors ? "text-emerald-500" : "text-amber-500"}`}>
+                  {hasLiveMirrors ? "● live" : "⚠ partial"}
+                </span>
               </p>
-              <p className={`text-xl font-mono font-bold ${(isEtoroLive ? totalPnL : data.equity.periodPnl) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                {formatCurrency(isEtoroLive ? totalPnL : data.equity.periodPnl)}
+              <p className={`text-xl font-mono font-bold ${totalPnL >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                {formatCurrency(totalPnL)}
               </p>
-              {isEtoroLive && (
-                <p className="text-xs text-gray-600 mt-0.5">excl. Smart Portfolios</p>
-              )}
+              <p className="text-[10px] text-gray-600 mt-0.5 font-mono">
+                {formatPercent(totalPnLPct)} · unrealized · all positions
+              </p>
             </div>
           </div>
         </div>
@@ -470,30 +500,49 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            {/* Smart Portfolios */}
-            {data.smartPortfolios && data.smartPortfolios.length > 0 && (
+            {/* Mirrors (Smart Portfolios + Copy traders) */}
+            {(hasLiveMirrors || (data.smartPortfolios && data.smartPortfolios.length > 0)) && (
               <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-800">
                   <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                    Smart Portfolios
+                    Smart Portfolios &amp; Copy Traders
                   </p>
-                  <span className="text-amber-500 text-xs">⚠ snapshot</span>
+                  <span className={`text-xs ${hasLiveMirrors ? "text-emerald-500" : "text-amber-500"}`}>
+                    {hasLiveMirrors ? "● live from eToro" : "⚠ snapshot — eToro mirrors unreachable"}
+                  </span>
                 </div>
                 <div className="space-y-2">
-                  {(data.smartPortfolios as SmartPortfolio[]).map((sp) => (
-                    <div key={sp.name} className="flex justify-between items-center border-b border-gray-800/50 pb-2 last:border-0 text-sm">
-                      <div>
-                        <p className="font-bold text-gray-100">{sp.name}</p>
-                        <p className="text-xs text-gray-400">{sp.label}</p>
+                  {hasLiveMirrors ? (
+                    etoroData!.mirrors.map((m) => (
+                      <div key={m.parentUsername} className="flex justify-between items-center border-b border-gray-800/50 pb-2 last:border-0 text-sm">
+                        <div>
+                          <p className="font-bold text-gray-100">{m.parentUsername}</p>
+                          <p className="text-xs text-gray-500 font-mono">invested {formatCurrency(m.amountInvested)}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-mono text-gray-100">{formatCurrency(m.currentValue)}</p>
+                          <p className={`text-xs font-mono ${m.netProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                            {formatCurrency(m.netProfit)} ({formatPercent(m.netProfitPct)})
+                          </p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-mono text-gray-100">{formatCurrency(sp.currentValue)}</p>
-                        <p className={`text-xs font-mono ${sp.currentPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                          {formatCurrency(sp.currentPnl)} ({formatPercent(sp.currentPnlPct)})
-                        </p>
+                    ))
+                  ) : (
+                    (data.smartPortfolios as SmartPortfolio[]).map((sp) => (
+                      <div key={sp.name} className="flex justify-between items-center border-b border-gray-800/50 pb-2 last:border-0 text-sm">
+                        <div>
+                          <p className="font-bold text-gray-100">{sp.name}</p>
+                          <p className="text-xs text-gray-400">{sp.label}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-mono text-gray-100">{formatCurrency(sp.currentValue)}</p>
+                          <p className={`text-xs font-mono ${sp.currentPnl >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                            {formatCurrency(sp.currentPnl)} ({formatPercent(sp.currentPnlPct)})
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             )}
