@@ -189,20 +189,22 @@ export default async function Dashboard() {
   const totalPnL = totalPortfolioValue - investedValue - cashIdle; // P/L excludes cash
   const totalPnLPct = investedValue > 0 ? (totalPnL / investedValue) * 100 : 0;
 
-  // Diagnostic banner: show divergence vs eToro's own portfolio summary if available
+  // Diagnostic banner: show source + known caveat for mirrors
   const dataSourceLabel = hasLiveMirrors
-    ? "eToro API · live"
+    ? "eToro API · live (mirror values at cost basis — open P/L not included)"
     : isEtoroLive
       ? "eToro API (cash + direct only) · mirrors from manual snapshot"
       : "manual snapshot — eToro API unreachable";
 
   const allFlags = enrichedPositions.flatMap(getPositionFlags);
 
-  // Live AED conversions for wealth progress
+  // Live AED conversions for wealth progress (Schwab RSUs marked-to-market via Yahoo)
   const usdToAed = data.wealthProgress?.usdToAed ?? 3.6725;
   const etoroPortfolioAED = Math.round(totalPortfolioValue * usdToAed);
   const pinsLivePrice = marketData.get("PINS")?.price ?? 0;
+  const snapLivePrice = marketData.get("SNAP")?.price ?? 0;
   const pinsRsuAED = pinsLivePrice > 0 ? Math.round(pinsLivePrice * 1429 * usdToAed) : 0;
+  const snapRsuAED = snapLivePrice > 0 ? Math.round(snapLivePrice * 1798 * usdToAed) : 0;
 
   // Filter to only upcoming/today events — compare date string to today in Dubai time
   const todayDubai = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dubai" }); // YYYY-MM-DD
@@ -778,12 +780,14 @@ export default async function Dashboard() {
                 </p>
                 {(() => {
                   const wp = data.wealthProgress!;
-                  // Override eToro and PINS RSU with live values when available
+                  // Override eToro / PINS-RSU / SNAP-RSU with live mark-to-market when available
                   const liveComponents = wp.components.map((c: any) => {
                     if (c.label === "eToro Portfolio" && isEtoroLive && etoroPortfolioAED > 0)
                       return { ...c, valueAED: etoroPortfolioAED, note: `$${totalPortfolioValue.toFixed(0)} × ${usdToAed} — live now` };
-                    if (c.label === "PINS RSU (Snap)" && pinsRsuAED > 0)
-                      return { ...c, valueAED: pinsRsuAED, note: `1,429 sh × $${pinsLivePrice.toFixed(2)} × ${usdToAed} — live` };
+                    if (c.label?.startsWith("PINS RSU") && pinsRsuAED > 0)
+                      return { ...c, valueAED: pinsRsuAED, note: `1,429 sh × $${pinsLivePrice.toFixed(2)} × ${usdToAed} — live (cost $46,650)` };
+                    if (c.label?.startsWith("SNAP RSU") && snapRsuAED > 0)
+                      return { ...c, valueAED: snapRsuAED, note: `1,798 sh × $${snapLivePrice.toFixed(2)} × ${usdToAed} — live (cost $12,340)` };
                     return c;
                   });
                   const grossAssets = liveComponents.reduce((s: number, c: any) => s + c.valueAED, 0);

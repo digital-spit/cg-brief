@@ -90,16 +90,41 @@ function aggregateLots(lots: EtoroLot[]): Map<string, AggregatedPosition> {
   return map;
 }
 
-// Defensive parse — eToro mirror objects use varying field names; try the common ones
+// Parse a mirror (Smart Portfolio or Copy trader) from eToro's portfolio response.
+// The /trading/info/portfolio endpoint does NOT return per-mirror current value or
+// unrealized P/L — only positions[].amount (cost basis at lot level), availableAmount
+// (idle cash within the mirror), depositSummary/withdrawalSummary (net cash deposited),
+// and closedPositionsNetProfit (realized profit kept inside the mirror).
+//
+// Best-effort live value = sum(positions.amount) + availableAmount + closedPositionsNetProfit.
+// This treats currently-open mirror positions as flat to entry — i.e., understates value
+// when the Smart Portfolio is in unrealized profit. The dashboard labels mirrors as
+// "● live cost basis" to be honest about this limitation.
 function parseMirror(raw: Record<string, unknown>): EtoroMirror | null {
-  const parentUsername = (raw.parentUsername ?? raw.username ?? raw.name ?? "Unknown") as string;
-  const mirrorID = (raw.mirrorID ?? raw.MirrorID ?? null) as number | null;
-  const amountInvested = Number(raw.amountInvested ?? raw.amount ?? raw.invested ?? 0);
-  const currentValue = Number(raw.value ?? raw.netValue ?? raw.currentValue ?? raw.equity ?? 0);
-  const netProfit = Number(raw.netProfit ?? raw.profit ?? raw.pnl ?? raw.unrealizedPnl ?? (currentValue - amountInvested));
+  const parentUsername = (raw.parentUsername ?? "Unknown") as string;
+  const mirrorID = (raw.mirrorID ?? null) as number | null;
+  const positions = (raw.positions ?? []) as Array<Record<string, unknown>>;
+  const availableAmount = Number(raw.availableAmount ?? 0);
+  const depositSummary = Number(raw.depositSummary ?? 0);
+  const withdrawalSummary = Number(raw.withdrawalSummary ?? 0);
+  const closedPositionsNetProfit = Number(raw.closedPositionsNetProfit ?? 0);
 
-  if (!parentUsername || amountInvested <= 0) return null;
+  // Cost basis of currently-open positions
+  const openPositionsCostBasis = positions.reduce(
+    (s, p) => s + Number(p.amount ?? 0),
+    0
+  );
 
+  // Net cash you've put into this mirror from your wallet
+  const amountInvested = depositSummary - withdrawalSummary;
+  if (amountInvested <= 0) return null;
+
+  // Cost-basis approach: open positions flat-to-entry + idle cash. Realized P/L is
+  // already implicit (closed positions returned cash that's now in idle or re-invested).
+  // This UNDERSTATES Smart Portfolios that are in unrealized profit — the dashboard
+  // surfaces this honestly via the badge "● live cost basis (open P/L not included)".
+  const currentValue = openPositionsCostBasis + availableAmount;
+  const netProfit = closedPositionsNetProfit; // only realized P/L is knowable here
   const netProfitPct = amountInvested > 0 ? (netProfit / amountInvested) * 100 : 0;
 
   return {

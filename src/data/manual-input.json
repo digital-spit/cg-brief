@@ -527,6 +527,7 @@
     "VTI",
     "QQQ",
     "PINS",
+    "SNAP",
     "ICLN",
     "TSM",
     "LRCX",
@@ -833,11 +834,39 @@
         "note": "Awaiting Hormuz resolution \u2014 deployment trigger not yet met"
       },
       {
-        "label": "PINS RSU (Snap)",
+        "label": "PINS RSU (Schwab)",
         "valueAED": 106129,
         "confidence": "medium",
         "color": "sky",
-        "note": "1,429 sh \u00d7 $20.22 \u00d7 3.6725 \u2014 employer broker, not eToro"
+        "note": "1,429 sh \u00d7 $20.22 \u00d7 3.6725 \u2014 Schwab acct ...790. Cost $46,650 (-$17,755 unrealized).",
+        "schwab": {
+          "symbol": "PINS",
+          "shares": 1429,
+          "costBasisUSD": 46649.76,
+          "accountSuffix": "790",
+          "asOf": "2026-05-04"
+        }
+      },
+      {
+        "label": "SNAP RSU (Schwab)",
+        "valueAED": 41534,
+        "confidence": "medium",
+        "color": "sky",
+        "note": "1,798 sh \u00d7 $6.29 \u00d7 3.6725 \u2014 Schwab acct ...343. Cost $12,340 (-$1,030 unrealized).",
+        "schwab": {
+          "symbol": "SNAP",
+          "shares": 1798,
+          "costBasisUSD": 12339.58,
+          "accountSuffix": "343",
+          "asOf": "2026-05-04"
+        }
+      },
+      {
+        "label": "Schwab cash",
+        "valueAED": 5,
+        "confidence": "medium",
+        "color": "slate",
+        "note": "$1.33 \u00d7 3.6725 \u2014 money market. Snapshot 2026-05-04."
       },
       {
         "label": "Wio Bank (USD)",
