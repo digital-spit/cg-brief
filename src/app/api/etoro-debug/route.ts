@@ -15,14 +15,15 @@ function summarize(obj: unknown, depth = 0): unknown {
     };
   }
   if (typeof obj === "object") {
-    if (depth >= 3) return "[...]";
+    if (depth >= 6) return "[...]";
     const o: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
       o[k] = summarize(v, depth + 1);
     }
     return o;
   }
-  return typeof obj;
+  // include actual values for primitives so we can see field semantics
+  return obj;
 }
 
 export async function GET(req: Request) {
