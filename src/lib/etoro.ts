@@ -74,10 +74,14 @@ function aggregateLots(lots: EtoroLot[]): Map<string, AggregatedPosition> {
     } else {
       const newUnits = existing.units + lot.units;
       const newInvested = existing.totalInvested + lotInvested;
+      // avgCost = units-weighted entry price across lots. Must use openRate (not
+      // totalInvested/units) — for leveraged positions, totalInvested is the margin,
+      // so totalInvested/units would equal openRate/leverage and break per-unit math.
+      const newAvgCost = (existing.avgCost * existing.units + lot.openRate * lot.units) / newUnits;
       map.set(lot.symbol, {
         symbol: lot.symbol,
         units: newUnits,
-        avgCost: newInvested / newUnits,
+        avgCost: newAvgCost,
         totalInvested: newInvested,
       });
     }

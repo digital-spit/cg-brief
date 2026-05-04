@@ -383,7 +383,7 @@ export default async function Dashboard() {
                           {pos.quantity.toFixed(5)} × ${pos.avgCost.toFixed(2)}
                         </p>
                         <p className="text-xs text-gray-400">
-                          = ${(pos.quantity * pos.avgCost).toFixed(2)}
+                          cost ${pos.currentValue && pos.unrealizedPnl != null ? (pos.currentValue - pos.unrealizedPnl).toFixed(2) : (pos.quantity * pos.avgCost).toFixed(2)}
                         </p>
                       </div>
                     </div>
