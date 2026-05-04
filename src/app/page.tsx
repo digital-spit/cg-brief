@@ -80,18 +80,22 @@ function getMarketData(
 function enrichPositionWithLiveData(
   position: any,
   marketDataMap: Map<string, MarketData>,
-  etoroAggregated?: Map<string, { units: number; avgCost: number }>
+  etoroAggregated?: Map<string, { units: number; avgCost: number; totalInvested: number }>
 ): PositionWithLive {
-  // Use live eToro units/avgCost if available, otherwise fall back to manual-input.json
+  // Use live eToro units/avgCost/totalInvested if available, otherwise fall back to manual-input.json
   const liveEtoro = etoroAggregated?.get(position.symbol);
   const quantity = liveEtoro?.units ?? position.quantity;
   const avgCost = liveEtoro?.avgCost ?? position.avgCost;
+  // Cost basis: prefer eToro `amount` (cash actually invested, leverage-adjusted) over qty×avgCost
+  const costBasis = liveEtoro?.totalInvested ?? quantity * avgCost;
 
   const mkt = getMarketData(position.symbol, marketDataMap);
   const livePrice = mkt.price || avgCost;
-  const currentValue = quantity * livePrice;
-  const costBasis = quantity * avgCost;
-  const unrealizedPnl = currentValue - costBasis;
+  // Mark-to-market: cash invested + (price delta × units). For unleveraged this equals quantity×livePrice.
+  // For leveraged CFDs (Gold non-expiry, etc.) eToro reports `units` as the levered notional, so
+  // qty×livePrice would over-count. Cost-basis + delta works correctly for both.
+  const unrealizedPnl = quantity * (livePrice - avgCost);
+  const currentValue = costBasis + unrealizedPnl;
   const unrealizedPnlPercent =
     costBasis > 0 ? (unrealizedPnl / costBasis) * 100 : 0;
 

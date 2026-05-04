@@ -154,7 +154,12 @@ export async function fetchEtoroPortfolio(): Promise<EtoroPortfolio | null> {
     }));
 
     const aggregated = aggregateLots(lots);
-    const directInvested = Array.from(aggregated.values()).reduce((s, a) => s + a.totalInvested, 0);
+    // Sum cost basis across ALL direct lots (including unmapped symbols), not just aggregated set.
+    // This matches eToro's app-level "Total Invested" for the direct book.
+    const directInvested = lots.reduce((s, lot) => {
+      if (lot.units <= 0 || lot.openRate <= 0) return s;
+      return s + (lot.amount > 0 ? lot.amount : lot.units * lot.openRate);
+    }, 0);
 
     // ── Mirrors (Copy traders + Smart Portfolios) ──
     // eToro response may put these in `mirrors` and/or `aggregatedMirrors`
