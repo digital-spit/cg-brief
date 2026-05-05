@@ -267,3 +267,284 @@ export function computeTodayPnlUSD(positions: PositionWithLive[]): number {
     return sum + (p.currentValue * (p.changePercent / 100));
   }, 0);
 }
+
+// ─────────── Performance metrics from daily/monthly snapshot history ───────────
+// snapshots: ascending by date, each {date:"YYYY-MM-DD", netWorthAED, portfolioUSD}
+// All annualized assuming 12 monthly observations / year.
+
+export interface PerformanceMetrics {
+  twrPct: number | null;       // total time-weighted return (begin → end)
+  twrAnnualizedPct: number | null;
+  cagrPct: number | null;
+  maxDrawdownPct: number;       // worst peak-to-trough during window
+  maxDrawdownAED: number;
+  sharpe: number | null;        // monthly returns sd, rfRate as decimal
+  bestMonthPct: number | null;
+  worstMonthPct: number | null;
+  monthsTracked: number;
+  rangeStart: string | null;
+  rangeEnd: string | null;
+}
+
+export function computePerformance(
+  snapshots: Array<{ date: string; netWorthAED: number; portfolioUSD?: number }>,
+  rfAnnualPct = 4.0
+): PerformanceMetrics {
+  if (!snapshots || snapshots.length < 2) {
+    return {
+      twrPct: null, twrAnnualizedPct: null, cagrPct: null,
+      maxDrawdownPct: 0, maxDrawdownAED: 0,
+      sharpe: null, bestMonthPct: null, worstMonthPct: null,
+      monthsTracked: snapshots?.length ?? 0,
+      rangeStart: null, rangeEnd: null,
+    };
+  }
+  const sorted = snapshots.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const n = sorted.length;
+  const start = sorted[0];
+  const end = sorted[n - 1];
+
+  // Per-month returns (assumes monthly cadence; use date diffs for true freq if irregular)
+  const returns: number[] = [];
+  for (let i = 1; i < n; i++) {
+    const prev = sorted[i - 1].netWorthAED;
+    const curr = sorted[i].netWorthAED;
+    if (prev > 0) returns.push((curr - prev) / prev);
+  }
+
+  const twr = end.netWorthAED / start.netWorthAED - 1;
+  const monthsBetween = (() => {
+    const a = new Date(start.date), b = new Date(end.date);
+    return (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth());
+  })();
+  const periods = Math.max(1, monthsBetween);
+  const cagr = Math.pow(1 + twr, 12 / periods) - 1;
+  const twrAnnualized = cagr;
+
+  // Max drawdown
+  let peak = sorted[0].netWorthAED;
+  let maxDdPct = 0;
+  let maxDdAED = 0;
+  for (const s of sorted) {
+    peak = Math.max(peak, s.netWorthAED);
+    const dd = (s.netWorthAED - peak) / peak;
+    if (dd < maxDdPct) {
+      maxDdPct = dd;
+      maxDdAED = s.netWorthAED - peak;
+    }
+  }
+
+  // Sharpe (monthly): mean / sd × √12, minus rf
+  const mean = returns.reduce((s, r) => s + r, 0) / returns.length;
+  const variance = returns.length > 1
+    ? returns.reduce((s, r) => s + (r - mean) ** 2, 0) / (returns.length - 1)
+    : 0;
+  const sd = Math.sqrt(variance);
+  const rfMonthly = rfAnnualPct / 100 / 12;
+  const sharpe = sd > 0 ? ((mean - rfMonthly) / sd) * Math.sqrt(12) : null;
+
+  return {
+    twrPct: twr * 100,
+    twrAnnualizedPct: twrAnnualized * 100,
+    cagrPct: cagr * 100,
+    maxDrawdownPct: maxDdPct * 100,
+    maxDrawdownAED: maxDdAED,
+    sharpe,
+    bestMonthPct: returns.length ? Math.max(...returns) * 100 : null,
+    worstMonthPct: returns.length ? Math.min(...returns) * 100 : null,
+    monthsTracked: n,
+    rangeStart: start.date,
+    rangeEnd: end.date,
+  };
+}
+
+// ─────────── Allocation: actual vs target by asset class ───────────
+// Maps wealth components + eToro positions → {equity, crypto, commodity, rsu, cash, realEstate}
+// Returns each slice with actualPct, targetPct, deviation, status.
+
+export type AllocationSlice = {
+  key: "equity" | "crypto" | "commodity" | "rsu" | "cash" | "realEstate";
+  label: string;
+  valueAED: number;
+  actualPct: number;
+  targetPct: number;
+  deviationPct: number;
+  status: "on-target" | "underweight" | "overweight";
+  color: string;
+};
+
+const SLICE_LABELS: Record<AllocationSlice["key"], string> = {
+  equity: "Equity (ETFs + Stocks)",
+  crypto: "Crypto",
+  commodity: "Commodity (Gold/GDX)",
+  rsu: "Employer RSU",
+  cash: "Cash + MMF",
+  realEstate: "Real Estate",
+};
+
+const SLICE_COLORS: Record<AllocationSlice["key"], string> = {
+  equity: "bg-emerald-500",
+  crypto: "bg-amber-400",
+  commodity: "bg-yellow-600",
+  rsu: "bg-sky-400",
+  cash: "bg-slate-500",
+  realEstate: "bg-purple-400",
+};
+
+export function computeAllocation(
+  components: Array<{ label: string; valueAED: number }>,
+  positions: PositionWithLive[],
+  cashIdleAED: number,
+  targetAllocation: { equity: number; crypto: number; commodity: number; rsu: number; cash: number; realEstate: number; rebalanceBandPct: number }
+): { slices: AllocationSlice[]; totalAED: number; bandPct: number; outOfBand: AllocationSlice[] } {
+  const buckets: Record<AllocationSlice["key"], number> = {
+    equity: 0, crypto: 0, commodity: 0, rsu: 0, cash: 0, realEstate: 0,
+  };
+
+  // Heuristics: classify each component by label, fall back to equity for unknowns
+  for (const c of components) {
+    const l = c.label.toLowerCase();
+    if (/rsu/.test(l))                                 buckets.rsu += c.valueAED;
+    else if (/wio|enbd|schwab cash|cash|aed account|usd account|eur account/.test(l)) buckets.cash += c.valueAED;
+    else if (/real ?estate|stake|smartcrowd/.test(l))  buckets.realEstate += c.valueAED;
+    else if (/etoro/.test(l))                          {/* split below */}
+    else                                               buckets.equity += c.valueAED;
+  }
+
+  // Split eToro portfolio into equity/crypto/commodity by underlying positions
+  const etoroComponent = components.find((c) => c.label === "eToro Portfolio");
+  if (etoroComponent && positions.length > 0) {
+    const totalPosValue = positions.reduce((s, p) => s + p.currentValue, 0);
+    if (totalPosValue > 0) {
+      for (const p of positions) {
+        const share = p.currentValue / totalPosValue;
+        const portion = etoroComponent.valueAED * share;
+        const sym = p.symbol.toUpperCase();
+        if (/BTC|ETH|SOL|XRP|CRYPTO/.test(sym))                            buckets.crypto += portion;
+        else if (/GC=F|GLD|GDX|SLV|XAU|XAG|GOLD|SILVER|COPPER|BRENT/.test(sym)) buckets.commodity += portion;
+        else                                                                buckets.equity += portion;
+      }
+    } else {
+      buckets.equity += etoroComponent.valueAED;
+    }
+  }
+
+  const totalAED = Object.values(buckets).reduce((s, v) => s + v, 0);
+  const slices: AllocationSlice[] = (Object.keys(buckets) as Array<AllocationSlice["key"]>).map((key) => {
+    const valueAED = buckets[key];
+    const actualPct = totalAED > 0 ? (valueAED / totalAED) * 100 : 0;
+    const targetPct = (targetAllocation as any)[key] ?? 0;
+    const deviationPct = actualPct - targetPct;
+    const band = targetAllocation.rebalanceBandPct;
+    const status = Math.abs(deviationPct) <= band ? "on-target" : deviationPct > 0 ? "overweight" : "underweight";
+    return { key, label: SLICE_LABELS[key], valueAED, actualPct, targetPct, deviationPct, status, color: SLICE_COLORS[key] };
+  });
+
+  return {
+    slices,
+    totalAED,
+    bandPct: targetAllocation.rebalanceBandPct,
+    outOfBand: slices.filter((s) => s.status !== "on-target"),
+  };
+}
+
+// ─────────── Stress test: apply named shocks to wealth components ───────────
+
+export interface StressResult {
+  name: string;
+  icon: string;
+  netWorthAfterAED: number;
+  deltaAED: number;
+  deltaPct: number;
+  affectedComponents: Array<{ label: string; deltaAED: number }>;
+}
+
+export function applyStressScenario(
+  scenario: { name: string; icon?: string; shocks: Array<{ label: string; shockPct: number }> },
+  components: Array<{ label: string; valueAED: number }>,
+  liabilitiesAED: number
+): StressResult {
+  const baseline = components.reduce((s, c) => s + c.valueAED, 0) - liabilitiesAED;
+  const affected: Array<{ label: string; deltaAED: number }> = [];
+
+  const newComponents = components.map((c) => {
+    const shock = scenario.shocks.find((s) => c.label.toLowerCase().includes(s.label.toLowerCase()));
+    if (!shock) return c;
+    const delta = c.valueAED * (shock.shockPct / 100);
+    affected.push({ label: c.label, deltaAED: delta });
+    return { ...c, valueAED: c.valueAED + delta };
+  });
+
+  const newNet = newComponents.reduce((s, c) => s + c.valueAED, 0) - liabilitiesAED;
+  const deltaAED = newNet - baseline;
+  return {
+    name: scenario.name,
+    icon: scenario.icon ?? "•",
+    netWorthAfterAED: newNet,
+    deltaAED,
+    deltaPct: baseline > 0 ? (deltaAED / baseline) * 100 : 0,
+    affectedComponents: affected,
+  };
+}
+
+// ─────────── Cashflow waterfall ───────────
+
+export interface CashflowSummary {
+  monthlyIncomeAED: number;
+  monthlyExpensesByCategory: Record<string, number>;
+  monthlyExpensesTotal: number;
+  netInvestableAED: number;
+  savingsRatePct: number;
+  runwayMonths: number | null; // if income stops
+  liquidCashAED: number;
+}
+
+export function computeCashflow(
+  income: Array<{ monthlyAED: number }>,
+  expenses: Array<{ amountAED: number; category: string }>,
+  liquidCashAED: number
+): CashflowSummary {
+  const monthlyIncome = income.reduce((s, i) => s + i.monthlyAED, 0);
+  const byCat: Record<string, number> = {};
+  for (const e of expenses) byCat[e.category] = (byCat[e.category] ?? 0) + e.amountAED;
+  const totalExp = Object.values(byCat).reduce((s, v) => s + v, 0);
+  const investable = monthlyIncome - totalExp;
+  return {
+    monthlyIncomeAED: monthlyIncome,
+    monthlyExpensesByCategory: byCat,
+    monthlyExpensesTotal: totalExp,
+    netInvestableAED: investable,
+    savingsRatePct: monthlyIncome > 0 ? (investable / monthlyIncome) * 100 : 0,
+    runwayMonths: totalExp > 0 ? liquidCashAED / totalExp : null,
+    liquidCashAED,
+  };
+}
+
+// ─────────── Inflation-adjusted goal ───────────
+
+export interface InflatedGoal {
+  baseYear: number;
+  realTargetAED: number;          // goal value in baseYear AED
+  nominalTargetAED: number;       // grossed-up to ETA year using inflation
+  etaYear: number;
+  inflationPct: number;
+  upliftAED: number;
+}
+
+export function inflationAdjustedGoal(
+  realTargetAED: number,
+  baseYear: number,
+  etaYear: number,
+  inflationPct: number
+): InflatedGoal {
+  const yrs = Math.max(0, etaYear - baseYear);
+  const nominal = realTargetAED * Math.pow(1 + inflationPct / 100, yrs);
+  return {
+    baseYear,
+    realTargetAED,
+    nominalTargetAED: nominal,
+    etaYear,
+    inflationPct,
+    upliftAED: nominal - realTargetAED,
+  };
+}

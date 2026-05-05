@@ -819,7 +819,46 @@
   ],
   "wealthProgress": {
     "goalAED": 1000000,
+    "goalBaseYear": 2026,
+    "inflationPct": 2.5,
     "usdToAed": 3.6725,
+    "snapshotsAsOf": "2026-05-05",
+    "snapshotsNote": "Manually maintained until /api/snapshot cron is wired. Each entry is end-of-month net worth in AED + portfolio USD.",
+    "snapshots": [
+      { "date": "2025-12-31", "netWorthAED": 482000, "portfolioUSD": 34800 },
+      { "date": "2026-01-31", "netWorthAED": 491500, "portfolioUSD": 35900 },
+      { "date": "2026-02-28", "netWorthAED": 506200, "portfolioUSD": 37200 },
+      { "date": "2026-03-31", "netWorthAED": 487300, "portfolioUSD": 36100 },
+      { "date": "2026-04-30", "netWorthAED": 495800, "portfolioUSD": 36500 },
+      { "date": "2026-05-05", "netWorthAED": 505000, "portfolioUSD": 36680 }
+    ],
+    "targetAllocationPct": {
+      "equity":      35,
+      "crypto":      10,
+      "commodity":   10,
+      "rsu":         10,
+      "cash":        25,
+      "realEstate":  10,
+      "rebalanceBandPct": 3
+    },
+    "monthlyExpenses": [
+      { "label": "ENBD personal loan",            "amountAED": 2517, "category": "debt",          "fixed": true },
+      { "label": "Family transfers (Renata)",     "amountAED": 5000, "category": "family",        "fixed": true },
+      { "label": "Family transfers (Waleed SWIFT)","amountAED": 2973,"category": "family",        "fixed": true },
+      { "label": "Apple subscriptions",           "amountAED": 220,  "category": "discretionary", "fixed": true },
+      { "label": "OpenAI + Midjourney",           "amountAED": 117,  "category": "discretionary", "fixed": true },
+      { "label": "Carrefour groceries",           "amountAED": 1200, "category": "living",        "fixed": false },
+      { "label": "Careem rides",                  "amountAED": 250,  "category": "living",        "fixed": false },
+      { "label": "Buffer / un-categorized",       "amountAED": 3000, "category": "discretionary", "fixed": false }
+    ],
+    "stressScenarios": [
+      { "name": "PINS earnings miss",     "icon": "📉", "shocks": [{ "label": "PINS RSU", "shockPct": -50 }] },
+      { "name": "Snap layoff (RSU = 0)",  "icon": "⚠️", "shocks": [{ "label": "PINS RSU", "shockPct": -100 }, { "label": "SNAP RSU", "shockPct": -100 }] },
+      { "name": "BTC retest $50K",        "icon": "₿",  "shocks": [{ "label": "eToro Portfolio", "shockPct": -10 }] },
+      { "name": "Hormuz war (oil spike)", "icon": "🛢️", "shocks": [{ "label": "eToro Portfolio", "shockPct": -8 }] },
+      { "name": "Tech bear -25%",         "icon": "📊", "shocks": [{ "label": "eToro Portfolio", "shockPct": -15 }, { "label": "PINS RSU", "shockPct": -25 }, { "label": "SNAP RSU", "shockPct": -25 }] },
+      { "name": "Best case (NVDA cycle)", "icon": "🚀", "shocks": [{ "label": "eToro Portfolio", "shockPct": 20 }] }
+    ],
     "cashDragConfig": {
       "targetMmfRatePct": 4.5,
       "comment": "Available rates: Wio Fixed Saving Space ~4.0% AED, Schwab SWVXX ~4.7% USD, ICICI 5% USD MMF. Use 4.5% blended for AED revenue-loss math."
