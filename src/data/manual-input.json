@@ -292,6 +292,7 @@
     }
   ],
   "warStatus": {
+    "lastUpdated": "2026-05-03",
     "status": "CEASEFIRE EXTENDED \u2014 FRAGILE / HORMUZ STILL BLOCKED",
     "statusKey": "ceasefire_extended_fragile",
     "description": "Original 2-week ceasefire (Apr 7) expired. Trump extended ~Apr 21 but briefly. US counter-blockade of Hormuz active since Apr 13. Iran seized ships Apr 22. Peace talks stalling as of May 2026. Oil storage nearly full. Iran losing ~$500M/day. No diplomatic resolution in sight.",
@@ -616,6 +617,7 @@
     ],
     "notes": "Apr 1-25 period P&L: -$786.99. Sunday Apr 27 snapshot: portfolio $39,431.21, unrealized P&L +$1,856.65. Smart portfolios (BigTech +14%, RenewableEnergy +17%) doing heavy lifting."
   },
+  "bullRunWatchlistUpdatedAt": "2026-05-03",
   "bullRunWatchlist": [
     {
       "symbol": "AVGO",

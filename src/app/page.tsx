@@ -65,6 +65,41 @@ function formatPrice(value: number): string {
   return value.toFixed(4);
 }
 
+// Days between an ISO date string (YYYY-MM-DD) and today's Dubai date.
+function daysOld(dateStr?: string): number | null {
+  if (!dateStr) return null;
+  const today = new Date(new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dubai" }));
+  const then = new Date(dateStr);
+  if (isNaN(then.getTime())) return null;
+  return Math.floor((today.getTime() - then.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+// Inline staleness badge — green if fresh, amber if borderline, red if past threshold.
+function StaleBadge({ dateStr, freshDays = 1, staleDays = 3, label = "updated" }: {
+  dateStr?: string; freshDays?: number; staleDays?: number; label?: string;
+}) {
+  const age = daysOld(dateStr);
+  if (age === null) return (
+    <span className="text-[10px] font-mono text-gray-500">no date</span>
+  );
+  const tone = age <= freshDays ? "text-emerald-400"
+             : age <= staleDays ? "text-amber-400"
+             : "text-red-400";
+  const dot  = age <= freshDays ? "bg-emerald-500"
+             : age <= staleDays ? "bg-amber-500"
+             : "bg-red-500 animate-pulse";
+  const word = age === 0 ? "today"
+             : age === 1 ? "1 day ago"
+             : age <= 7 ? `${age} days ago`
+             : `${Math.floor(age / 7)} wk${Math.floor(age / 7) > 1 ? "s" : ""} ago`;
+  return (
+    <span className={`inline-flex items-center gap-1 text-[10px] font-mono ${tone}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
+      {label} {word}{age > staleDays ? " · STALE" : ""}
+    </span>
+  );
+}
+
 function getMarketData(
   symbol: string,
   marketDataMap: Map<string, MarketData>
@@ -1150,17 +1185,29 @@ export default async function Dashboard() {
             </div>
 
             {/* War & Deployment */}
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                War & Deployment
-              </p>
-              <div className="text-xs">
-                <p className="font-bold text-gray-100 mb-2">
-                  {data.warStatus.status}
-                </p>
-                <p className="text-gray-400 mb-3">
-                  {data.warStatus.description}
-                </p>
+            {(() => {
+              const warAge = daysOld((data.warStatus as any).lastUpdated);
+              const warStale = warAge !== null && warAge > 1;
+              return (
+                <div className={`border rounded-xl p-5 ${warStale ? "bg-red-950/20 border-red-900/60" : "bg-gray-900 border-gray-800"}`}>
+                  <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      War &amp; Deployment
+                    </p>
+                    <StaleBadge dateStr={(data.warStatus as any).lastUpdated} freshDays={1} staleDays={3} />
+                  </div>
+                  {warStale && (
+                    <p className="text-[11px] text-red-300 mb-3 leading-snug">
+                      ⚠ This section is manual and {warAge} days old. Geopolitics moves daily — do NOT make 115K-AED-deployment decisions on this without re-reading current Hormuz news. Hit ⚡ Live Analysis above to refresh, or update <code className="font-mono text-[10px] bg-gray-800 px-1 rounded">manual-input.json &gt; warStatus</code>.
+                    </p>
+                  )}
+                  <div className="text-xs">
+                    <p className="font-bold text-gray-100 mb-2">
+                      {data.warStatus.status}
+                    </p>
+                    <p className="text-gray-400 mb-3">
+                      {data.warStatus.description}
+                    </p>
                 <div className="space-y-1 mb-3">
                   {data.warStatus.triggers.map((trigger, idx) => (
                     <div key={idx} className="flex items-start gap-2">
@@ -1188,16 +1235,21 @@ export default async function Dashboard() {
                   </p>
                 )}
               </div>
-            </div>
+                </div>
+              );
+            })()}
 
           </div>
 
           {/* Bull Run Watchlist — full width */}
           {data.bullRunWatchlist && data.bullRunWatchlist.length > 0 && (
             <div className="lg:col-span-3 bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                🔥 Bull Run Watchlist — Next Entries
-              </p>
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Bull Run Watchlist — Next Entries
+                </p>
+                <StaleBadge dateStr={(data as any).bullRunWatchlistUpdatedAt} freshDays={3} staleDays={14} label="reviewed" />
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {data.bullRunWatchlist!.map((pick, idx) => {
                   const mkt = getMarketData(pick.symbol, marketData);
