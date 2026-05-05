@@ -9,6 +9,79 @@ interface StrategistNote {
   stalenessWarning?: string;
 }
 
+// Known tickers in this user's universe — used to render mono badges
+const KNOWN_TICKERS = new Set([
+  "BTC", "ETH", "SOL", "XRP", "MSTR",
+  "PINS", "SNAP", "VTI", "QQQ", "TSM", "ICLN", "GDX", "SLV",
+  "AVGO", "NVDA", "MRVL", "VRT", "FCX", "SCCO", "WPM", "RGLD",
+  "GOOG", "AMZN", "META", "AAPL", "MSFT", "NFLX", "WMT",
+  "TP1", "TP2", "SL", "RSU", "ETF", "AED", "USD", "EUR", "FOMC", "CPI", "PPI",
+  "BOE", "ECB", "GDP", "CGT", "IRA",
+]);
+
+// Words/phrases that trigger color tinting per sentence
+const URGENCY_RED = /\b(CRITICAL|do not|don't|exit|stop|fraud|lawsuit|⚠️|⚠|Decide before|caution|avoid|risk|losing)\b/i;
+const URGENCY_GREEN = /\b(accumulate|add|deploy|TP1|TP2|breakout|bullish|inflows|cycle intact|strongest)\b/i;
+const URGENCY_AMBER = /\b(wait|hold|monitor|reassess|trim|review|watch|trigger)\b/i;
+
+function classifySentence(s: string): "red" | "green" | "amber" | "gray" {
+  if (URGENCY_RED.test(s)) return "red";
+  if (URGENCY_GREEN.test(s)) return "green";
+  if (URGENCY_AMBER.test(s)) return "amber";
+  return "gray";
+}
+
+const TONE_STYLES: Record<string, string> = {
+  red:   "border-l-2 border-red-700 bg-red-950/20 text-gray-200",
+  green: "border-l-2 border-emerald-700 bg-emerald-950/20 text-gray-200",
+  amber: "border-l-2 border-amber-700 bg-amber-950/15 text-gray-200",
+  gray:  "border-l-2 border-gray-700 bg-gray-800/30 text-gray-300",
+};
+
+// Split body on sentence boundaries, preserving en-dashes inside a sentence.
+function splitSentences(body: string): string[] {
+  // Split on ". " or "! " followed by capital/emoji, but keep ⚠ markers attached.
+  return body
+    .split(/(?<=[.!?])\s+(?=[A-Z⚠🚨📊🏛️🥇₿📈🔑📡🛒🤖🔧🔥📉📌])/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+// Render a sentence with ticker badges + price highlights inline.
+function renderRichSentence(s: string, key: number): JSX.Element {
+  // Tokenize: split on whitespace, preserve, then re-style known tickers / $ / %
+  const parts = s.split(/(\s+)/);
+  return (
+    <p key={key} className="text-[13px] leading-relaxed">
+      {parts.map((tok, i) => {
+        // strip trailing punctuation for ticker check
+        const clean = tok.replace(/[.,:;!?)\]]+$/, "");
+        const trail = tok.slice(clean.length);
+        if (KNOWN_TICKERS.has(clean)) {
+          return (
+            <span key={i}>
+              <span className="font-mono text-[12px] px-1.5 py-0.5 rounded bg-gray-700/70 text-emerald-300 font-semibold">
+                {clean}
+              </span>
+              {trail}
+            </span>
+          );
+        }
+        // price like $75K, $4,612, $20.22, AED 115K
+        if (/^\$[\d,]+(\.\d+)?[KMB]?$/.test(clean) || /^AED$/.test(clean)) {
+          return <span key={i} className="font-mono text-amber-300">{tok}</span>;
+        }
+        // percent
+        if (/^[+-]?\d+(\.\d+)?%$/.test(clean)) {
+          const positive = clean.startsWith("+") || (!clean.startsWith("-") && parseFloat(clean) > 0);
+          return <span key={i} className={`font-mono ${positive ? "text-emerald-400" : "text-red-400"}`}>{tok}</span>;
+        }
+        return <span key={i}>{tok}</span>;
+      })}
+    </p>
+  );
+}
+
 interface ActionItem {
   label: string;
   priority: string;
@@ -133,13 +206,22 @@ export default function StrategistPanel({
           </div>
         )}
 
-        <p className="text-sm font-semibold text-gray-200 mb-2 italic leading-snug">
+        <p className="text-base font-semibold text-white mb-3 leading-snug">
           {note.title}
         </p>
-        <p className="text-sm text-gray-400 leading-relaxed">{note.body}</p>
+        <div className="space-y-1.5">
+          {splitSentences(note.body).map((sentence, idx) => {
+            const tone = classifySentence(sentence);
+            return (
+              <div key={idx} className={`rounded-r-md pl-3 pr-2 py-1.5 ${TONE_STYLES[tone]}`}>
+                {renderRichSentence(sentence, idx)}
+              </div>
+            );
+          })}
+        </div>
 
         {note.edition && (
-          <p className="text-[10px] text-gray-600 mt-2">{note.edition}</p>
+          <p className="text-[10px] text-gray-600 mt-3 font-mono">{note.edition}</p>
         )}
       </div>
 
