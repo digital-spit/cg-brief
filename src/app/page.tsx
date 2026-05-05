@@ -3,7 +3,7 @@ import { fetchEtoroPortfolio } from "@/lib/etoro";
 import {
   classifyActionZone, buildProjection, computeTodayPnlUSD,
   computePerformance, computeAllocation, applyStressScenario,
-  computeCashflow, inflationAdjustedGoal,
+  computeCashflow, inflationAdjustedGoal, reconcilePositions,
 } from "@/lib/wealth";
 import type {
   ManualInput,
@@ -248,9 +248,16 @@ export default async function Dashboard() {
   const isEtoroLive = etoroData !== null;
   const hasLiveMirrors = isEtoroLive && (etoroData?.mirrors.length ?? 0) > 0;
 
-  const enrichedPositions = data.positions.map((pos) =>
-    enrichPositionWithLiveData(pos, marketData, etoroData?.aggregated)
+  // RECONCILE: eToro live = source of truth for which positions exist + qty + avgCost.
+  // manual-input.json positions[] = metadata only (SL/TP/notes/addZones).
+  // Anything in manual but not in eToro live = stale (likely closed); flagged via banner.
+  // Anything in eToro live but not in manual = unmapped (no SL/TP); flagged via banner.
+  const reconciliation = reconcilePositions(
+    data.positions as any,
+    etoroData?.aggregated,
+    marketData
   );
+  const enrichedPositions = reconciliation.livePositions;
 
   // Direct book — sum from positions joined to live Yahoo prices + live eToro units/cost
   const directBookValue = enrichedPositions.reduce(
@@ -667,9 +674,30 @@ export default async function Dashboard() {
           <div className="lg:col-span-2 space-y-5">
             {/* Direct Book */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                Direct Book
-              </p>
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Direct Book
+                </p>
+                <span className={`text-[10px] font-mono ${reconciliation.source === "etoro-live" ? "text-emerald-400" : "text-amber-400"}`}>
+                  ● {reconciliation.source === "etoro-live" ? `live · ${enrichedPositions.length} from eToro` : "manual fallback"}
+                </span>
+              </div>
+              {reconciliation.staleManualEntries.length > 0 && (
+                <div className="mb-3 p-2 rounded border border-amber-800 bg-amber-950/30 text-[11px] leading-snug">
+                  <p className="text-amber-300 font-semibold mb-0.5">⚠ Stale metadata in manual-input.json</p>
+                  <p className="text-amber-200/80">
+                    {reconciliation.staleManualEntries.join(", ")} listed locally but not in eToro live — position{reconciliation.staleManualEntries.length > 1 ? "s" : ""} likely closed. Remove from <code className="font-mono text-[10px] bg-gray-800 px-1 rounded">manual-input.json &gt; positions[]</code> to clean up.
+                  </p>
+                </div>
+              )}
+              {reconciliation.unmappedLiveEntries.length > 0 && (
+                <div className="mb-3 p-2 rounded border border-sky-800 bg-sky-950/30 text-[11px] leading-snug">
+                  <p className="text-sky-300 font-semibold mb-0.5">ℹ Live position without metadata</p>
+                  <p className="text-sky-200/80">
+                    {reconciliation.unmappedLiveEntries.join(", ")} on eToro live but no SL/TP defined — add metadata in <code className="font-mono text-[10px] bg-gray-800 px-1 rounded">manual-input.json &gt; positions[]</code> for proper Action Zones classification.
+                  </p>
+                </div>
+              )}
               <div className="space-y-3">
                 {enrichedPositions.map((pos) => (
                   <div

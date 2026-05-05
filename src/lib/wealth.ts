@@ -258,6 +258,115 @@ export function buildProjection(netWorthAED: number, goalAED: number): WealthPro
   };
 }
 
+// ─────────── Reconcile eToro live positions with manual metadata ───────────
+// eToro is the source of truth for "what positions exist + units + avgCost". Manual
+// positions[] supplies metadata only: SL/TP/TP2/notes/addZones/label. Anything in
+// manual but not in eToro live = stale entry (likely closed, e.g. GDX). Anything in
+// eToro live but not in manual = missing metadata, render with warning.
+
+import type { MarketData } from "./types";
+import type { AggregatedPosition } from "./etoro";
+
+export interface ReconciliationResult {
+  livePositions: PositionWithLive[];
+  staleManualEntries: string[];   // symbols in manual but absent from eToro live
+  unmappedLiveEntries: string[];  // symbols in eToro live but absent from manual metadata
+  source: "etoro-live" | "manual-fallback";
+}
+
+export function reconcilePositions(
+  manualMetadata: Array<Record<string, unknown>>,
+  etoroAggregated: Map<string, AggregatedPosition> | undefined,
+  marketData: Map<string, MarketData>
+): ReconciliationResult {
+  // Fallback: no eToro live → render manual as-is (legacy path)
+  if (!etoroAggregated || etoroAggregated.size === 0) {
+    const livePositions = manualMetadata.map((m) => {
+      const sym = m.symbol as string;
+      const mkt = marketData.get(sym);
+      const livePrice = mkt?.price || (m.avgCost as number) || 0;
+      const qty = (m.quantity as number) || 0;
+      const avgCost = (m.avgCost as number) || 0;
+      const costBasis = qty * avgCost;
+      const unrealizedPnl = qty * (livePrice - avgCost);
+      const currentValue = costBasis + unrealizedPnl;
+      return {
+        ...(m as any),
+        livePrice,
+        changePercent: mkt?.changePercent ?? 0,
+        currentValue,
+        unrealizedPnl,
+        unrealizedPnlPercent: costBasis > 0 ? (unrealizedPnl / costBasis) * 100 : 0,
+        sma50: mkt?.sma50,
+        sma200: mkt?.sma200,
+        rsi14: mkt?.rsi14,
+        dataSource: "manual",
+      } as PositionWithLive;
+    });
+    return { livePositions, staleManualEntries: [], unmappedLiveEntries: [], source: "manual-fallback" };
+  }
+
+  // eToro live is source of truth for which symbols exist
+  const liveSymbols = new Set(etoroAggregated.keys());
+  const manualBySymbol = new Map<string, Record<string, unknown>>();
+  for (const m of manualMetadata) manualBySymbol.set(m.symbol as string, m);
+
+  const livePositions: PositionWithLive[] = [];
+  const unmappedLiveEntries: string[] = [];
+
+  for (const [symbol, agg] of etoroAggregated.entries()) {
+    const meta = manualBySymbol.get(symbol);
+    const mkt = marketData.get(symbol);
+    const livePrice = mkt?.price || agg.avgCost;
+    const costBasis = agg.totalInvested;
+    const unrealizedPnl = agg.units * (livePrice - agg.avgCost);
+    const currentValue = costBasis + unrealizedPnl;
+    const unrealizedPnlPercent = costBasis > 0 ? (unrealizedPnl / costBasis) * 100 : 0;
+
+    const baseMeta = meta ?? {
+      symbol,
+      label: `${symbol} (no metadata)`,
+      stopLoss: 0,
+      takeProfit: 0,
+      takeProfit2: 0,
+      entryDate: "",
+      notes: `⚠ No SL/TP set — add metadata to manual-input.json > positions[] for this symbol.`,
+      status: "active",
+    };
+    if (!meta) unmappedLiveEntries.push(symbol);
+
+    livePositions.push({
+      ...(baseMeta as any),
+      symbol,
+      quantity: agg.units,    // live from eToro
+      avgCost: agg.avgCost,   // live from eToro
+      livePrice,
+      changePercent: mkt?.changePercent ?? 0,
+      currentValue,
+      unrealizedPnl,
+      unrealizedPnlPercent,
+      sma50: mkt?.sma50,
+      sma200: mkt?.sma200,
+      rsi14: mkt?.rsi14,
+      dataSource: "etoro-live",
+    } as PositionWithLive);
+  }
+
+  // Anything in manual that is NOT in live = stale (e.g. closed position not yet removed)
+  const staleManualEntries: string[] = [];
+  for (const m of manualMetadata) {
+    const sym = m.symbol as string;
+    if (!liveSymbols.has(sym)) staleManualEntries.push(sym);
+  }
+
+  return {
+    livePositions,
+    staleManualEntries,
+    unmappedLiveEntries,
+    source: "etoro-live",
+  };
+}
+
 // ─────────── Today's momentum ───────────
 // Sum of (live position currentValue × Yahoo daily change %) — proxy for $ change today.
 

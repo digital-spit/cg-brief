@@ -1,16 +1,23 @@
 const ETORO_BASE = "https://public-api.etoro.com/api/v1";
 
 // eToro instrumentID → Yahoo Finance symbol (direct positions)
+// Add entries here as the user opens new positions on eToro. Anything not mapped will
+// still appear in dashboard as "unmapped — instrument #X" so you know to add it.
 export const INSTRUMENT_SYMBOL_MAP: Record<number, string> = {
-  18: "GC=F",       // Gold CFD
-  1184: "PINS",     // Pinterest
-  3006: "QQQ",      // Nasdaq 100 ETF
-  4237: "VTI",      // Vanguard Total Market ETF
-  4481: "TSM",      // Taiwan Semiconductor ADR
-  8739: "ICLN",     // iShares Clean Energy ETF
+  18: "GC=F",        // Gold CFD
+  1184: "PINS",      // Pinterest
+  3006: "QQQ",       // Nasdaq 100 ETF
+  4237: "VTI",       // Vanguard Total Market ETF
+  4481: "TSM",       // Taiwan Semiconductor ADR
+  8739: "ICLN",      // iShares Clean Energy ETF
   100000: "BTC-USD", // Bitcoin
   100001: "ETH-USD", // Ethereum
 };
+
+// Inverse map for label fallback when symbol is unmapped
+export function symbolForInstrument(id: number): string | null {
+  return INSTRUMENT_SYMBOL_MAP[id] ?? null;
+}
 
 export interface EtoroLot {
   positionID: number;
