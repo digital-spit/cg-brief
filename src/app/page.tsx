@@ -1,5 +1,6 @@
 import { fetchMarketData, calculateTrend, getRSIZone, getSignal } from "@/lib/market";
 import { fetchEtoroPortfolio } from "@/lib/etoro";
+import { classifyActionZone, buildProjection, computeTodayPnlUSD } from "@/lib/wealth";
 import type {
   ManualInput,
   PositionWithLive,
@@ -206,6 +207,30 @@ export default async function Dashboard() {
   const pinsRsuAED = pinsLivePrice > 0 ? Math.round(pinsLivePrice * 1429 * usdToAed) : 0;
   const snapRsuAED = snapLivePrice > 0 ? Math.round(snapLivePrice * 1798 * usdToAed) : 0;
 
+  // ─── Wealth Hero math ───
+  const wp = data.wealthProgress;
+  const liveWealthComponents = (wp?.components ?? []).map((c: any) => {
+    if (c.label === "eToro Portfolio" && etoroPortfolioAED > 0) return { ...c, valueAED: etoroPortfolioAED };
+    if (c.label?.startsWith("PINS RSU") && pinsRsuAED > 0)       return { ...c, valueAED: pinsRsuAED };
+    if (c.label?.startsWith("SNAP RSU") && snapRsuAED > 0)       return { ...c, valueAED: snapRsuAED };
+    return c;
+  });
+  const grossAssetsAED = liveWealthComponents.reduce((s: number, c: any) => s + c.valueAED, 0);
+  const totalLiabilitiesAED = (wp?.liabilities ?? []).reduce((s: number, l: any) => s + l.balanceAED, 0);
+  const netWorthAED = grossAssetsAED - totalLiabilitiesAED;
+  const projection = buildProjection(netWorthAED, wp?.goalAED ?? 1_000_000);
+
+  // Momentum tiles
+  const todayPnlUSD = computeTodayPnlUSD(enrichedPositions);
+  const todayPnlAED = todayPnlUSD * usdToAed;
+  const monthlyIncomeAED = (wp?.incomeSources ?? []).reduce((s: number, i: any) => s + i.monthlyAED, 0);
+
+  // ─── Action Zones (sorted by urgency desc) ───
+  const actionZones = enrichedPositions
+    .map(classifyActionZone)
+    .sort((a, b) => b.urgency - a.urgency);
+  const urgentZones = actionZones.filter((z) => z.urgency >= 40);
+
   // Filter to only upcoming/today events — compare date string to today in Dubai time
   const todayDubai = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dubai" }); // YYYY-MM-DD
   const upcomingEvents = (data.events ?? []).filter(
@@ -289,6 +314,110 @@ export default async function Dashboard() {
                   eToro synced {new Date(etoroData.fetchedAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true, timeZone: "Asia/Dubai" })} Dubai
                 </p>
               )}
+            </div>
+          </div>
+
+          {/* ─── Wealth Hero ─── */}
+          <div className="mb-5 bg-gradient-to-br from-emerald-950/40 via-gray-900 to-sky-950/30 border border-gray-800 rounded-2xl p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Net Worth + AED 1M progress */}
+              <div className="lg:col-span-2">
+                <p className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Road to AED 1,000,000</p>
+                <div className="flex items-baseline gap-3 mb-1">
+                  <p className="text-4xl font-mono font-bold text-white">
+                    AED {netWorthAED.toLocaleString()}
+                  </p>
+                  <p className="text-2xl font-mono font-bold text-emerald-400">
+                    {projection.pctToGoal.toFixed(1)}%
+                  </p>
+                </div>
+                <p className="text-xs text-gray-400 font-mono mb-3">
+                  AED {projection.remainingAED.toLocaleString()} to goal · gross AED {grossAssetsAED.toLocaleString()} − liabilities AED {totalLiabilitiesAED.toLocaleString()}
+                </p>
+
+                {/* Segmented progress bar */}
+                <div className="relative h-7 bg-gray-900 rounded-lg overflow-hidden flex border border-gray-800">
+                  {liveWealthComponents.map((c: any, i: number) => {
+                    const segColors: Record<string, string> = {
+                      emerald: "bg-emerald-500", amber: "bg-amber-400", sky: "bg-sky-400",
+                      indigo: "bg-indigo-400", purple: "bg-purple-400", slate: "bg-slate-500",
+                    };
+                    const w = (c.valueAED / projection.goalAED) * 100;
+                    return (
+                      <div
+                        key={i}
+                        className={`${segColors[c.color] || "bg-gray-500"} h-full transition-all`}
+                        style={{ width: `${w}%` }}
+                        title={`${c.label}: AED ${c.valueAED.toLocaleString()} (${w.toFixed(1)}%)`}
+                      />
+                    );
+                  })}
+                  {totalLiabilitiesAED > 0 && (
+                    <div
+                      className="bg-red-900/70 h-full border-l border-red-700"
+                      style={{ width: `${(totalLiabilitiesAED / projection.goalAED) * 100}%` }}
+                      title={`Liabilities: AED ${totalLiabilitiesAED.toLocaleString()}`}
+                    />
+                  )}
+                  <div className="bg-gray-800/40 h-full flex-1 border-l border-dashed border-gray-700" />
+                  {/* 50% / 75% target markers */}
+                  {[0.5, 0.75].map((m) => (
+                    <div key={m} className="absolute top-0 bottom-0 border-l border-dashed border-gray-600 opacity-50"
+                         style={{ left: `${m * 100}%` }} />
+                  ))}
+                </div>
+
+                {/* Scenario ETA cards */}
+                <div className="grid grid-cols-3 gap-2 mt-4">
+                  {projection.scenarios.map((s) => {
+                    const yrs = isFinite(s.months) ? (s.months / 12) : Infinity;
+                    const accent = s.label === "Base case" ? "border-emerald-700 bg-emerald-950/30" : "border-gray-700 bg-gray-900/50";
+                    return (
+                      <div key={s.label} className={`rounded-lg p-3 border ${accent}`}>
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{s.label}</p>
+                        <p className="text-sm font-mono text-gray-200 mt-1">
+                          {isFinite(yrs) ? `${yrs.toFixed(1)} yrs` : "—"}
+                        </p>
+                        <p className="text-[10px] text-gray-500 font-mono">
+                          {s.etaDate} · AED {(s.monthlySavingsAED / 1000).toFixed(0)}K/mo @ {s.cagrPct}%
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Momentum tiles */}
+              <div className="grid grid-cols-2 gap-2 content-start">
+                <div className="bg-gray-900/70 border border-gray-800 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Today</p>
+                  <p className={`text-lg font-mono font-bold ${todayPnlUSD >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                    {todayPnlUSD >= 0 ? "+" : ""}${Math.abs(todayPnlUSD).toFixed(0)}
+                  </p>
+                  <p className="text-[10px] text-gray-600 font-mono">≈ AED {Math.round(todayPnlAED).toLocaleString()}</p>
+                </div>
+                <div className="bg-gray-900/70 border border-gray-800 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Unrealized</p>
+                  <p className={`text-lg font-mono font-bold ${totalPnL >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                    {totalPnL >= 0 ? "+" : ""}${Math.abs(totalPnL).toFixed(0)}
+                  </p>
+                  <p className="text-[10px] text-gray-600 font-mono">{formatPercent(totalPnLPct)} on invested</p>
+                </div>
+                <div className="bg-gray-900/70 border border-gray-800 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Monthly inflow</p>
+                  <p className="text-lg font-mono font-bold text-sky-400">
+                    AED {Math.round(monthlyIncomeAED / 1000)}K
+                  </p>
+                  <p className="text-[10px] text-gray-600 font-mono">salary + consulting</p>
+                </div>
+                <div className="bg-gray-900/70 border border-gray-800 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Action items</p>
+                  <p className="text-lg font-mono font-bold text-amber-400">
+                    {urgentZones.length}
+                  </p>
+                  <p className="text-[10px] text-gray-600 font-mono">positions need a decision</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -922,33 +1051,53 @@ export default async function Dashboard() {
               </div>
             )}
 
-            {/* Portfolio Flags */}
+            {/* Action Zones — ranked by urgency */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                Portfolio Flags
-              </p>
+              <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Action Zones
+                </p>
+                <p className="text-[10px] text-gray-600 font-mono">
+                  {urgentZones.length} of {actionZones.length} need attention
+                </p>
+              </div>
               <div className="space-y-2">
-                {allFlags.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic">
-                    All positions nominal
-                  </p>
+                {actionZones.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic">No positions to evaluate</p>
                 ) : (
-                  allFlags.map((flag, idx) => (
-                    <div
-                      key={idx}
-                      className={`rounded-lg p-3 text-xs border ${
-                        flag.severity === "critical"
-                          ? "bg-red-950/30 border-red-800"
-                          : flag.severity === "watch"
-                            ? "bg-amber-950/30 border-amber-800"
-                            : "bg-emerald-950/30 border-emerald-800"
-                      }`}
-                    >
-                      <p className="font-semibold text-gray-100">
-                        {flag.title}
-                      </p>
-                    </div>
-                  ))
+                  actionZones.map((z) => {
+                    const colorMap: Record<string, string> = {
+                      red:     "bg-red-950/40 border-red-800 text-red-200",
+                      emerald: "bg-emerald-950/30 border-emerald-800 text-emerald-200",
+                      sky:     "bg-sky-950/30 border-sky-800 text-sky-200",
+                      amber:   "bg-amber-950/30 border-amber-800 text-amber-200",
+                      gray:    "bg-gray-800/30 border-gray-700 text-gray-400",
+                    };
+                    const ctaColor: Record<string, string> = {
+                      red:     "bg-red-900 text-red-100",
+                      emerald: "bg-emerald-900 text-emerald-100",
+                      sky:     "bg-sky-900 text-sky-100",
+                      amber:   "bg-amber-900 text-amber-100",
+                      gray:    "bg-gray-700 text-gray-300",
+                    };
+                    return (
+                      <div key={z.symbol} className={`rounded-lg p-3 text-xs border ${colorMap[z.color]}`}>
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold font-mono">{z.symbol}</span>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${ctaColor[z.color]}`}>
+                              {z.cta}
+                            </span>
+                          </div>
+                          <span className={`text-[10px] font-mono ${z.pnlPercent >= 0 ? "text-emerald-300" : "text-red-300"}`}>
+                            {formatPercent(z.pnlPercent)}
+                          </span>
+                        </div>
+                        <p className="text-[11px] leading-snug opacity-90">{z.rationale}</p>
+                        <p className="text-[10px] font-mono opacity-60 mt-1">live ${z.livePrice >= 100 ? z.livePrice.toFixed(0) : z.livePrice.toFixed(2)} · urgency {z.urgency}</p>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>
