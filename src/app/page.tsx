@@ -16,6 +16,7 @@ import manualInput from "@/data/manual-input.json";
 import RefreshButton from "./refresh-button";
 import LiveNewsFeed from "./components/LiveNewsFeed";
 import StrategistPanel from "./components/StrategistPanel";
+import InteractiveChecklist from "./components/InteractiveChecklist";
 
 export const revalidate = 900; // 15 min ISR — Refresh button bypasses cache on demand
 
@@ -668,6 +669,212 @@ export default async function Dashboard() {
         {/* Live Intelligence Feed */}
         <LiveNewsFeed />
 
+        {/* ─── Performance Suite (TWR · Allocation · Stress · Cashflow) ─── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+        {/* ─── Performance (TWR / CAGR / Sharpe / Max DD) ─── */}
+        {performance.monthsTracked >= 2 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Performance</p>
+              <p className="text-[10px] text-gray-600 font-mono">
+                {performance.monthsTracked} pts · {performance.rangeStart} → {performance.rangeEnd}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="bg-gray-800/40 rounded-lg p-2.5">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest">Total return</p>
+                <p className={`text-lg font-mono font-bold ${(performance.twrPct ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  {performance.twrPct == null ? "—" : `${performance.twrPct >= 0 ? "+" : ""}${performance.twrPct.toFixed(2)}%`}
+                </p>
+                <p className="text-[10px] text-gray-600 font-mono">since {performance.rangeStart}</p>
+              </div>
+              <div className="bg-gray-800/40 rounded-lg p-2.5">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest">CAGR</p>
+                <p className={`text-lg font-mono font-bold ${(performance.cagrPct ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                  {performance.cagrPct == null ? "—" : `${performance.cagrPct >= 0 ? "+" : ""}${performance.cagrPct.toFixed(2)}%`}
+                </p>
+                <p className="text-[10px] text-gray-600 font-mono">annualized</p>
+              </div>
+              <div className="bg-gray-800/40 rounded-lg p-2.5">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest">Max DD</p>
+                <p className="text-lg font-mono font-bold text-red-400">
+                  {performance.maxDrawdownPct.toFixed(2)}%
+                </p>
+                <p className="text-[10px] text-gray-600 font-mono">
+                  AED {Math.round(performance.maxDrawdownAED).toLocaleString()}
+                </p>
+              </div>
+              <div className="bg-gray-800/40 rounded-lg p-2.5">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest">Sharpe (vs 4% rf)</p>
+                <p className={`text-lg font-mono font-bold ${(performance.sharpe ?? 0) >= 1 ? "text-emerald-400" : (performance.sharpe ?? 0) >= 0 ? "text-amber-400" : "text-red-400"}`}>
+                  {performance.sharpe == null ? "—" : performance.sharpe.toFixed(2)}
+                </p>
+                <p className="text-[10px] text-gray-600 font-mono">
+                  best {performance.bestMonthPct?.toFixed(1) ?? "—"}% / worst {performance.worstMonthPct?.toFixed(1) ?? "—"}%
+                </p>
+              </div>
+            </div>
+            <p className="text-[10px] text-gray-600 mt-2 font-mono italic">
+              Snapshots maintained manually until /api/snapshot cron is wired (see manual-input.json &gt; wealthProgress &gt; snapshots).
+            </p>
+          </div>
+        )}
+
+        {/* ─── Allocation vs Target ─── */}
+        {allocation && (
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Allocation · Rebalance</p>
+              <p className={`text-[10px] font-mono ${allocation.outOfBand.length > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                {allocation.outOfBand.length === 0
+                  ? `● within ±${allocation.bandPct}% band`
+                  : `⚠ ${allocation.outOfBand.length} slice${allocation.outOfBand.length > 1 ? "s" : ""} out of band`}
+              </p>
+            </div>
+            {/* Stacked bar: actual */}
+            <div className="h-4 bg-gray-800 rounded-full overflow-hidden flex mb-3 border border-gray-700">
+              {allocation.slices.map((s) => (
+                <div key={s.key} className={`${s.color} h-full transition-all`}
+                     style={{ width: `${s.actualPct}%` }}
+                     title={`${s.label}: ${s.actualPct.toFixed(1)}% (target ${s.targetPct}%)`} />
+              ))}
+            </div>
+            <div className="space-y-1.5 text-xs">
+              {allocation.slices.map((s) => {
+                const tone = s.status === "on-target" ? "text-gray-300"
+                          : s.status === "overweight" ? "text-amber-300"
+                          : "text-sky-300";
+                const arrow = s.status === "overweight" ? "↑" : s.status === "underweight" ? "↓" : "·";
+                return (
+                  <div key={s.key} className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-sm ${s.color}`} />
+                      <span className="text-gray-300">{s.label}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-right">
+                      <span className="font-mono text-gray-400 text-[10px]">AED {Math.round(s.valueAED).toLocaleString()}</span>
+                      <span className="font-mono text-gray-200 w-12 text-right">{s.actualPct.toFixed(1)}%</span>
+                      <span className="font-mono text-gray-600 w-10 text-right">/{s.targetPct}%</span>
+                      <span className={`font-mono w-12 text-right ${tone}`}>
+                        {arrow} {s.deviationPct >= 0 ? "+" : ""}{s.deviationPct.toFixed(1)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {allocation.outOfBand.length > 0 && (
+              <div className="mt-3 pt-2 border-t border-gray-800 space-y-1">
+                <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">Rebalance suggestions</p>
+                {allocation.outOfBand.map((s) => {
+                  const direction = s.status === "overweight" ? "Trim" : "Add to";
+                  const dollarsAED = (Math.abs(s.deviationPct) / 100) * allocation.totalAED;
+                  return (
+                    <p key={s.key} className="text-[11px] text-gray-300 leading-snug">
+                      <span className="text-gray-500 font-mono mr-1">→</span>
+                      {direction} <span className="font-semibold">{s.label}</span> by ≈ AED {Math.round(dollarsAED).toLocaleString()} to hit target {s.targetPct}%
+                    </p>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ─── Stress Test ─── */}
+        {stressResults.length > 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Stress Test</p>
+              <p className="text-[10px] text-gray-600 font-mono">vs current AED {netWorthAED.toLocaleString()}</p>
+            </div>
+            <div className="space-y-1.5">
+              {stressResults
+                .slice()
+                .sort((a, b) => a.deltaAED - b.deltaAED)
+                .map((r) => {
+                  const tone = r.deltaAED >= 0
+                    ? "border-emerald-800 bg-emerald-950/30 text-emerald-200"
+                    : Math.abs(r.deltaPct) >= 10
+                      ? "border-red-800 bg-red-950/40 text-red-200"
+                      : "border-amber-800 bg-amber-950/30 text-amber-200";
+                  return (
+                    <div key={r.name} className={`rounded-lg p-2.5 text-xs border ${tone}`}>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-semibold flex items-center gap-1.5">
+                          <span>{r.icon}</span>
+                          <span>{r.name}</span>
+                        </p>
+                        <div className="text-right font-mono">
+                          <span className={`font-bold ${r.deltaAED >= 0 ? "text-emerald-300" : "text-red-300"}`}>
+                            {r.deltaAED >= 0 ? "+" : ""}AED {Math.round(r.deltaAED).toLocaleString()}
+                          </span>
+                          <span className="text-[10px] opacity-70 ml-1.5">({r.deltaPct >= 0 ? "+" : ""}{r.deltaPct.toFixed(1)}%)</span>
+                        </div>
+                      </div>
+                      <p className="text-[10px] opacity-70 mt-0.5 font-mono">
+                        Net would be AED {Math.round(r.netWorthAfterAED).toLocaleString()}
+                        {r.affectedComponents.length > 0 && (
+                          <span> · hits: {r.affectedComponents.map((c) => c.label.replace(" (Schwab)", "").replace(" Portfolio", "")).join(", ")}</span>
+                        )}
+                      </p>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+
+        {/* ─── Cashflow Waterfall ─── */}
+        {cashflow && (
+          <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Cashflow · Monthly</p>
+              <p className="text-[10px] text-gray-600 font-mono">
+                save {cashflow.savingsRatePct.toFixed(0)}%
+                {cashflow.runwayMonths !== null && ` · runway ${cashflow.runwayMonths.toFixed(1)} mo`}
+              </p>
+            </div>
+
+            {/* Waterfall: income → categories → net */}
+            <div className="space-y-1.5 text-xs">
+              <div className="flex justify-between bg-emerald-950/40 border border-emerald-800 rounded p-2">
+                <span className="text-emerald-200 font-semibold">Gross income</span>
+                <span className="font-mono text-emerald-300 font-bold">+AED {cashflow.monthlyIncomeAED.toLocaleString()}</span>
+              </div>
+              {Object.entries(cashflow.monthlyExpensesByCategory)
+                .sort((a, b) => b[1] - a[1])
+                .map(([cat, amt]) => {
+                  const pctOfIncome = cashflow.monthlyIncomeAED > 0 ? (amt / cashflow.monthlyIncomeAED) * 100 : 0;
+                  return (
+                    <div key={cat} className="flex justify-between items-center bg-gray-800/40 rounded p-2">
+                      <span className="text-gray-300 capitalize">− {cat}</span>
+                      <div className="text-right">
+                        <span className="font-mono text-red-300">−AED {amt.toLocaleString()}</span>
+                        <span className="text-[10px] text-gray-600 font-mono ml-2">({pctOfIncome.toFixed(0)}%)</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              <div className={`flex justify-between border rounded p-2 ${cashflow.netInvestableAED >= 0 ? "bg-sky-950/40 border-sky-800 text-sky-200" : "bg-red-950/40 border-red-800 text-red-200"}`}>
+                <span className="font-bold">= Net investable</span>
+                <span className={`font-mono font-bold ${cashflow.netInvestableAED >= 0 ? "text-sky-300" : "text-red-300"}`}>
+                  {cashflow.netInvestableAED >= 0 ? "+" : ""}AED {cashflow.netInvestableAED.toLocaleString()}
+                </span>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-gray-600 mt-3 font-mono italic">
+              Dashboard projection assumes AED 30K/mo savings (Base case). Actual capacity = AED {cashflow.netInvestableAED.toLocaleString()}/mo.
+              {cashflow.netInvestableAED < 30000 && cashflow.netInvestableAED > 0 && (
+                <span className="text-amber-400"> Base scenario may be optimistic — adjust target.</span>
+              )}
+            </p>
+          </div>
+        )}
+
+        </div>
+
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Left Column */}
@@ -1223,208 +1430,6 @@ export default async function Dashboard() {
               </div>
             )}
 
-            {/* ─── Performance (TWR / CAGR / Sharpe / Max DD) ─── */}
-            {performance.monthsTracked >= 2 && (
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Performance</p>
-                  <p className="text-[10px] text-gray-600 font-mono">
-                    {performance.monthsTracked} pts · {performance.rangeStart} → {performance.rangeEnd}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="bg-gray-800/40 rounded-lg p-2.5">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">Total return</p>
-                    <p className={`text-lg font-mono font-bold ${(performance.twrPct ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {performance.twrPct == null ? "—" : `${performance.twrPct >= 0 ? "+" : ""}${performance.twrPct.toFixed(2)}%`}
-                    </p>
-                    <p className="text-[10px] text-gray-600 font-mono">since {performance.rangeStart}</p>
-                  </div>
-                  <div className="bg-gray-800/40 rounded-lg p-2.5">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">CAGR</p>
-                    <p className={`text-lg font-mono font-bold ${(performance.cagrPct ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}`}>
-                      {performance.cagrPct == null ? "—" : `${performance.cagrPct >= 0 ? "+" : ""}${performance.cagrPct.toFixed(2)}%`}
-                    </p>
-                    <p className="text-[10px] text-gray-600 font-mono">annualized</p>
-                  </div>
-                  <div className="bg-gray-800/40 rounded-lg p-2.5">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">Max DD</p>
-                    <p className="text-lg font-mono font-bold text-red-400">
-                      {performance.maxDrawdownPct.toFixed(2)}%
-                    </p>
-                    <p className="text-[10px] text-gray-600 font-mono">
-                      AED {Math.round(performance.maxDrawdownAED).toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="bg-gray-800/40 rounded-lg p-2.5">
-                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">Sharpe (vs 4% rf)</p>
-                    <p className={`text-lg font-mono font-bold ${(performance.sharpe ?? 0) >= 1 ? "text-emerald-400" : (performance.sharpe ?? 0) >= 0 ? "text-amber-400" : "text-red-400"}`}>
-                      {performance.sharpe == null ? "—" : performance.sharpe.toFixed(2)}
-                    </p>
-                    <p className="text-[10px] text-gray-600 font-mono">
-                      best {performance.bestMonthPct?.toFixed(1) ?? "—"}% / worst {performance.worstMonthPct?.toFixed(1) ?? "—"}%
-                    </p>
-                  </div>
-                </div>
-                <p className="text-[10px] text-gray-600 mt-2 font-mono italic">
-                  Snapshots maintained manually until /api/snapshot cron is wired (see manual-input.json &gt; wealthProgress &gt; snapshots).
-                </p>
-              </div>
-            )}
-
-            {/* ─── Allocation vs Target ─── */}
-            {allocation && (
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Allocation · Rebalance</p>
-                  <p className={`text-[10px] font-mono ${allocation.outOfBand.length > 0 ? "text-amber-400" : "text-emerald-400"}`}>
-                    {allocation.outOfBand.length === 0
-                      ? `● within ±${allocation.bandPct}% band`
-                      : `⚠ ${allocation.outOfBand.length} slice${allocation.outOfBand.length > 1 ? "s" : ""} out of band`}
-                  </p>
-                </div>
-                {/* Stacked bar: actual */}
-                <div className="h-4 bg-gray-800 rounded-full overflow-hidden flex mb-3 border border-gray-700">
-                  {allocation.slices.map((s) => (
-                    <div key={s.key} className={`${s.color} h-full transition-all`}
-                         style={{ width: `${s.actualPct}%` }}
-                         title={`${s.label}: ${s.actualPct.toFixed(1)}% (target ${s.targetPct}%)`} />
-                  ))}
-                </div>
-                <div className="space-y-1.5 text-xs">
-                  {allocation.slices.map((s) => {
-                    const tone = s.status === "on-target" ? "text-gray-300"
-                              : s.status === "overweight" ? "text-amber-300"
-                              : "text-sky-300";
-                    const arrow = s.status === "overweight" ? "↑" : s.status === "underweight" ? "↓" : "·";
-                    return (
-                      <div key={s.key} className="flex justify-between items-center">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-sm ${s.color}`} />
-                          <span className="text-gray-300">{s.label}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-right">
-                          <span className="font-mono text-gray-400 text-[10px]">AED {Math.round(s.valueAED).toLocaleString()}</span>
-                          <span className="font-mono text-gray-200 w-12 text-right">{s.actualPct.toFixed(1)}%</span>
-                          <span className="font-mono text-gray-600 w-10 text-right">/{s.targetPct}%</span>
-                          <span className={`font-mono w-12 text-right ${tone}`}>
-                            {arrow} {s.deviationPct >= 0 ? "+" : ""}{s.deviationPct.toFixed(1)}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                {allocation.outOfBand.length > 0 && (
-                  <div className="mt-3 pt-2 border-t border-gray-800 space-y-1">
-                    <p className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-1">Rebalance suggestions</p>
-                    {allocation.outOfBand.map((s) => {
-                      const direction = s.status === "overweight" ? "Trim" : "Add to";
-                      const dollarsAED = (Math.abs(s.deviationPct) / 100) * allocation.totalAED;
-                      return (
-                        <p key={s.key} className="text-[11px] text-gray-300 leading-snug">
-                          <span className="text-gray-500 font-mono mr-1">→</span>
-                          {direction} <span className="font-semibold">{s.label}</span> by ≈ AED {Math.round(dollarsAED).toLocaleString()} to hit target {s.targetPct}%
-                        </p>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ─── Stress Test ─── */}
-            {stressResults.length > 0 && (
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Stress Test</p>
-                  <p className="text-[10px] text-gray-600 font-mono">vs current AED {netWorthAED.toLocaleString()}</p>
-                </div>
-                <div className="space-y-1.5">
-                  {stressResults
-                    .slice()
-                    .sort((a, b) => a.deltaAED - b.deltaAED)
-                    .map((r) => {
-                      const tone = r.deltaAED >= 0
-                        ? "border-emerald-800 bg-emerald-950/30 text-emerald-200"
-                        : Math.abs(r.deltaPct) >= 10
-                          ? "border-red-800 bg-red-950/40 text-red-200"
-                          : "border-amber-800 bg-amber-950/30 text-amber-200";
-                      return (
-                        <div key={r.name} className={`rounded-lg p-2.5 text-xs border ${tone}`}>
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="font-semibold flex items-center gap-1.5">
-                              <span>{r.icon}</span>
-                              <span>{r.name}</span>
-                            </p>
-                            <div className="text-right font-mono">
-                              <span className={`font-bold ${r.deltaAED >= 0 ? "text-emerald-300" : "text-red-300"}`}>
-                                {r.deltaAED >= 0 ? "+" : ""}AED {Math.round(r.deltaAED).toLocaleString()}
-                              </span>
-                              <span className="text-[10px] opacity-70 ml-1.5">({r.deltaPct >= 0 ? "+" : ""}{r.deltaPct.toFixed(1)}%)</span>
-                            </div>
-                          </div>
-                          <p className="text-[10px] opacity-70 mt-0.5 font-mono">
-                            Net would be AED {Math.round(r.netWorthAfterAED).toLocaleString()}
-                            {r.affectedComponents.length > 0 && (
-                              <span> · hits: {r.affectedComponents.map((c) => c.label.replace(" (Schwab)", "").replace(" Portfolio", "")).join(", ")}</span>
-                            )}
-                          </p>
-                        </div>
-                      );
-                    })}
-                </div>
-              </div>
-            )}
-
-            {/* ─── Cashflow Waterfall ─── */}
-            {cashflow && (
-              <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Cashflow · Monthly</p>
-                  <p className="text-[10px] text-gray-600 font-mono">
-                    save {cashflow.savingsRatePct.toFixed(0)}%
-                    {cashflow.runwayMonths !== null && ` · runway ${cashflow.runwayMonths.toFixed(1)} mo`}
-                  </p>
-                </div>
-
-                {/* Waterfall: income → categories → net */}
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex justify-between bg-emerald-950/40 border border-emerald-800 rounded p-2">
-                    <span className="text-emerald-200 font-semibold">Gross income</span>
-                    <span className="font-mono text-emerald-300 font-bold">+AED {cashflow.monthlyIncomeAED.toLocaleString()}</span>
-                  </div>
-                  {Object.entries(cashflow.monthlyExpensesByCategory)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([cat, amt]) => {
-                      const pctOfIncome = cashflow.monthlyIncomeAED > 0 ? (amt / cashflow.monthlyIncomeAED) * 100 : 0;
-                      return (
-                        <div key={cat} className="flex justify-between items-center bg-gray-800/40 rounded p-2">
-                          <span className="text-gray-300 capitalize">− {cat}</span>
-                          <div className="text-right">
-                            <span className="font-mono text-red-300">−AED {amt.toLocaleString()}</span>
-                            <span className="text-[10px] text-gray-600 font-mono ml-2">({pctOfIncome.toFixed(0)}%)</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  <div className={`flex justify-between border rounded p-2 ${cashflow.netInvestableAED >= 0 ? "bg-sky-950/40 border-sky-800 text-sky-200" : "bg-red-950/40 border-red-800 text-red-200"}`}>
-                    <span className="font-bold">= Net investable</span>
-                    <span className={`font-mono font-bold ${cashflow.netInvestableAED >= 0 ? "text-sky-300" : "text-red-300"}`}>
-                      {cashflow.netInvestableAED >= 0 ? "+" : ""}AED {cashflow.netInvestableAED.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-[10px] text-gray-600 mt-3 font-mono italic">
-                  Dashboard projection assumes AED 30K/mo savings (Base case). Actual capacity = AED {cashflow.netInvestableAED.toLocaleString()}/mo.
-                  {cashflow.netInvestableAED < 30000 && cashflow.netInvestableAED > 0 && (
-                    <span className="text-amber-400"> Base scenario may be optimistic — adjust target.</span>
-                  )}
-                </p>
-              </div>
-            )}
-
             {/* Action Zones (merged with Technical Signals) — ranked by urgency */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
@@ -1435,11 +1440,11 @@ export default async function Dashboard() {
                   {urgentZones.length} of {actionZones.length} need attention
                 </p>
               </div>
-              <div className="space-y-2">
-                {actionZones.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic">No positions to evaluate</p>
-                ) : (
-                  actionZones.map((z) => {
+              <InteractiveChecklist
+                storagePrefix="actionZone"
+                emptyMessage="No positions to evaluate"
+                showResetButton={true}
+                items={actionZones.map((z) => {
                     const colorMap: Record<string, string> = {
                       red:     "bg-red-950/40 border-red-800 text-red-200",
                       emerald: "bg-emerald-950/30 border-emerald-800 text-emerald-200",
@@ -1472,53 +1477,41 @@ export default async function Dashboard() {
                                   : signal === "sell" ? "bg-red-900 text-red-100"
                                   : signal === "hold" ? "bg-amber-900 text-amber-100"
                                   : "bg-gray-800 text-gray-400";
-                    return (
-                      <div key={z.symbol} className={`rounded-lg p-3 text-xs border ${colorMap[z.color]}`}>
-                        <div className="flex items-start justify-between gap-2 mb-1.5">
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold font-mono">{z.symbol}</span>
-                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${ctaColor[z.color]}`}>
-                              {z.cta}
+                    return {
+                      id: `${z.symbol}-${z.kind}-${z.execution?.instruction?.slice(0, 30) ?? z.cta}`,
+                      content: (
+                        <div className={`rounded-lg p-3 text-xs border ${colorMap[z.color]}`}>
+                          <div className="flex items-start justify-between gap-2 mb-1.5">
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold font-mono">{z.symbol}</span>
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${ctaColor[z.color]}`}>{z.cta}</span>
+                            </div>
+                            <span className={`text-[10px] font-mono ${z.pnlPercent >= 0 ? "text-emerald-300" : "text-red-300"}`}>
+                              {formatPercent(z.pnlPercent)}
                             </span>
                           </div>
-                          <span className={`text-[10px] font-mono ${z.pnlPercent >= 0 ? "text-emerald-300" : "text-red-300"}`}>
-                            {formatPercent(z.pnlPercent)}
-                          </span>
-                        </div>
-
-                        {/* Tech chip row */}
-                        <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
-                          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${rsiTone}`}>
-                            RSI {rsi == null ? "—" : rsi.toFixed(0)}
-                          </span>
-                          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded uppercase tracking-wider ${trendTone}`}>
-                            {trend}
-                          </span>
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${sigTone}`}>
-                            tech: {signal}
-                          </span>
-                        </div>
-
-                        <p className="text-[11px] leading-snug opacity-90 mb-1.5">{z.rationale}</p>
-
-                        {z.execution && (
-                          <div className="mt-1.5 mb-1 rounded-md px-2 py-1.5 bg-black/30 border border-white/5">
-                            <p className="text-[11px] font-semibold leading-snug">
-                              <span className="text-gray-500 font-mono mr-1">→</span>
-                              {z.execution.instruction}
-                            </p>
-                            {z.execution.detail && (
-                              <p className="text-[10px] leading-snug opacity-70 mt-0.5">{z.execution.detail}</p>
-                            )}
+                          <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                            <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${rsiTone}`}>RSI {rsi == null ? "—" : rsi.toFixed(0)}</span>
+                            <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded uppercase tracking-wider ${trendTone}`}>{trend}</span>
+                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${sigTone}`}>tech: {signal}</span>
                           </div>
-                        )}
-
-                        <p className="text-[10px] font-mono opacity-60 mt-1">live ${z.livePrice >= 100 ? z.livePrice.toFixed(0) : z.livePrice.toFixed(2)} · urgency {z.urgency}</p>
-                      </div>
-                    );
+                          <p className="text-[11px] leading-snug opacity-90 mb-1.5">{z.rationale}</p>
+                          {z.execution && (
+                            <div className="mt-1.5 mb-1 rounded-md px-2 py-1.5 bg-black/30 border border-white/5">
+                              <p className="text-[11px] font-semibold leading-snug">
+                                <span className="text-gray-500 font-mono mr-1">→</span>
+                                {z.execution.instruction}
+                              </p>
+                              {z.execution.detail && <p className="text-[10px] leading-snug opacity-70 mt-0.5">{z.execution.detail}</p>}
+                            </div>
+                          )}
+                          <p className="text-[10px] font-mono opacity-60 mt-1">live ${z.livePrice >= 100 ? z.livePrice.toFixed(0) : z.livePrice.toFixed(2)} · urgency {z.urgency}</p>
+                        </div>
+                      ),
+                    };
                   })
-                )}
-              </div>
+                }
+              />
             </div>
 
             {/* Upcoming Catalysts */}

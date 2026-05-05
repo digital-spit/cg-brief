@@ -112,6 +112,34 @@
       }
     },
     {
+      "symbol": "ETH-USD",
+      "label": "Ethereum",
+      "quantity": 0,
+      "avgCost": 2253.60,
+      "stopLoss": 1950,
+      "takeProfit": 3200,
+      "takeProfit2": 4800,
+      "entryDate": "2026-05",
+      "notes": "Avg $2,253.60. Pectra upgrade live (lower staking minimums + EIP-7702). April ETF inflows accelerating. Warsh transition USD-weak tailwind. SL $1,950 (-13.5%, below $2K cycle support). TP1 $3,200 (+42%, 50% retrace to ATH $4,953) trim 30%. TP2 $4,800 (+113%, near cycle high) trim 50%. Stake via Lido for 3-4% APR while held. UAE zero CGT.",
+      "status": "active",
+      "addZones": {
+        "uptrendAdd": {
+          "price": 2800,
+          "note": "Range-top breakout above $2,800 with volume — alt season confirmation"
+        },
+        "dipMedium": {
+          "min": 2100,
+          "max": 2200,
+          "note": "Current accumulation zone — light add on first dip"
+        },
+        "dipConviction": {
+          "min": 1950,
+          "max": 2050,
+          "note": "Cycle floor + $2K psychological — back up the truck if reached"
+        }
+      }
+    },
+    {
       "symbol": "TSM",
       "label": "Taiwan Semiconductor ADR",
       "quantity": 2.10071,

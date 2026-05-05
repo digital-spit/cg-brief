@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import InteractiveChecklist from "./InteractiveChecklist";
 
 interface StrategistNote {
   title: string;
@@ -235,26 +236,25 @@ export default function StrategistPanel({
             <span className="text-emerald-500 text-xs">● live</span>
           )}
         </div>
-        <div className="space-y-2">
-          {actionItems.map((item, idx) => {
-            const style =
-              PRIORITY_STYLES[item.priority] ?? PRIORITY_STYLES.medium;
+        <InteractiveChecklist
+          storagePrefix="strategistAction"
+          showResetButton={true}
+          items={actionItems.map((item, idx) => {
+            const style = PRIORITY_STYLES[item.priority] ?? PRIORITY_STYLES.medium;
             const dot = PRIORITY_DOT[item.priority] ?? PRIORITY_DOT.medium;
-            return (
-              <div
-                key={idx}
-                className={`rounded-lg p-3 text-xs border ${style} ${
-                  item.done ? "opacity-40 line-through" : ""
-                }`}
-              >
-                <div className="flex items-start gap-2">
-                  <span className={`mt-1 shrink-0 w-1.5 h-1.5 rounded-full ${dot}`} />
-                  <p className="leading-relaxed">{item.label}</p>
+            return {
+              id: `${item.priority}-${item.label.slice(0, 60)}-${idx}`,
+              content: (
+                <div className={`rounded-lg p-3 text-xs border ${style}`}>
+                  <div className="flex items-start gap-2">
+                    <span className={`mt-1 shrink-0 w-1.5 h-1.5 rounded-full ${dot}`} />
+                    <p className="leading-relaxed">{item.label}</p>
+                  </div>
                 </div>
-              </div>
-            );
+              ),
+            };
           })}
-        </div>
+        />
       </div>
     </>
   );
