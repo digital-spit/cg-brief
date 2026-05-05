@@ -121,13 +121,8 @@ function generateRuleBasedAnalysis(body: StrategistRequest, now: string) {
     const clean = evt.label.replace(/^[^\w]*/, "").substring(0, 85);
     actionItems.push({ label: `📊 ${evt.date}: ${clean}`, priority: "high", done: false });
   }
-  if (cashIdle > 1000) {
-    actionItems.push({
-      label: `💰 $${cashIdle.toFixed(2)} idle cash — deploy or park in stables for yield`,
-      priority: "medium",
-      done: false,
-    });
-  }
+  // Idle cash deployment is now handled by the dedicated Cash Deployment Plan panel
+  // (treasury-grade, multi-institution, conviction-weighted). Don't duplicate here.
 
   return {
     title,

@@ -672,6 +672,221 @@ export function computeCashflow(
   };
 }
 
+// ─────────── Cash Deployment Plan ───────────
+// Treasury-grade allocation of total idle cash across institutions, factoring:
+// - 6-month emergency reserve based on actual monthly burn
+// - Yield parking for cash not deployable within 30 days (MMF/Fixed Saving)
+// - Conviction-weighted candidate trades from watchlist + position add-zones
+// - Diversification toward under-target allocation buckets
+
+export interface DeploymentTrade {
+  source: "conviction-watchlist" | "existing-addzone" | "underweight-bucket" | "yield-park";
+  vehicle: string;            // e.g. "eToro buy", "Wio Fixed Saving USD"
+  symbol?: string;
+  label: string;
+  type?: string;              // stock | etf | crypto | commodity | mmf
+  sizeAED: number;
+  sizeUSD?: number;
+  units?: number;
+  livePrice?: number;
+  conviction?: number;        // 1-10
+  rationale: string;
+  priority: number;           // 0-100, higher first
+  instruction: string;        // imperative one-liner
+  steps?: string[];
+}
+
+export interface DeploymentPlan {
+  totalLiquidAED: number;
+  emergencyReserveAED: number;
+  reserveCoverMonths: number;
+  deployableAED: number;
+  mmfParkAED: number;
+  deployNowAED: number;
+  trades: DeploymentTrade[];
+  byBucketAED: Record<string, number>;
+}
+
+interface BuildPlanInput {
+  cashAccounts: Array<{ label: string; currency: string; balance: number; balanceAED: number }>;
+  enbdAED: number;                  // ENBD AED current (post-CC)
+  etoroCashUSD: number;             // eToro free cash
+  schwabCashUSD: number;             // Schwab MMF (already yielding)
+  usdToAed: number;
+  monthlyBurnAED: number;            // from cashflow.monthlyExpensesTotal
+  watchlist: Array<{
+    symbol: string; label: string; type: string; conviction: number;
+    signal: string; entryZone?: { min: number; max: number }; thesis?: string;
+  }>;
+  marketData: Map<string, MarketData>;
+  positionsWithZones: Array<PositionWithLive & { addZones?: any }>;
+  underweightBuckets: Array<{ key: string; label: string; deviationPct: number; targetPct: number }>;
+}
+
+const ADD_BUDGET_BY_CONVICTION_AED: Record<number, number> = {
+  10: 8000, 9: 6000, 8: 5000, 7: 4000, 6: 3000, 5: 2500, 4: 2000, 3: 1500, 2: 1000, 1: 1000,
+};
+
+export function buildCashDeploymentPlan(input: BuildPlanInput): DeploymentPlan {
+  // ── 1. Total liquid ──
+  const cashAcctsAED = input.cashAccounts.reduce((s, a) => s + a.balanceAED, 0);
+  const etoroCashAED = input.etoroCashUSD * input.usdToAed;
+  const schwabAED = input.schwabCashUSD * input.usdToAed; // already at ~4.7%, exclude from deployable
+  const totalLiquidAED = cashAcctsAED + input.enbdAED + etoroCashAED + schwabAED;
+
+  // ── 2. Emergency reserve: 6 months × monthly burn ──
+  const reserveCoverMonths = 6;
+  const emergencyReserveAED = input.monthlyBurnAED * reserveCoverMonths;
+
+  // ── 3. Deployable surplus ──
+  const deployableAED = Math.max(0, totalLiquidAED - emergencyReserveAED - schwabAED);
+
+  // ── 4. MMF park: 30% of surplus to keep opportunistic dry powder yielding ──
+  const mmfParkAED = Math.round(deployableAED * 0.30);
+  const deployNowAED = deployableAED - mmfParkAED;
+
+  // ── 5. Candidate trades ──
+  const candidates: DeploymentTrade[] = [];
+
+  // 5a. Watchlist conviction buys with live price in entry zone
+  for (const pick of input.watchlist) {
+    if (!pick.entryZone) continue;
+    if (pick.signal !== "strong_buy" && pick.signal !== "buy") continue;
+    const live = input.marketData.get(pick.symbol)?.price ?? 0;
+    if (live <= 0) continue;
+    const inZone = live >= pick.entryZone.min && live <= pick.entryZone.max;
+    const aboveZone = live > pick.entryZone.max;
+    if (!inZone && !aboveZone) continue; // wait if below zone (still cheap, fine to add) — actually allow
+    const placement = inZone ? "in entry zone" : "above entry zone — chasing";
+    const sizeAED = ADD_BUDGET_BY_CONVICTION_AED[pick.conviction] ?? 2500;
+    const sizeUSD = sizeAED / input.usdToAed;
+    const units = sizeUSD / live;
+    candidates.push({
+      source: "conviction-watchlist",
+      vehicle: "eToro buy",
+      symbol: pick.symbol,
+      label: pick.label,
+      type: pick.type,
+      sizeAED,
+      sizeUSD,
+      units,
+      livePrice: live,
+      conviction: pick.conviction,
+      priority: pick.conviction * 10 + (inZone ? 5 : 0) + (pick.signal === "strong_buy" ? 3 : 0),
+      rationale: `Conviction ${pick.conviction}/10 · ${pick.signal.replace("_", " ")} · ${placement} ($${pick.entryZone.min}-${pick.entryZone.max})${pick.thesis ? ` · ${pick.thesis.slice(0, 90)}…` : ""}`,
+      instruction: `Buy AED ${sizeAED.toLocaleString()} (≈ $${sizeUSD.toFixed(0)}) of ${pick.symbol} @ ~$${live.toFixed(2)} on eToro`,
+      steps: [
+        `On eToro, search "${pick.symbol}" → tap Trade → Buy`,
+        `Enter $${sizeUSD.toFixed(0)} OR ${units >= 1 ? units.toFixed(2) : units.toFixed(4)} units`,
+        `Set Stop Loss to fund-off level for this thesis`,
+        `Confirm at market`,
+      ],
+    });
+  }
+
+  // 5b. Existing positions currently in ADD zones
+  for (const pos of input.positionsWithZones) {
+    const az = (pos as any).addZones;
+    if (!az) continue;
+    const p = pos.livePrice;
+    let zone: string | null = null;
+    let conv = 5;
+    if (az.dipConviction && p >= az.dipConviction.min && p <= az.dipConviction.max) { zone = "conviction"; conv = 9; }
+    else if (az.dipMedium && p >= az.dipMedium.min && p <= az.dipMedium.max) { zone = "medium"; conv = 6; }
+    else if (az.dipLight && p >= az.dipLight.min && p <= az.dipLight.max) { zone = "light"; conv = 4; }
+    else if (az.uptrendAdd && p >= az.uptrendAdd.price) { zone = "uptrend"; conv = 5; }
+    if (!zone) continue;
+    const sizeAED = ADD_BUDGET_BY_CONVICTION_AED[conv] ?? 2500;
+    const sizeUSD = sizeAED / input.usdToAed;
+    const units = sizeUSD / p;
+    candidates.push({
+      source: "existing-addzone",
+      vehicle: "eToro add to existing",
+      symbol: pos.symbol,
+      label: pos.label,
+      type: pos.symbol.includes("BTC") || pos.symbol.includes("ETH") ? "crypto" : "equity",
+      sizeAED,
+      sizeUSD,
+      units,
+      livePrice: p,
+      conviction: conv,
+      priority: conv * 10 + 8, // existing positions get a small priority bump (already-aligned thesis)
+      rationale: `Existing position in ${zone} zone — already vetted thesis. Avg cost stays anchored.`,
+      instruction: `Buy AED ${sizeAED.toLocaleString()} (≈ $${sizeUSD.toFixed(0)}) more ${pos.symbol} @ ~$${p.toFixed(2)} on eToro`,
+      steps: [
+        `On eToro, open ${pos.symbol} → tap Trade → Buy`,
+        `Enter $${sizeUSD.toFixed(0)} OR ${units >= 1 ? units.toFixed(2) : units.toFixed(4)} units`,
+        `Set Stop Loss to $${pos.stopLoss.toFixed(2)} (existing SL)`,
+        `Confirm — this creates a new lot under same symbol`,
+      ],
+    });
+  }
+
+  // 5c. Diversification fillers for underweight buckets (only if no high-conviction in that bucket already)
+  const bucketCovered = new Set(candidates.map((c) => c.type));
+  for (const u of input.underweightBuckets) {
+    if (bucketCovered.has(u.key)) continue; // existing candidate fills this bucket
+    if (Math.abs(u.deviationPct) < 2) continue; // not meaningfully underweight
+    const fillSizeAED = Math.min(4000, Math.round(Math.abs(u.deviationPct) * 100));
+    if (fillSizeAED < 1000) continue;
+    candidates.push({
+      source: "underweight-bucket",
+      vehicle: u.key === "cash" ? "Wio Fixed Saving USD" : "eToro broad-market ETF",
+      label: `Diversify into ${u.label}`,
+      type: u.key,
+      sizeAED: fillSizeAED,
+      conviction: 5,
+      priority: 30 + Math.abs(u.deviationPct), // lower than conviction picks
+      rationale: `${u.label} is ${Math.abs(u.deviationPct).toFixed(1)}% under target ${u.targetPct}% — buy a broad proxy to rebalance.`,
+      instruction: `Allocate AED ${fillSizeAED.toLocaleString()} toward ${u.label} (e.g. ${u.key === "equity" ? "VTI" : u.key === "crypto" ? "ETH-USD" : u.key === "commodity" ? "GC=F" : "Wio MMF"})`,
+    });
+  }
+
+  // ── 6. Sort + budget allocation ──
+  candidates.sort((a, b) => b.priority - a.priority);
+  const trades: DeploymentTrade[] = [];
+  let remainingBudget = deployNowAED;
+  const byBucket: Record<string, number> = {};
+  for (const c of candidates) {
+    if (remainingBudget < 1000) break;
+    const sized = Math.min(c.sizeAED, remainingBudget);
+    if (sized < 1000) continue; // skip dust
+    trades.push({ ...c, sizeAED: sized });
+    remainingBudget -= sized;
+    const k = c.type ?? "other";
+    byBucket[k] = (byBucket[k] ?? 0) + sized;
+  }
+
+  // ── 7. MMF park as a final trade ──
+  if (mmfParkAED >= 1000) {
+    trades.push({
+      source: "yield-park",
+      vehicle: "Wio Fixed Saving USD or Schwab SWVXX",
+      label: "Park dry powder at ~4.7% MMF",
+      sizeAED: mmfParkAED,
+      priority: 0,
+      rationale: `30% of surplus held in MMF — ready to deploy on next signal. Earns ~AED ${Math.round(mmfParkAED * 0.047).toLocaleString()}/yr while waiting.`,
+      instruction: `Move AED ${mmfParkAED.toLocaleString()} to Wio Fixed Saving USD or Schwab SWVXX (~4.7% APR)`,
+      steps: [
+        `Wio: Open Spaces → New Saving Space → Fixed (USD) → enter $${(mmfParkAED / input.usdToAed).toFixed(0)}`,
+        `Or Schwab: Move cash to SWVXX (auto-yields, fully liquid)`,
+      ],
+    });
+    byBucket["mmf"] = mmfParkAED;
+  }
+
+  return {
+    totalLiquidAED,
+    emergencyReserveAED,
+    reserveCoverMonths,
+    deployableAED,
+    mmfParkAED,
+    deployNowAED,
+    trades,
+    byBucketAED: byBucket,
+  };
+}
+
 // ─────────── Inflation-adjusted goal ───────────
 
 export interface InflatedGoal {

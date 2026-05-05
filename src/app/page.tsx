@@ -4,6 +4,7 @@ import {
   classifyActionZone, buildProjection, computeTodayPnlUSD,
   computePerformance, computeAllocation, applyStressScenario,
   computeCashflow, inflationAdjustedGoal, reconcilePositions,
+  buildCashDeploymentPlan,
 } from "@/lib/wealth";
 import type {
   ManualInput,
@@ -383,6 +384,29 @@ export default async function Dashboard() {
   const cashflow = monthlyExpenses.length > 0
     ? computeCashflow(wp?.incomeSources ?? [], monthlyExpenses, liquidCashAED)
     : null;
+
+  // ─── Cash Deployment Plan ───
+  const enbdAED = liveWealthComponents.find((c: any) => c.label?.startsWith("ENBD"))?.valueAED ?? 0;
+  const schwabCashUSD = (liveWealthComponents.find((c: any) => c.label === "Schwab cash")?.valueAED ?? 0) / usdToAed;
+  const cashAccountsForPlan = cashDragRows.map((a) => ({
+    label: a.label, currency: a.currency, balance: a.balance, balanceAED: a.balanceAED,
+  }));
+  const monthlyBurnAED = cashflow?.monthlyExpensesTotal ?? 12504;
+  const underweightBuckets = (allocation?.outOfBand ?? [])
+    .filter((s) => s.status === "underweight")
+    .map((s) => ({ key: s.key, label: s.label, deviationPct: s.deviationPct, targetPct: s.targetPct }));
+  const cashPlan = buildCashDeploymentPlan({
+    cashAccounts: cashAccountsForPlan,
+    enbdAED,
+    etoroCashUSD: cashIdle,
+    schwabCashUSD,
+    usdToAed,
+    monthlyBurnAED,
+    watchlist: ((data as any).bullRunWatchlist ?? []) as any[],
+    marketData,
+    positionsWithZones: enrichedPositions as any[],
+    underweightBuckets,
+  });
 
   // ─── Inflation-adjusted target ───
   const baseYear = (wp as any)?.goalBaseYear ?? 2026;
@@ -874,6 +898,99 @@ export default async function Dashboard() {
         )}
 
         </div>
+
+        {/* ─── Cash Deployment Plan — treasury-grade allocation of all idle cash ─── */}
+        {cashPlan.totalLiquidAED > 0 && (
+          <div className="bg-gradient-to-br from-sky-950/30 via-gray-900 to-emerald-950/20 border border-gray-800 rounded-xl p-5 mb-5">
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-800">
+              <div>
+                <p className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Cash Deployment Plan</p>
+                <p className="text-[10px] text-gray-500 font-mono mt-0.5">
+                  Treasury-grade · uses live signals across portfolio + watchlist + allocation gaps
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-mono text-gray-500">Total liquid</p>
+                <p className="text-lg font-mono font-bold text-white">AED {Math.round(cashPlan.totalLiquidAED).toLocaleString()}</p>
+              </div>
+            </div>
+
+            {/* Capital allocation bar */}
+            <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
+              <div className="bg-amber-950/30 border border-amber-800 rounded p-2">
+                <p className="text-[10px] text-amber-400 uppercase tracking-widest font-bold">Reserve ({cashPlan.reserveCoverMonths}× burn)</p>
+                <p className="font-mono text-amber-200 font-bold mt-0.5">AED {Math.round(cashPlan.emergencyReserveAED).toLocaleString()}</p>
+                <p className="text-[10px] text-amber-300/70 font-mono mt-0.5">Untouchable runway</p>
+              </div>
+              <div className="bg-sky-950/30 border border-sky-800 rounded p-2">
+                <p className="text-[10px] text-sky-400 uppercase tracking-widest font-bold">MMF Park (30%)</p>
+                <p className="font-mono text-sky-200 font-bold mt-0.5">AED {Math.round(cashPlan.mmfParkAED).toLocaleString()}</p>
+                <p className="text-[10px] text-sky-300/70 font-mono mt-0.5">~4.7% APR · liquid</p>
+              </div>
+              <div className="bg-emerald-950/30 border border-emerald-800 rounded p-2">
+                <p className="text-[10px] text-emerald-400 uppercase tracking-widest font-bold">Deploy now (70%)</p>
+                <p className="font-mono text-emerald-200 font-bold mt-0.5">AED {Math.round(cashPlan.deployNowAED).toLocaleString()}</p>
+                <p className="text-[10px] text-emerald-300/70 font-mono mt-0.5">Conviction-tilted</p>
+              </div>
+            </div>
+
+            {cashPlan.trades.length > 0 ? (
+              <InteractiveChecklist
+                storagePrefix="cashDeploy"
+                showResetButton={true}
+                items={cashPlan.trades.map((t, i) => {
+                  const sourceColor =
+                    t.source === "conviction-watchlist" ? "border-emerald-800 bg-emerald-950/30" :
+                    t.source === "existing-addzone"    ? "border-sky-800 bg-sky-950/30" :
+                    t.source === "underweight-bucket"  ? "border-amber-800 bg-amber-950/30" :
+                    /* yield-park */                     "border-gray-700 bg-gray-800/40";
+                  const sourceBadge =
+                    t.source === "conviction-watchlist" ? "WATCHLIST" :
+                    t.source === "existing-addzone"    ? "EXISTING" :
+                    t.source === "underweight-bucket"  ? "REBALANCE" :
+                    "PARK";
+                  return {
+                    id: `${t.source}-${t.symbol ?? t.label}-${t.sizeAED}-${i}`,
+                    content: (
+                      <div className={`rounded-lg p-3 text-xs border ${sourceColor}`}>
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-black/30 text-gray-300">{sourceBadge}</span>
+                            {t.symbol && <span className="font-bold font-mono text-white">{t.symbol}</span>}
+                            <span className="font-mono text-emerald-300 font-bold">AED {Math.round(t.sizeAED).toLocaleString()}</span>
+                            {t.conviction && <span className="text-[10px] font-mono opacity-70">conviction {t.conviction}/10</span>}
+                          </div>
+                          <span className="text-[10px] font-mono opacity-50">P{t.priority.toFixed(0)}</span>
+                        </div>
+                        <p className="text-[11px] font-semibold leading-snug mt-1">
+                          <span className="text-gray-500 font-mono mr-1">→</span>
+                          {t.instruction}
+                        </p>
+                        <p className="text-[10px] leading-snug opacity-75 mt-1">{t.rationale}</p>
+                        {t.steps && t.steps.length > 0 && (
+                          <ol className="mt-1.5 pl-1 space-y-0.5 list-none">
+                            {t.steps.map((s, si) => (
+                              <li key={si} className="text-[10px] leading-snug opacity-90 flex gap-1.5">
+                                <span className="text-gray-500 font-mono shrink-0 w-3">{si + 1}.</span>
+                                <span>{s}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        )}
+                      </div>
+                    ),
+                  };
+                })}
+              />
+            ) : (
+              <p className="text-xs text-gray-400 italic">No deployable surplus — all liquid is committed to reserve + MMF park.</p>
+            )}
+
+            <p className="text-[10px] text-gray-600 mt-3 font-mono italic">
+              Plan recomputes each render from live cash balances (Wio + ENBD + eToro + Schwab), live Yahoo prices, current allocation deviations, and watchlist conviction levels. Reserve = {cashPlan.reserveCoverMonths} × monthly burn (AED {Math.round(monthlyBurnAED).toLocaleString()}). Tick a trade once placed — state persists.
+            </p>
+          </div>
+        )}
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
