@@ -144,18 +144,6 @@
         }
       }
     },
-    {
-      "symbol": "GDX",
-      "label": "VanEck Gold Miners ETF",
-      "quantity": 3.02176,
-      "avgCost": 99.28,
-      "stopLoss": 88,
-      "takeProfit": 115,
-      "takeProfit2": 130,
-      "entryDate": "2026-04-26",
-      "notes": "3.02 sh @ $99.28. Gold miners play alongside GC=F. SL ~$88 (-11%) / TP1 $115 (+16%) / TP2 $130 (+31%). High beta to gold.",
-      "status": "active"
-    }
   ],
   "copyPortfolio": {
     "trader": "Jaynemesis",
@@ -539,7 +527,6 @@
     "NTR",
     "FCX",
     "SCCO",
-    "GDX",
     "AVGO",
     "NVDA",
     "MRVL",
@@ -843,6 +830,7 @@
     },
     "monthlyExpenses": [
       { "label": "ENBD personal loan (INSTL_RECOVERY)",      "amountAED": 2517, "category": "debt",      "fixed": true,  "verifiedSource": "ENBD statement" },
+      { "label": "Skywards CC auto-pay (100% of statement)", "amountAED": 16000,"category": "debt",      "fixed": true,  "verifiedSource": "ENBD auto-debit 05/05/2026", "note": "Variable month-to-month based on usage. AED 16K is the latest auto-debit (5 May 2026). Reset balance to 0; tracks ongoing spend." },
       { "label": "Domestic worker (Maids — DDR debit)",      "amountAED": 2997, "category": "household", "fixed": true,  "verifiedSource": "ENBD statement" },
       { "label": "Family transfers (Renata, via Wio)",       "amountAED": 5000, "category": "family",    "fixed": true,  "verifiedSource": "Wio statement" },
       { "label": "Family transfers (Waleed SWIFT)",          "amountAED": 2973, "category": "family",    "fixed": true,  "verifiedSource": "Wio statement" },
@@ -939,23 +927,23 @@
       },
       {
         "label": "ENBD AED current",
-        "valueAED": 77073,
+        "valueAED": 61073,
         "confidence": "high",
         "color": "purple",
-        "note": "AED 77,072.70 \u2014 ENBD acct 1015933953702 closing balance per Statement of Account dated 03/05/2026 (period 03/11/2025\u201303/05/2026). Salary lands here.",
-        "enbd": { "currency": "AED", "balance": 77072.70, "asOf": "2026-05-01", "accountNumber": "1015933953702" }
+        "note": "AED 77,072.70 closing 01/05/2026 \u2212 AED 16,000 auto-debit 05/05/2026 (Skywards CC payment, 100% of statement). Salary lands here.",
+        "enbd": { "currency": "AED", "balance": 61072.70, "asOf": "2026-05-05", "accountNumber": "1015933953702" }
       }
     ],
     "liabilities": [
       {
         "label": "Emirates NBD Personal Loan",
-        "balanceAED": 86362,
-        "note": "103,981 Sep 2025 \u2212 7 \u00d7 2,517 AED repayments = est. 86,362 outstanding"
+        "balanceAED": 71260,
+        "note": "Estimated AED 71,260 outstanding. Original AED 103,981 (Sep 2025) \u2212 13 \u00d7 AED 2,517 INSTL_RECOVERY (Sep 2025\u2013Apr 2026, 6 verified in latest statement) = est. AED 71,260. Verify with loan statement."
       },
       {
-        "label": "Emirates NBD Credit Card",
-        "balanceAED": 29348,
-        "note": "29,348 AED \u2014 Sep 30, 2025. Current balance unknown."
+        "label": "Skywards Credit Card (Emirates NBD)",
+        "balanceAED": 0,
+        "note": "Auto-debit 05/05/2026: AED 16,000 paid (100% of statement). Balance reset to AED 0 post-payment. New charges accrue from this date \u2014 refresh after next statement."
       }
     ],
     "incomeSources": [
