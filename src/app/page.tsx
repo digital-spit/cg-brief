@@ -321,11 +321,21 @@ export default async function Dashboard() {
   }>;
   // FX → AED conversion. Use static rates that match the dashboard's stated assumptions.
   const fxToAed: Record<string, number> = { AED: 1, USD: usdToAed, EUR: 4.13 };
+  // Per-currency suggested target vehicle when an account is idle at <target rate
+  const suggestedVenue: Record<string, { name: string; ratePct: number }> = {
+    USD: { name: "Wio Fixed Saving USD or Schwab SWVXX", ratePct: 4.7 },
+    EUR: { name: "Wio Fixed Saving EUR (or convert to USD MMF)", ratePct: 3.5 },
+    AED: { name: "Wio Fixed Saving AED Space", ratePct: 4.0 },
+  };
   const cashDragRows = cashDragAccounts.map((a) => {
     const balanceAED = a.balance * (fxToAed[a.currency] ?? 1);
-    const lossPct = Math.max(0, targetRatePct - (a.currentRatePct ?? 0));
+    const targetForRow = suggestedVenue[a.currency]?.ratePct ?? targetRatePct;
+    const lossPct = Math.max(0, targetForRow - (a.currentRatePct ?? 0));
     const annualLossAED = balanceAED * (lossPct / 100);
-    return { ...a, balanceAED, lossPct, annualLossAED };
+    const recommendation = lossPct > 0 && balanceAED >= 1000
+      ? `Move ${a.currency} ${a.balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} → ${suggestedVenue[a.currency]?.name} (~${targetForRow}%) — recovers AED ${Math.round(annualLossAED).toLocaleString()}/yr`
+      : null;
+    return { ...a, balanceAED, lossPct, annualLossAED, targetForRow, recommendation };
   });
   const totalIdleAED = cashDragRows.reduce((s, r) => s + r.balanceAED, 0);
   const totalAnnualLossAED = cashDragRows.reduce((s, r) => s + r.annualLossAED, 0);
@@ -333,7 +343,7 @@ export default async function Dashboard() {
 
   // ─── Action Zones (sorted by urgency desc) ───
   const actionZones = enrichedPositions
-    .map(classifyActionZone)
+    .map((p) => classifyActionZone(p, usdToAed))
     .sort((a, b) => b.urgency - a.urgency);
   const urgentZones = actionZones.filter((z) => z.urgency >= 40);
 
@@ -1078,21 +1088,29 @@ export default async function Dashboard() {
                                   row.balanceAED >= 10_000 ? "border-amber-700 bg-amber-950/30" :
                                   "border-gray-700 bg-gray-800/30";
                                 return (
-                                  <div key={i} className={`flex justify-between items-center mb-1.5 px-2 py-1.5 rounded border ${idleSeverity} text-xs`}>
-                                    <div>
-                                      <p className="text-gray-200 font-semibold">{row.label}</p>
-                                      <p className="text-[10px] text-gray-500 font-mono">
-                                        {row.currency} {row.balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} @ {row.currentRatePct}% · as of {row.asOf}
-                                      </p>
+                                  <div key={i} className={`mb-1.5 px-2 py-1.5 rounded border ${idleSeverity} text-xs`}>
+                                    <div className="flex justify-between items-start">
+                                      <div>
+                                        <p className="text-gray-200 font-semibold">{row.label}</p>
+                                        <p className="text-[10px] text-gray-500 font-mono">
+                                          {row.currency} {row.balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} @ {row.currentRatePct}% · as of {row.asOf}
+                                        </p>
+                                      </div>
+                                      <div className="text-right">
+                                        <p className="font-mono text-red-300 text-xs">
+                                          −AED {Math.round(row.annualLossAED).toLocaleString()}/yr
+                                        </p>
+                                        <p className="text-[10px] text-gray-600 font-mono">
+                                          AED {Math.round(row.balanceAED).toLocaleString()} idle
+                                        </p>
+                                      </div>
                                     </div>
-                                    <div className="text-right">
-                                      <p className="font-mono text-red-300 text-xs">
-                                        −AED {Math.round(row.annualLossAED).toLocaleString()}/yr
+                                    {row.recommendation && (
+                                      <p className="text-[10px] mt-1 leading-snug text-emerald-200/90">
+                                        <span className="text-gray-500 font-mono mr-1">→</span>
+                                        {row.recommendation}
                                       </p>
-                                      <p className="text-[10px] text-gray-600 font-mono">
-                                        AED {Math.round(row.balanceAED).toLocaleString()} idle
-                                      </p>
-                                    </div>
+                                    )}
                                   </div>
                                 );
                               })}
@@ -1205,7 +1223,20 @@ export default async function Dashboard() {
                           </span>
                         </div>
 
-                        <p className="text-[11px] leading-snug opacity-90">{z.rationale}</p>
+                        <p className="text-[11px] leading-snug opacity-90 mb-1.5">{z.rationale}</p>
+
+                        {z.execution && (
+                          <div className="mt-1.5 mb-1 rounded-md px-2 py-1.5 bg-black/30 border border-white/5">
+                            <p className="text-[11px] font-semibold leading-snug">
+                              <span className="text-gray-500 font-mono mr-1">→</span>
+                              {z.execution.instruction}
+                            </p>
+                            {z.execution.detail && (
+                              <p className="text-[10px] leading-snug opacity-70 mt-0.5">{z.execution.detail}</p>
+                            )}
+                          </div>
+                        )}
+
                         <p className="text-[10px] font-mono opacity-60 mt-1">live ${z.livePrice >= 100 ? z.livePrice.toFixed(0) : z.livePrice.toFixed(2)} · urgency {z.urgency}</p>
                       </div>
                     );
