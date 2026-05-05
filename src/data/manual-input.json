@@ -827,11 +827,11 @@
         "note": "$39,431 \u00d7 3.6725 \u2014 live Apr 27 snapshot"
       },
       {
-        "label": "AED Capital (locked)",
+        "label": "Wio Fixed Saving (AED)",
         "valueAED": 115000,
         "confidence": "high",
         "color": "amber",
-        "note": "Awaiting Hormuz resolution \u2014 deployment trigger not yet met"
+        "note": "AED 115K dry powder in Wio Fixed Saving Space @ 4% p.a. \u2014 awaiting Hormuz deployment. Separate from Wio USD."
       },
       {
         "label": "PINS RSU (Schwab)",
@@ -869,18 +869,18 @@
         "note": "$1.33 \u00d7 3.6725 \u2014 money market. Snapshot 2026-05-04."
       },
       {
-        "label": "Wio Bank (USD)",
+        "label": "Wio USD Saving Space",
         "valueAED": 368869,
         "confidence": "low",
         "color": "indigo",
-        "note": "$100,468 \u00d7 3.6725 \u2014 Sep 30, 2025 snapshot. Verify current balance."
+        "note": "$100,468 \u00d7 3.6725 \u2014 Sep 30 2025 snapshot. STALE 7+ months. Salary inflow since likely materially higher. Verify."
       },
       {
-        "label": "AED / EUR Cash",
+        "label": "Other Cash (ENBD + Wio current + EUR)",
         "valueAED": 69568,
         "confidence": "low",
         "color": "purple",
-        "note": "ENBD AED 55,363 + Wio AED 261 + Wio EUR 3,361 \u2014 Sep 30, 2025 snapshot"
+        "note": "ENBD AED 55,363 + Wio AED current 261 + Wio EUR 3,361 \u2014 Sep 30 2025. STALE 7+ months."
       }
     ],
     "liabilities": [

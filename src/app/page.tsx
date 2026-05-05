@@ -331,9 +331,19 @@ export default async function Dashboard() {
                     {projection.pctToGoal.toFixed(1)}%
                   </p>
                 </div>
-                <p className="text-xs text-gray-400 font-mono mb-3">
+                <p className="text-xs text-gray-400 font-mono mb-1">
                   AED {projection.remainingAED.toLocaleString()} to goal · gross AED {grossAssetsAED.toLocaleString()} − liabilities AED {totalLiabilitiesAED.toLocaleString()}
                 </p>
+                {(() => {
+                  const lowConf = liveWealthComponents.filter((c: any) => c.confidence === "low");
+                  const lowConfAED = lowConf.reduce((s: number, c: any) => s + c.valueAED, 0);
+                  if (lowConfAED === 0) return null;
+                  return (
+                    <p className="text-[11px] text-amber-400 font-mono mb-3">
+                      ⚠ {((lowConfAED / grossAssetsAED) * 100).toFixed(0)}% of gross (AED {lowConfAED.toLocaleString()}) is from STALE Sep 2025 snapshots — verify Wio + ENBD balances
+                    </p>
+                  );
+                })()}
 
                 {/* Segmented progress bar */}
                 <div className="relative h-7 bg-gray-900 rounded-lg overflow-hidden flex border border-gray-800">
