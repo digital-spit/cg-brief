@@ -1497,12 +1497,27 @@ export default async function Dashboard() {
                           </div>
                           <p className="text-[11px] leading-snug opacity-90 mb-1.5">{z.rationale}</p>
                           {z.execution && (
-                            <div className="mt-1.5 mb-1 rounded-md px-2 py-1.5 bg-black/30 border border-white/5">
+                            <div className="mt-1.5 mb-1 rounded-md px-2 py-2 bg-black/30 border border-white/5">
                               <p className="text-[11px] font-semibold leading-snug">
                                 <span className="text-gray-500 font-mono mr-1">→</span>
                                 {z.execution.instruction}
                               </p>
-                              {z.execution.detail && <p className="text-[10px] leading-snug opacity-70 mt-0.5">{z.execution.detail}</p>}
+                              {z.execution.detail && <p className="text-[10px] leading-snug opacity-75 mt-1">{z.execution.detail}</p>}
+                              {z.execution.steps && z.execution.steps.length > 0 && (
+                                <ol className="mt-1.5 pl-1 space-y-0.5 list-none">
+                                  {z.execution.steps.map((step, i) => (
+                                    <li key={i} className="text-[10px] leading-snug opacity-90 flex gap-1.5">
+                                      <span className="text-gray-500 font-mono shrink-0 w-3">{i + 1}.</span>
+                                      <span>{step}</span>
+                                    </li>
+                                  ))}
+                                </ol>
+                              )}
+                              {z.execution.note && (
+                                <p className="text-[10px] leading-snug italic opacity-60 mt-1.5 pt-1.5 border-t border-white/5">
+                                  {z.execution.note}
+                                </p>
+                              )}
                             </div>
                           )}
                           <p className="text-[10px] font-mono opacity-60 mt-1">live ${z.livePrice >= 100 ? z.livePrice.toFixed(0) : z.livePrice.toFixed(2)} · urgency {z.urgency}</p>

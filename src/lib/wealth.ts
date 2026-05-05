@@ -29,7 +29,9 @@ export interface ActionZone {
   color: "red" | "amber" | "emerald" | "sky" | "gray";
   execution: {
     instruction: string; // single sentence imperative — "Sell 0.7 sh ($278) on eToro"
-    detail?: string;     // optional second line — leftover position, expected fees, etc.
+    detail?: string;     // expected outcome — booked profit, leftover position, etc.
+    steps?: string[];    // exact eToro UI path, numbered
+    note?: string;       // multi-lot / FIFO / tax behavior caveat
   } | null;
 }
 
@@ -71,45 +73,77 @@ function buildExecution(
       // 100% exit
       const proceedsUSD = currentValue;
       return {
-        instruction: `Close ${fmtUnits(qty)} ${symbol} @ ~${fmtUSD(p)} → ${fmtUSD(proceedsUSD)} on ${venue}`,
-        detail: `Realize loss ~${fmtUSD(pos.unrealizedPnl)} (${pos.unrealizedPnlPercent.toFixed(1)}%) — UAE $0 CGT, full proceeds redeployable`,
+        instruction: `Close all ${fmtUnits(qty)} ${symbol} → ~${fmtUSD(proceedsUSD)} (full exit)`,
+        detail: `Realize loss ~${fmtUSD(pos.unrealizedPnl)} (${pos.unrealizedPnlPercent.toFixed(1)}%). UAE $0 CGT — full proceeds redeployable.`,
+        steps: [
+          `On eToro app/web, open the ${symbol} position`,
+          `Tap "Close Position" on the aggregated row`,
+          `Confirm market close — all lots close at live price`,
+        ],
+        note: `If you hold multiple lots, eToro closes them all at once — single order, no FIFO concerns.`,
       };
     }
     case "near-sl": {
-      // Tighten — half the position, OR move stop to breakeven
       const trimUnits = qty * 0.5;
       const proceedsUSD = trimUnits * p;
       return {
-        instruction: `Trim 50% (${fmtUnits(trimUnits)} ${symbol} ≈ ${fmtUSD(proceedsUSD)}) OR raise SL closer to live price`,
-        detail: `Leaves ${fmtUnits(qty - trimUnits)} ${symbol} ≈ ${fmtUSD((qty - trimUnits) * p)} exposed`,
+        instruction: `Trim 50% (${fmtUnits(trimUnits)} ${symbol} ≈ ${fmtUSD(proceedsUSD)}) OR move SL up`,
+        detail: `Choose ONE: (a) reduce exposure by half, leaves ${fmtUnits(qty - trimUnits)} ${symbol} ≈ ${fmtUSD((qty - trimUnits) * p)} riding; (b) raise SL to ${fmtUSD(p * 0.97)} to lock in survival without giving up upside.`,
+        steps: [
+          `(Option a) Open ${symbol} in eToro → Edit Trade → Partial close ${fmtUnits(trimUnits)} units`,
+          `(Option b) Open each ${symbol} lot → Edit Trade → set Stop Loss to ${fmtUSD(p * 0.97)}`,
+        ],
+        note: `Option (b) keeps 100% of upside but tightens risk. Pick based on conviction in the thesis.`,
       };
     }
     case "hit-tp2": {
-      // Book 50%, trail rest
       const trimUnits = qty * 0.5;
       const proceedsUSD = trimUnits * p;
       return {
-        instruction: `Sell 50% (${fmtUnits(trimUnits)} ${symbol} ≈ ${fmtUSD(proceedsUSD)}) on ${venue}; trail SL on remainder`,
-        detail: `Booked profit ≈ ${fmtUSD(trimUnits * (p - pos.avgCost))}. Leaves ${fmtUnits(qty - trimUnits)} ${symbol} riding`,
+        instruction: `Sell 50% (${fmtUnits(trimUnits)} ${symbol} ≈ ${fmtUSD(proceedsUSD)}) at market; trail SL on remainder`,
+        detail: `Books ≈ ${fmtUSD(trimUnits * (p - pos.avgCost))} profit at TP2. Leaves ${fmtUnits(qty - trimUnits)} ${symbol} (≈${fmtUSD((qty - trimUnits) * p)}) riding for the cycle high.`,
+        steps: [
+          `On eToro, open ${symbol} → Edit Trade on the aggregated position`,
+          `Choose "Partial Close" → enter ${fmtUnits(trimUnits)} units`,
+          `Confirm at market price`,
+          `Then on the remaining open lots: Edit Trade → set Stop Loss to ${fmtUSD(p * 0.92)} (trailing)`,
+        ],
+        note: `Multi-lot? eToro closes oldest lots first (FIFO). UAE zero CGT means lot order is tax-irrelevant — just take the proceeds.`,
       };
     }
     case "hit-tp1": {
-      // Trim 30% (mid of 25–33), raise SL to breakeven
       const trimUnits = qty * 0.30;
       const proceedsUSD = trimUnits * p;
       const bookedProfit = trimUnits * (p - pos.avgCost);
       return {
-        instruction: `Sell 30% (${fmtUnits(trimUnits)} ${symbol} ≈ ${fmtUSD(proceedsUSD)}) on ${venue}; raise SL to breakeven $${pos.avgCost.toFixed(2)}`,
-        detail: `Books ≈ ${fmtUSD(bookedProfit)} profit. Leaves ${fmtUnits(qty - trimUnits)} ${symbol} (≈${fmtUSD((qty - trimUnits) * p)}) riding`,
+        instruction: `Sell 30% (${fmtUnits(trimUnits)} ${symbol} ≈ ${fmtUSD(proceedsUSD)}); raise SL to breakeven`,
+        detail: `Books ≈ ${fmtUSD(bookedProfit)} profit. Leaves ${fmtUnits(qty - trimUnits)} ${symbol} (≈${fmtUSD((qty - trimUnits) * p)}) free-rolling toward TP2 with breakeven SL — zero further risk on remainder.`,
+        steps: [
+          `On eToro, open ${symbol} → Edit Trade on the aggregated position`,
+          `Choose "Partial Close" → enter ${fmtUnits(trimUnits)} units`,
+          `Confirm at market price`,
+          `On the remaining lots: Edit Trade → set Stop Loss to $${pos.avgCost.toFixed(2)} (your avg cost)`,
+        ],
+        note: `Multi-lot caveat: eToro's partial close fills oldest lots first (FIFO). With UAE zero CGT this is a non-issue — accept the default. New avg cost on the remaining ${fmtUnits(qty - trimUnits)} ${symbol} stays at $${pos.avgCost.toFixed(2)}.`,
       };
     }
     case "near-tp2":
     case "near-tp1": {
       const ladderTarget = kind === "near-tp2" ? pos.takeProfit2 : pos.takeProfit;
-      const ladderTrim = qty * 0.30;
+      const tpName = kind === "near-tp2" ? "TP2" : "TP1";
+      const ladderTrim = kind === "near-tp2" ? qty * 0.50 : qty * 0.30;
+      const trimPct = kind === "near-tp2" ? "50%" : "30%";
       return {
-        instruction: `Set limit-sell on ${venue}: ${fmtUnits(ladderTrim)} ${symbol} @ $${ladderTarget.toFixed(2)} (≈ ${fmtUSD(ladderTrim * ladderTarget)})`,
-        detail: `Ladder triggers automatically when target hits — no manual monitoring needed`,
+        instruction: `Pre-set a ${trimPct} ladder: auto-sell ${fmtUnits(ladderTrim)} ${symbol} when price hits $${ladderTarget.toFixed(2)} (${tpName})`,
+        detail: `Locks in ≈ ${fmtUSD(ladderTrim * ladderTarget)} proceeds (${fmtUSD(ladderTrim * (ladderTarget - pos.avgCost))} profit) automatically the moment ${tpName} prints. No manual monitoring. Distance to target: ${(((ladderTarget - p) / p) * 100).toFixed(1)}%.`,
+        steps: [
+          `On eToro, open ${symbol} position page`,
+          `Tap "Edit Trade" on the aggregated position (NOT a single lot)`,
+          `Set "Take Profit" to $${ladderTarget.toFixed(2)}`,
+          `If eToro asks how much to close, choose "Partial" and enter ${fmtUnits(ladderTrim)} units`,
+          `Save. Order sits dormant until price hits — then closes automatically at market`,
+        ],
+        note: `Multi-lot caveat: setting TP on the aggregated position closes lots oldest-first when triggered. UAE zero CGT = lot order doesn't matter for tax; you just want the proceeds. Alternative: set the same TP on each individual lot (Edit Trade per lot) if you want to control exactly which lots close — only worth it if specific lots have meaning to you (e.g., emotional or DCA-tracking).`,
       };
     }
     case "add-conviction":
@@ -119,9 +153,18 @@ function buildExecution(
       const budgetAED = ADD_BUDGET_AED[kind] ?? 2500;
       const budgetUSD = budgetAED / usdToAed;
       const addUnits = budgetUSD / p;
+      const newAvg = (qty * pos.avgCost + addUnits * p) / (qty + addUnits);
       return {
-        instruction: `Buy ${fmtUnits(addUnits)} ${symbol} @ ~${fmtUSD(p)} ≈ ${fmtUSD(budgetUSD)} (AED ${budgetAED.toLocaleString()}) on ${venue}`,
-        detail: `New avg cost ≈ $${((qty * pos.avgCost + addUnits * p) / (qty + addUnits)).toFixed(2)} (was $${pos.avgCost.toFixed(2)})`,
+        instruction: `Buy ${fmtUnits(addUnits)} ${symbol} ≈ ${fmtUSD(budgetUSD)} (AED ${budgetAED.toLocaleString()})`,
+        detail: `Creates a new lot at $${p.toFixed(2)}. Aggregated avg cost moves from $${pos.avgCost.toFixed(2)} → $${newAvg.toFixed(2)} across ${fmtUnits(qty + addUnits)} ${symbol} total.`,
+        steps: [
+          `On eToro, search ${symbol} (or open the existing position page)`,
+          `Tap "Trade" → "Buy"`,
+          `Enter amount: $${budgetUSD.toFixed(0)} (or ${fmtUnits(addUnits)} units)`,
+          `Set Stop Loss: $${pos.stopLoss.toFixed(2)} (same as your existing SL — keeps thesis aligned)`,
+          `Confirm at market price`,
+        ],
+        note: `This adds a NEW lot — your existing lots stay untouched. eToro will list it separately under the same symbol. Total exposure becomes ${fmtUnits(qty + addUnits)} ${symbol} ≈ ${fmtUSD((qty + addUnits) * p)}.`,
       };
     }
     case "coast":
