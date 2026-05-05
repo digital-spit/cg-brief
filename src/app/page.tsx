@@ -34,15 +34,40 @@ async function fetchFearGreed(): Promise<FearGreedEntry | null> {
   }
 }
 
-async function getDashboardData() {
+interface LiveWarPulse {
+  status: string;
+  statusKey: string;
+  description: string;
+  triggers: Array<{ label: string; state: string; detail: string }>;
+  deploymentLocked: boolean;
+  deploymentAmountAED: number;
+  lastUpdated: string;
+  source: "live-ai" | "live-rule" | "fallback";
+  oilSpotUSD?: number;
+  oilDailyChangePct?: number;
+  headlinesUsed: Array<{ title: string; publisher: string; ageMinutes: number; link: string }>;
+}
+
+async function fetchWarPulse(origin: string | null): Promise<LiveWarPulse | null> {
+  if (!origin) return null;
+  try {
+    const res = await fetch(`${origin}/api/war-pulse`, { next: { revalidate: 1800 } } as RequestInit);
+    if (!res.ok) return null;
+    return (await res.json()) as LiveWarPulse;
+  } catch {
+    return null;
+  }
+}
+
+async function getDashboardData(origin: string | null) {
   const data = manualInput as unknown as ManualInput;
-  // Fetch market prices (15 min), eToro portfolio (1 hr), and Fear & Greed (1 hr) in parallel
-  const [marketData, etoroData, fearGreed] = await Promise.all([
+  const [marketData, etoroData, fearGreed, warPulse] = await Promise.all([
     fetchMarketData(data.marketSymbols),
     fetchEtoroPortfolio(),
     fetchFearGreed(),
+    fetchWarPulse(origin),
   ]);
-  return { data, marketData, etoroData, fearGreed };
+  return { data, marketData, etoroData, fearGreed, warPulse };
 }
 
 function formatCurrency(value: number): string {
@@ -184,7 +209,35 @@ function getPositionFlags(position: PositionWithLive): Flag[] {
 }
 
 export default async function Dashboard() {
-  const { data, marketData, etoroData, fearGreed } = await getDashboardData();
+  // Build absolute origin for server-side fetch to our own API route
+  const origin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}`
+              : process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const { data, marketData, etoroData, fearGreed, warPulse } = await getDashboardData(origin);
+
+  // Use live war pulse when available; otherwise fall back to manual-input.json warStatus
+  const liveWar: { status: string; description: string; triggers: any[]; deploymentLocked: boolean; deploymentAmountAED: number; lastUpdated?: string; source?: string; oilSpotUSD?: number; oilDailyChangePct?: number; headlines?: LiveWarPulse["headlinesUsed"] } =
+    warPulse
+      ? {
+          status: warPulse.status,
+          description: warPulse.description,
+          triggers: warPulse.triggers,
+          deploymentLocked: warPulse.deploymentLocked,
+          deploymentAmountAED: warPulse.deploymentAmountAED,
+          lastUpdated: warPulse.lastUpdated,
+          source: warPulse.source,
+          oilSpotUSD: warPulse.oilSpotUSD,
+          oilDailyChangePct: warPulse.oilDailyChangePct,
+          headlines: warPulse.headlinesUsed,
+        }
+      : {
+          status: data.warStatus.status,
+          description: data.warStatus.description,
+          triggers: data.warStatus.triggers as any[],
+          deploymentLocked: data.warStatus.deploymentLocked,
+          deploymentAmountAED: data.warStatus.deploymentAmountAED,
+          lastUpdated: (data.warStatus as any).lastUpdated,
+          source: "fallback",
+        };
 
   // Live cash from eToro API (credit minus pending orders), falls back to manual-input.json
   const cashIdle = etoroData?.cashAvailable ?? data.equity.cashIdle;
@@ -1137,57 +1190,89 @@ export default async function Dashboard() {
               </div>
             </div>
 
-            {/* War & Deployment */}
+            {/* War & Deployment — live from /api/war-pulse (Yahoo news + Brent + Anthropic synthesis) */}
             {(() => {
-              const warAge = daysOld((data.warStatus as any).lastUpdated);
-              const warStale = warAge !== null && warAge > 1;
+              const isLive = liveWar.source === "live-ai" || liveWar.source === "live-rule";
+              const ageMin = liveWar.lastUpdated
+                ? Math.floor((Date.now() - new Date(liveWar.lastUpdated).getTime()) / 60000)
+                : null;
+              const ageLabel = !isLive
+                ? "manual fallback"
+                : ageMin === null ? "—"
+                : ageMin < 1 ? "just now"
+                : ageMin < 60 ? `${ageMin}m ago`
+                : ageMin < 1440 ? `${Math.floor(ageMin / 60)}h ago`
+                : `${Math.floor(ageMin / 1440)}d ago`;
+              const sourceLabel = liveWar.source === "live-ai" ? "AI synthesis"
+                                : liveWar.source === "live-rule" ? "rule synthesis"
+                                : "manual fallback";
+              const dotColor = isLive ? "bg-emerald-500" : "bg-red-500 animate-pulse";
+              const tone = isLive ? "bg-gray-900 border-gray-800" : "bg-red-950/20 border-red-900/60";
               return (
-                <div className={`border rounded-xl p-5 ${warStale ? "bg-red-950/20 border-red-900/60" : "bg-gray-900 border-gray-800"}`}>
+                <div className={`border rounded-xl p-5 ${tone}`}>
                   <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
                     <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
                       War &amp; Deployment
                     </p>
-                    <StaleBadge dateStr={(data.warStatus as any).lastUpdated} freshDays={1} staleDays={3} />
+                    <span className={`inline-flex items-center gap-1 text-[10px] font-mono ${isLive ? "text-emerald-400" : "text-red-400"}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
+                      {sourceLabel} · {ageLabel}
+                    </span>
                   </div>
-                  {warStale && (
-                    <p className="text-[11px] text-red-300 mb-3 leading-snug">
-                      ⚠ This section is manual and {warAge} days old. Geopolitics moves daily — do NOT make 115K-AED-deployment decisions on this without re-reading current Hormuz news. Hit ⚡ Live Analysis above to refresh, or update <code className="font-mono text-[10px] bg-gray-800 px-1 rounded">manual-input.json &gt; warStatus</code>.
-                    </p>
-                  )}
                   <div className="text-xs">
-                    <p className="font-bold text-gray-100 mb-2">
-                      {data.warStatus.status}
-                    </p>
-                    <p className="text-gray-400 mb-3">
-                      {data.warStatus.description}
-                    </p>
-                <div className="space-y-1 mb-3">
-                  {data.warStatus.triggers.map((trigger, idx) => (
-                    <div key={idx} className="flex items-start gap-2">
-                      <span
-                        className={`mt-0.5 ${
-                          trigger.state === "met"
-                            ? "text-emerald-400"
-                            : "text-red-400"
-                        }`}
-                      >
-                        {trigger.state === "met" ? "✓" : "○"}
-                      </span>
-                      <div>
-                        <p className="text-gray-300">{trigger.label}</p>
-                        <p className="text-gray-500 text-xs">
-                          {trigger.detail}
-                        </p>
-                      </div>
+                    <p className="font-bold text-gray-100 mb-2">{liveWar.status}</p>
+                    {(liveWar.oilSpotUSD ?? 0) > 0 && (
+                      <p className="text-[10px] text-gray-500 font-mono mb-2">
+                        Brent crude ${liveWar.oilSpotUSD!.toFixed(2)}{" "}
+                        <span className={(liveWar.oilDailyChangePct ?? 0) >= 0 ? "text-emerald-400" : "text-red-400"}>
+                          ({(liveWar.oilDailyChangePct ?? 0) >= 0 ? "+" : ""}{(liveWar.oilDailyChangePct ?? 0).toFixed(2)}%)
+                        </span>
+                      </p>
+                    )}
+                    <p className="text-gray-400 mb-3 leading-relaxed">{liveWar.description}</p>
+                    <div className="space-y-1 mb-3">
+                      {liveWar.triggers.map((trigger: any, idx: number) => {
+                        const icon = trigger.state === "met" ? "✓"
+                                  : trigger.state === "partial" ? "◐"
+                                  : "○";
+                        const color = trigger.state === "met" ? "text-emerald-400"
+                                   : trigger.state === "partial" ? "text-amber-400"
+                                   : "text-red-400";
+                        return (
+                          <div key={idx} className="flex items-start gap-2">
+                            <span className={`mt-0.5 ${color}`}>{icon}</span>
+                            <div>
+                              <p className="text-gray-300">{trigger.label}</p>
+                              <p className="text-gray-500 text-xs">{trigger.detail}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
-                </div>
-                {data.warStatus.deploymentLocked && (
-                  <p className="text-amber-400 text-xs font-semibold">
-                    Deployment Locked: {formatCurrency(data.warStatus.deploymentAmountAED)} AED
-                  </p>
-                )}
-              </div>
+                    {liveWar.deploymentLocked && (
+                      <p className="text-amber-400 text-xs font-semibold">
+                        Deployment Locked: AED {liveWar.deploymentAmountAED.toLocaleString()}
+                      </p>
+                    )}
+                    {liveWar.headlines && liveWar.headlines.length > 0 && (
+                      <div className="mt-3 pt-2 border-t border-gray-800">
+                        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Source headlines</p>
+                        <ul className="space-y-1">
+                          {liveWar.headlines.slice(0, 4).map((h, i) => (
+                            <li key={i} className="text-[10px] text-gray-400 leading-snug">
+                              <span className="text-gray-600 font-mono mr-1">
+                                {h.ageMinutes < 60 ? `${h.ageMinutes}m` : `${Math.floor(h.ageMinutes / 60)}h`}
+                              </span>
+                              <a href={h.link} target="_blank" rel="noopener noreferrer" className="hover:text-gray-200 hover:underline">
+                                {h.title}
+                              </a>
+                              <span className="text-gray-600"> — {h.publisher}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })()}
