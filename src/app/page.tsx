@@ -856,85 +856,6 @@ export default async function Dashboard() {
               )}
             </div>
 
-            {/* Technical Signals */}
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4 pb-2 border-b border-gray-800">
-                Technical Signals
-              </p>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="border-b border-gray-800">
-                      <th className="text-left py-2 px-2 text-gray-400 font-semibold">
-                        Symbol
-                      </th>
-                      <th className="text-right py-2 px-2 text-gray-400 font-semibold">
-                        RSI14
-                      </th>
-                      <th className="text-left py-2 px-2 text-gray-400 font-semibold">
-                        Trend
-                      </th>
-                      <th className="text-left py-2 px-2 text-gray-400 font-semibold">
-                        Signal
-                      </th>
-                      <th className="text-left py-2 px-2 text-gray-400 font-semibold">
-                        Recommendation
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {enrichedPositions.map((pos) => {
-                      const trend = calculateTrend(
-                        pos.livePrice,
-                        pos.sma50,
-                        pos.sma200
-                      );
-                      const rsiZone = getRSIZone(pos.rsi14);
-                      const { signal, recommendation } = getSignal(
-                        trend,
-                        rsiZone
-                      );
-                      return (
-                        <tr
-                          key={pos.symbol}
-                          className="border-b border-gray-800/50 hover:bg-gray-800/20"
-                        >
-                          <td className="py-2 px-2 font-mono text-gray-200">
-                            {pos.symbol}
-                          </td>
-                          <td className="py-2 px-2 text-right font-mono text-gray-300">
-                            {pos.rsi14
-                              ? pos.rsi14.toFixed(1)
-                              : "—"}
-                          </td>
-                          <td className="py-2 px-2 capitalize text-gray-300">
-                            {trend}
-                          </td>
-                          <td className="py-2 px-2 capitalize font-semibold">
-                            <span
-                              className={
-                                signal === "buy"
-                                  ? "text-emerald-400"
-                                  : signal === "sell"
-                                    ? "text-red-400"
-                                    : signal === "hold"
-                                      ? "text-amber-400"
-                                      : "text-gray-400"
-                              }
-                            >
-                              {signal}
-                            </span>
-                          </td>
-                          <td className="py-2 px-2 text-gray-400">
-                            {recommendation}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
           </div>
 
           {/* Right Column */}
@@ -1096,11 +1017,11 @@ export default async function Dashboard() {
               </div>
             )}
 
-            {/* Action Zones — ranked by urgency */}
+            {/* Action Zones (merged with Technical Signals) — ranked by urgency */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
               <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-800">
                 <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-                  Action Zones
+                  Action Zones · Technicals
                 </p>
                 <p className="text-[10px] text-gray-600 font-mono">
                   {urgentZones.length} of {actionZones.length} need attention
@@ -1125,9 +1046,27 @@ export default async function Dashboard() {
                       amber:   "bg-amber-900 text-amber-100",
                       gray:    "bg-gray-700 text-gray-300",
                     };
+                    // Pull merged tech-signal data for this position
+                    const pos = enrichedPositions.find((p) => p.symbol === z.symbol);
+                    const trend = pos ? calculateTrend(pos.livePrice, pos.sma50, pos.sma200) : "unknown";
+                    const rsiZone = pos ? getRSIZone(pos.rsi14) : "unknown";
+                    const { signal } = pos ? getSignal(trend, rsiZone) : { signal: "wait" };
+                    const rsi = pos?.rsi14;
+                    const rsiTone = rsi == null ? "bg-gray-800 text-gray-500"
+                                  : rsi >= 75 ? "bg-red-950/50 text-red-300 border border-red-800"
+                                  : rsi >= 65 ? "bg-amber-950/40 text-amber-300 border border-amber-800"
+                                  : rsi <= 30 ? "bg-emerald-950/40 text-emerald-300 border border-emerald-800"
+                                  : "bg-gray-800 text-gray-400 border border-gray-700";
+                    const trendTone = trend === "uptrend" ? "bg-emerald-950/40 text-emerald-300 border border-emerald-800"
+                                    : trend === "downtrend" ? "bg-red-950/40 text-red-300 border border-red-800"
+                                    : "bg-gray-800 text-gray-400 border border-gray-700";
+                    const sigTone = signal === "buy" ? "bg-emerald-900 text-emerald-100"
+                                  : signal === "sell" ? "bg-red-900 text-red-100"
+                                  : signal === "hold" ? "bg-amber-900 text-amber-100"
+                                  : "bg-gray-800 text-gray-400";
                     return (
                       <div key={z.symbol} className={`rounded-lg p-3 text-xs border ${colorMap[z.color]}`}>
-                        <div className="flex items-start justify-between gap-2 mb-1">
+                        <div className="flex items-start justify-between gap-2 mb-1.5">
                           <div className="flex items-center gap-2">
                             <span className="font-bold font-mono">{z.symbol}</span>
                             <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${ctaColor[z.color]}`}>
@@ -1138,6 +1077,20 @@ export default async function Dashboard() {
                             {formatPercent(z.pnlPercent)}
                           </span>
                         </div>
+
+                        {/* Tech chip row */}
+                        <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${rsiTone}`}>
+                            RSI {rsi == null ? "—" : rsi.toFixed(0)}
+                          </span>
+                          <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded uppercase tracking-wider ${trendTone}`}>
+                            {trend}
+                          </span>
+                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${sigTone}`}>
+                            tech: {signal}
+                          </span>
+                        </div>
+
                         <p className="text-[11px] leading-snug opacity-90">{z.rationale}</p>
                         <p className="text-[10px] font-mono opacity-60 mt-1">live ${z.livePrice >= 100 ? z.livePrice.toFixed(0) : z.livePrice.toFixed(2)} · urgency {z.urgency}</p>
                       </div>
