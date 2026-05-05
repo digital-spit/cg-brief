@@ -708,7 +708,7 @@ export interface DeploymentPlan {
 }
 
 interface BuildPlanInput {
-  cashAccounts: Array<{ label: string; currency: string; balance: number; balanceAED: number }>;
+  cashAccounts: Array<{ label: string; currency: string; balance: number; balanceAED: number; currentRatePct?: number }>;
   enbdAED: number;                  // ENBD AED current (post-CC)
   etoroCashUSD: number;             // eToro free cash
   schwabCashUSD: number;             // Schwab MMF (already yielding)
@@ -728,18 +728,27 @@ const ADD_BUDGET_BY_CONVICTION_AED: Record<number, number> = {
 };
 
 export function buildCashDeploymentPlan(input: BuildPlanInput): DeploymentPlan {
+  // Productive cash threshold — accounts at or above this rate are NOT deployable
+  // (already yielding meaningfully); they count toward total liquid only.
+  const PRODUCTIVE_RATE_THRESHOLD_PCT = 3.5;
+
   // ── 1. Total liquid ──
   const cashAcctsAED = input.cashAccounts.reduce((s, a) => s + a.balanceAED, 0);
   const etoroCashAED = input.etoroCashUSD * input.usdToAed;
-  const schwabAED = input.schwabCashUSD * input.usdToAed; // already at ~4.7%, exclude from deployable
+  const schwabAED = input.schwabCashUSD * input.usdToAed; // already at ~4.7%
   const totalLiquidAED = cashAcctsAED + input.enbdAED + etoroCashAED + schwabAED;
+
+  // Productive cash already in yielding accounts — exclude from deployable surplus
+  const productiveCashAED = input.cashAccounts
+    .filter((a) => (a.currentRatePct ?? 0) >= PRODUCTIVE_RATE_THRESHOLD_PCT)
+    .reduce((s, a) => s + a.balanceAED, 0) + schwabAED;
 
   // ── 2. Emergency reserve: 6 months × monthly burn ──
   const reserveCoverMonths = 6;
   const emergencyReserveAED = input.monthlyBurnAED * reserveCoverMonths;
 
   // ── 3. Deployable surplus ──
-  const deployableAED = Math.max(0, totalLiquidAED - emergencyReserveAED - schwabAED);
+  const deployableAED = Math.max(0, totalLiquidAED - emergencyReserveAED - productiveCashAED);
 
   // ── 4. MMF park: 30% of surplus to keep opportunistic dry powder yielding ──
   const mmfParkAED = Math.round(deployableAED * 0.30);
@@ -884,6 +893,137 @@ export function buildCashDeploymentPlan(input: BuildPlanInput): DeploymentPlan {
     deployNowAED,
     trades,
     byBucketAED: byBucket,
+  };
+}
+
+// ─────────── RSU analyzer — live TP / Hold / Trim guidance ───────────
+// PINS and SNAP RSUs at Schwab. Live priced via Yahoo. Recommendation factors:
+//   - Concentration vs total net worth (target cap 10% per single-stock employer-grade)
+//   - Distance from cost basis (recovery thesis intact?)
+//   - Employer overlap (SNAP RSU = double income exposure since user is paid by Snap)
+//   - UAE zero CGT (no tax friction; sell anytime to redeploy)
+
+export type RsuRecommendation = "STRONG_TRIM" | "TRIM" | "HOLD" | "RECOVERY_HOLD";
+
+export interface RsuAnalysis {
+  symbol: string;
+  label: string;
+  shares: number;
+  livePrice: number;
+  dayChangePct: number;
+  costBasisUSD: number;
+  costPerShareUSD: number;
+  currentValueUSD: number;
+  currentValueAED: number;
+  unrealizedPnlUSD: number;
+  unrealizedPnlPct: number;
+  concentrationPct: number;        // % of total net worth
+  recoveryNeededPct: number;       // price upside needed to break even (for losers)
+  recommendation: RsuRecommendation;
+  rationale: string;
+  executionSteps: string[];
+  isEmployer: boolean;             // true for SNAP (user works at Snap)
+  schwabAccountSuffix?: string;
+}
+
+interface RsuAnalysisInput {
+  symbol: string;
+  label: string;
+  shares: number;
+  costBasisUSD: number;
+  livePrice: number;
+  dayChangePct: number;
+  isEmployer: boolean;
+  schwabAccountSuffix?: string;
+  netWorthAED: number;
+  usdToAed: number;
+  concentrationCapPct?: number;    // default 10% per single-stock holding
+}
+
+export function analyzeRsu(input: RsuAnalysisInput): RsuAnalysis {
+  const cap = input.concentrationCapPct ?? 10;
+  const currentValueUSD = input.shares * input.livePrice;
+  const currentValueAED = currentValueUSD * input.usdToAed;
+  const costPerShareUSD = input.shares > 0 ? input.costBasisUSD / input.shares : 0;
+  const unrealizedPnlUSD = currentValueUSD - input.costBasisUSD;
+  const unrealizedPnlPct = input.costBasisUSD > 0 ? (unrealizedPnlUSD / input.costBasisUSD) * 100 : 0;
+  const concentrationPct = input.netWorthAED > 0 ? (currentValueAED / input.netWorthAED) * 100 : 0;
+  const recoveryNeededPct = input.livePrice > 0 && input.livePrice < costPerShareUSD
+    ? ((costPerShareUSD - input.livePrice) / input.livePrice) * 100
+    : 0;
+
+  // Decision matrix
+  let recommendation: RsuRecommendation;
+  let rationale: string;
+  let executionSteps: string[];
+
+  const isUnderwater = unrealizedPnlPct < -10;
+  const isOverConcentrated = concentrationPct > cap;
+  const isInProfit = unrealizedPnlPct > 0;
+  const isApproachingBreakeven = unrealizedPnlPct >= -3 && unrealizedPnlPct <= 0;
+
+  if (isOverConcentrated && (isInProfit || isApproachingBreakeven)) {
+    // Big position, near or above breakeven — diversify aggressively
+    const trimSharesToCap = Math.ceil(input.shares * (1 - cap / Math.max(concentrationPct, cap + 0.1)));
+    recommendation = "STRONG_TRIM";
+    rationale = `${input.symbol} is ${concentrationPct.toFixed(1)}% of net worth (cap ${cap}%) and at/above cost basis. ${input.isEmployer ? "Employer concentration on top of salary income — double exposure." : "Pure single-stock concentration risk."} UAE zero CGT = no friction. Trim ${trimSharesToCap.toLocaleString()} shares (~$${(trimSharesToCap * input.livePrice).toFixed(0)}) to bring exposure under cap.`;
+    executionSteps = [
+      `Log into Schwab → ${input.label} position${input.schwabAccountSuffix ? ` (acct ...${input.schwabAccountSuffix})` : ""}`,
+      `Place market sell order for ${trimSharesToCap.toLocaleString()} shares`,
+      `Wire proceeds to Wio USD or eToro for redeployment per Cash Deployment Plan`,
+    ];
+  } else if (isOverConcentrated && isUnderwater) {
+    // Big position deeply underwater — hold for recovery but don't add
+    recommendation = "RECOVERY_HOLD";
+    rationale = `${input.symbol} is ${concentrationPct.toFixed(1)}% of NW but ${unrealizedPnlPct.toFixed(1)}% underwater (need +${recoveryNeededPct.toFixed(1)}% to break even). Selling now locks in loss; UAE zero CGT means no tax-loss harvesting benefit. HOLD for catalyst — but trim aggressively when price recovers to within -5% of cost ($${(costPerShareUSD * 0.95).toFixed(2)}). Set price alert.`;
+    executionSteps = [
+      `Schwab → ${input.label} → set price alert at $${(costPerShareUSD * 0.95).toFixed(2)} (5% below cost — first trim trigger)`,
+      `Set second alert at $${costPerShareUSD.toFixed(2)} (breakeven — full trim)`,
+      `Don't average down. Don't add via vesting if optional.`,
+    ];
+  } else if (input.isEmployer && concentrationPct > cap * 0.6) {
+    // Employer RSU approaching cap — preemptively cycle out
+    recommendation = "TRIM";
+    rationale = `${input.symbol} is ${concentrationPct.toFixed(1)}% of NW (cap ${cap}%). As employer stock, you already have 86% income concentration. Each new vest tilts further. Cycle: sell vested shares within 30 days to keep exposure ≤ ${(cap * 0.6).toFixed(0)}%. Currently ${unrealizedPnlPct.toFixed(1)}% vs cost — UAE zero CGT, no benefit to holding.`;
+    executionSteps = [
+      `Schwab → ${input.label} → review unvested + vested split`,
+      `Set monthly recurring sell of vested shares (calendar reminder)`,
+      `Redeploy proceeds via Cash Deployment Plan`,
+    ];
+  } else if (isUnderwater) {
+    recommendation = "RECOVERY_HOLD";
+    rationale = `${input.symbol} is ${unrealizedPnlPct.toFixed(1)}% underwater. ${concentrationPct.toFixed(1)}% NW concentration is manageable. Recovery to cost basis needs +${recoveryNeededPct.toFixed(1)}%. ${input.isEmployer ? "Don't accept new vests if optional; sell vested as it lands." : "Hold; reassess on next earnings."}`;
+    executionSteps = [
+      `Schwab → set price alert at cost basis $${costPerShareUSD.toFixed(2)} for full review`,
+      `On next earnings, re-evaluate thesis vs deploying proceeds elsewhere`,
+    ];
+  } else {
+    recommendation = "HOLD";
+    rationale = `${input.symbol} is ${unrealizedPnlPct >= 0 ? "+" : ""}${unrealizedPnlPct.toFixed(1)}% vs cost. ${concentrationPct.toFixed(1)}% NW concentration is within cap. Hold. Reassess on next earnings.`;
+    executionSteps = [
+      `No action. Monitor on next earnings call.`,
+    ];
+  }
+
+  return {
+    symbol: input.symbol,
+    label: input.label,
+    shares: input.shares,
+    livePrice: input.livePrice,
+    dayChangePct: input.dayChangePct,
+    costBasisUSD: input.costBasisUSD,
+    costPerShareUSD,
+    currentValueUSD,
+    currentValueAED,
+    unrealizedPnlUSD,
+    unrealizedPnlPct,
+    concentrationPct,
+    recoveryNeededPct,
+    recommendation,
+    rationale,
+    executionSteps,
+    isEmployer: input.isEmployer,
+    schwabAccountSuffix: input.schwabAccountSuffix,
   };
 }
 

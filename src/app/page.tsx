@@ -4,7 +4,7 @@ import {
   classifyActionZone, buildProjection, computeTodayPnlUSD,
   computePerformance, computeAllocation, applyStressScenario,
   computeCashflow, inflationAdjustedGoal, reconcilePositions,
-  buildCashDeploymentPlan,
+  buildCashDeploymentPlan, analyzeRsu,
 } from "@/lib/wealth";
 import type {
   ManualInput,
@@ -385,11 +385,42 @@ export default async function Dashboard() {
     ? computeCashflow(wp?.incomeSources ?? [], monthlyExpenses, liquidCashAED)
     : null;
 
+  // ─── RSU live analysis (PINS + SNAP @ Schwab) ───
+  const pinsDayChange = marketData.get("PINS")?.changePercent ?? 0;
+  const snapDayChange = marketData.get("SNAP")?.changePercent ?? 0;
+  const rsuAnalyses = [
+    analyzeRsu({
+      symbol: "PINS",
+      label: "Pinterest RSU",
+      shares: 1429,
+      costBasisUSD: 46649.76,
+      livePrice: pinsLivePrice,
+      dayChangePct: pinsDayChange,
+      isEmployer: false,
+      schwabAccountSuffix: "790",
+      netWorthAED,
+      usdToAed,
+    }),
+    analyzeRsu({
+      symbol: "SNAP",
+      label: "Snap RSU",
+      shares: 1798,
+      costBasisUSD: 12339.58,
+      livePrice: snapLivePrice,
+      dayChangePct: snapDayChange,
+      isEmployer: true,
+      schwabAccountSuffix: "343",
+      netWorthAED,
+      usdToAed,
+    }),
+  ];
+
   // ─── Cash Deployment Plan ───
   const enbdAED = liveWealthComponents.find((c: any) => c.label?.startsWith("ENBD"))?.valueAED ?? 0;
   const schwabCashUSD = (liveWealthComponents.find((c: any) => c.label === "Schwab cash")?.valueAED ?? 0) / usdToAed;
   const cashAccountsForPlan = cashDragRows.map((a) => ({
     label: a.label, currency: a.currency, balance: a.balance, balanceAED: a.balanceAED,
+    currentRatePct: a.currentRatePct,
   }));
   const monthlyBurnAED = cashflow?.monthlyExpensesTotal ?? 12504;
   const underweightBuckets = (allocation?.outOfBand ?? [])
@@ -897,6 +928,99 @@ export default async function Dashboard() {
           </div>
         )}
 
+        </div>
+
+        {/* ─── RSU Live Analysis (PINS + SNAP) ─── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+          {rsuAnalyses.map((rsu) => {
+            const recColor: Record<string, string> = {
+              STRONG_TRIM: "from-red-950/40 via-gray-900 to-amber-950/30 border-red-800",
+              TRIM: "from-amber-950/30 via-gray-900 to-amber-950/30 border-amber-800",
+              RECOVERY_HOLD: "from-sky-950/30 via-gray-900 to-gray-900 border-sky-800",
+              HOLD: "from-emerald-950/30 via-gray-900 to-gray-900 border-emerald-800",
+            };
+            const recLabel: Record<string, string> = {
+              STRONG_TRIM: "STRONG TRIM",
+              TRIM: "TRIM",
+              RECOVERY_HOLD: "RECOVERY HOLD",
+              HOLD: "HOLD",
+            };
+            const recBadge: Record<string, string> = {
+              STRONG_TRIM: "bg-red-900 text-red-100",
+              TRIM: "bg-amber-900 text-amber-100",
+              RECOVERY_HOLD: "bg-sky-900 text-sky-100",
+              HOLD: "bg-emerald-900 text-emerald-100",
+            };
+            return (
+              <div key={rsu.symbol} className={`bg-gradient-to-br ${recColor[rsu.recommendation]} border rounded-xl p-5`}>
+                <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-800">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{rsu.label}</p>
+                    {rsu.isEmployer && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-900 text-purple-100">EMPLOYER</span>}
+                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${recBadge[rsu.recommendation]}`}>
+                    {recLabel[rsu.recommendation]}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="bg-gray-900/60 rounded p-2">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">Live value</p>
+                    <p className="text-base font-mono font-bold text-white">${rsu.currentValueUSD.toFixed(0)}</p>
+                    <p className="text-[10px] text-gray-600 font-mono">
+                      AED {Math.round(rsu.currentValueAED).toLocaleString()} · {rsu.shares.toLocaleString()} sh × ${rsu.livePrice.toFixed(2)}
+                      {rsu.dayChangePct !== 0 && (
+                        <span className={`ml-1 ${rsu.dayChangePct >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                          ({rsu.dayChangePct >= 0 ? "+" : ""}{rsu.dayChangePct.toFixed(2)}% today)
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="bg-gray-900/60 rounded p-2">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">vs cost basis</p>
+                    <p className={`text-base font-mono font-bold ${rsu.unrealizedPnlUSD >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+                      {rsu.unrealizedPnlUSD >= 0 ? "+" : ""}${Math.abs(rsu.unrealizedPnlUSD).toFixed(0)}
+                    </p>
+                    <p className="text-[10px] text-gray-600 font-mono">
+                      ${rsu.costBasisUSD.toLocaleString()} cost · ${rsu.costPerShareUSD.toFixed(2)}/sh · {rsu.unrealizedPnlPct >= 0 ? "+" : ""}{rsu.unrealizedPnlPct.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mb-3 text-xs">
+                  <div className={`rounded p-2 border ${rsu.concentrationPct > 10 ? "border-red-800 bg-red-950/30" : rsu.concentrationPct > 6 ? "border-amber-800 bg-amber-950/30" : "border-gray-700 bg-gray-800/40"}`}>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">Concentration</p>
+                    <p className={`font-mono font-bold ${rsu.concentrationPct > 10 ? "text-red-300" : rsu.concentrationPct > 6 ? "text-amber-300" : "text-gray-200"}`}>
+                      {rsu.concentrationPct.toFixed(1)}% of NW
+                    </p>
+                    <p className="text-[10px] text-gray-600 font-mono">cap 10%</p>
+                  </div>
+                  <div className="bg-gray-800/40 border border-gray-700 rounded p-2">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest">{rsu.recoveryNeededPct > 0 ? "Recovery needed" : "Distance from cost"}</p>
+                    <p className="font-mono font-bold text-gray-200">
+                      {rsu.recoveryNeededPct > 0 ? `+${rsu.recoveryNeededPct.toFixed(1)}%` : `${rsu.unrealizedPnlPct.toFixed(1)}%`}
+                    </p>
+                    <p className="text-[10px] text-gray-600 font-mono">
+                      {rsu.recoveryNeededPct > 0 ? `to break even at $${rsu.costPerShareUSD.toFixed(2)}` : "above cost"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-md px-3 py-2 bg-black/40 border border-white/5 mb-2">
+                  <p className="text-[11px] leading-snug text-gray-200">{rsu.rationale}</p>
+                </div>
+
+                <ol className="pl-1 space-y-0.5 list-none">
+                  {rsu.executionSteps.map((s, i) => (
+                    <li key={i} className="text-[10px] leading-snug opacity-90 flex gap-1.5">
+                      <span className="text-gray-500 font-mono shrink-0 w-3">{i + 1}.</span>
+                      <span>{s}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            );
+          })}
         </div>
 
         {/* ─── Cash Deployment Plan — treasury-grade allocation of all idle cash ─── */}

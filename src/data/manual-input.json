@@ -4,7 +4,7 @@
     "beginningRealized": 38521.45,
     "endingRealized": 37710.08,
     "endingUnrealized": 39431.21,
-    "cashIdle": 1478.02,
+    "cashIdle": 2200,
     "periodPnl": -786.99,
     "statementPeriod": "APR 1\u201325, 2026",
     "currentTotalInvested": 36096.54,
@@ -881,10 +881,12 @@
       "comment": "Available rates: Wio Fixed Saving Space ~4.0% AED, Schwab SWVXX ~4.7% USD, ICICI 5% USD MMF. Use 4.5% blended for AED revenue-loss math."
     },
     "cashDragAccounts": [
-      { "label": "Wio USD account", "currency": "USD", "balance": 60490.17, "currentRatePct": 0, "asOf": "2026-05-03" },
+      { "label": "Wio USD account", "currency": "USD", "balance": 33258.72, "currentRatePct": 0, "asOf": "2026-05-06" },
       { "label": "Wio EUR account", "currency": "EUR", "balance": 11190.89, "currentRatePct": 0, "asOf": "2026-05-03" },
       { "label": "Wio AED account", "currency": "AED", "balance": 4467.81, "currentRatePct": 0, "asOf": "2026-05-03" },
-      { "label": "Schwab cash (SWVXX MMF)", "currency": "USD", "balance": 1.33, "currentRatePct": 4.7, "asOf": "2026-05-04" }
+      { "label": "Wio AED Saving Space", "currency": "AED", "balance": 100000, "currentRatePct": 3.75, "asOf": "2026-05-06" },
+      { "label": "Schwab cash (SWVXX MMF)", "currency": "USD", "balance": 1.33, "currentRatePct": 4.7, "asOf": "2026-05-04" },
+      { "label": "eToro free cash (deploy on-platform — eToro pays 0% on idle USD)", "currency": "USD", "balance": 2200, "currentRatePct": 0, "asOf": "2026-05-06" }
     ],
     "components": [
       {
@@ -896,11 +898,19 @@
       },
       {
         "label": "Wio USD account",
-        "valueAED": 222150,
+        "valueAED": 122150,
         "confidence": "high",
         "color": "indigo",
-        "note": "$60,490.17 \u00d7 3.6725 \u2014 Wio USD current acct closing balance per Wio statement 03/05/2026.",
-        "wio": { "currency": "USD", "balance": 60490.17, "asOf": "2026-05-03" }
+        "note": "$33,258.72 \u00d7 3.6725 \u2014 was $60,490 on 03/05; AED 100K (\u2248$27,231) moved to Wio AED Saving Space on 06/05/2026.",
+        "wio": { "currency": "USD", "balance": 33258.72, "asOf": "2026-05-06" }
+      },
+      {
+        "label": "Wio AED Saving Space",
+        "valueAED": 100000,
+        "confidence": "high",
+        "color": "emerald",
+        "note": "AED 100,000 @ 3.75% APR \u2014 moved from Wio USD on 06/05/2026 (~$27,231 converted to AED). Earns AED ~3,750/yr. Liquid (Wio Saving Space, not fixed-term).",
+        "wio": { "currency": "AED", "balance": 100000, "asOf": "2026-05-06", "ratePct": 3.75, "type": "saving-space" }
       },
       {
         "label": "Wio EUR account",
