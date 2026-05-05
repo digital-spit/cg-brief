@@ -820,6 +820,16 @@
   "wealthProgress": {
     "goalAED": 1000000,
     "usdToAed": 3.6725,
+    "cashDragConfig": {
+      "targetMmfRatePct": 4.5,
+      "comment": "Available rates: Wio Fixed Saving Space ~4.0% AED, Schwab SWVXX ~4.7% USD, ICICI 5% USD MMF. Use 4.5% blended for AED revenue-loss math."
+    },
+    "cashDragAccounts": [
+      { "label": "Wio USD account", "currency": "USD", "balance": 60490.17, "currentRatePct": 0, "asOf": "2026-05-03" },
+      { "label": "Wio EUR account", "currency": "EUR", "balance": 11190.89, "currentRatePct": 0, "asOf": "2026-05-03" },
+      { "label": "Wio AED account", "currency": "AED", "balance": 4467.81, "currentRatePct": 0, "asOf": "2026-05-03" },
+      { "label": "Schwab cash (SWVXX MMF)", "currency": "USD", "balance": 1.33, "currentRatePct": 4.7, "asOf": "2026-05-04" }
+    ],
     "components": [
       {
         "label": "eToro Portfolio",

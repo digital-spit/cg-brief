@@ -313,6 +313,24 @@ export default async function Dashboard() {
   const todayPnlAED = todayPnlUSD * usdToAed;
   const monthlyIncomeAED = (wp?.incomeSources ?? []).reduce((s: number, i: any) => s + i.monthlyAED, 0);
 
+  // ─── Cash Drag — revenue left on the table at 0% across idle accounts ───
+  const cashDragCfg = (wp as any)?.cashDragConfig as { targetMmfRatePct?: number } | undefined;
+  const targetRatePct = cashDragCfg?.targetMmfRatePct ?? 4.5;
+  const cashDragAccounts = ((wp as any)?.cashDragAccounts ?? []) as Array<{
+    label: string; currency: "USD" | "EUR" | "AED"; balance: number; currentRatePct: number; asOf: string;
+  }>;
+  // FX → AED conversion. Use static rates that match the dashboard's stated assumptions.
+  const fxToAed: Record<string, number> = { AED: 1, USD: usdToAed, EUR: 4.13 };
+  const cashDragRows = cashDragAccounts.map((a) => {
+    const balanceAED = a.balance * (fxToAed[a.currency] ?? 1);
+    const lossPct = Math.max(0, targetRatePct - (a.currentRatePct ?? 0));
+    const annualLossAED = balanceAED * (lossPct / 100);
+    return { ...a, balanceAED, lossPct, annualLossAED };
+  });
+  const totalIdleAED = cashDragRows.reduce((s, r) => s + r.balanceAED, 0);
+  const totalAnnualLossAED = cashDragRows.reduce((s, r) => s + r.annualLossAED, 0);
+  const totalMonthlyLossAED = totalAnnualLossAED / 12;
+
   // ─── Action Zones (sorted by urgency desc) ───
   const actionZones = enrichedPositions
     .map(classifyActionZone)
@@ -508,12 +526,14 @@ export default async function Dashboard() {
                   </p>
                   <p className="text-[10px] text-gray-600 font-mono">salary + consulting</p>
                 </div>
-                <div className="bg-gray-900/70 border border-gray-800 rounded-lg p-3">
-                  <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Action items</p>
-                  <p className="text-lg font-mono font-bold text-amber-400">
-                    {urgentZones.length}
+                <div className="bg-red-950/40 border border-red-800 rounded-lg p-3">
+                  <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">Cash drag</p>
+                  <p className="text-lg font-mono font-bold text-red-300">
+                    −AED {Math.round(totalAnnualLossAED).toLocaleString()}/yr
                   </p>
-                  <p className="text-[10px] text-gray-600 font-mono">positions need a decision</p>
+                  <p className="text-[10px] text-red-400/80 font-mono">
+                    AED {Math.round(totalIdleAED / 1000)}K idle @ &lt;{targetRatePct}% MMF · ≈ AED {Math.round(totalMonthlyLossAED).toLocaleString()}/mo
+                  </p>
                 </div>
               </div>
             </div>
@@ -1035,6 +1055,47 @@ export default async function Dashboard() {
                               <p className="text-gray-500 text-xs">Total liabilities</p>
                               <p className="font-mono text-red-500 text-xs font-bold">− AED {totalLiabilities.toLocaleString()}</p>
                             </div>
+                          </div>
+                        )}
+
+                        {/* Cash Drag — per-account revenue lost at 0% */}
+                        {cashDragRows.length > 0 && (
+                          <div className="mt-3 pt-2 border-t border-gray-800">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest">
+                                Cash Drag · idle @ &lt;{targetRatePct}% MMF
+                              </p>
+                              <p className="text-[10px] font-mono text-red-300">
+                                Total loss: AED {Math.round(totalAnnualLossAED).toLocaleString()}/yr
+                              </p>
+                            </div>
+                            {cashDragRows
+                              .slice()
+                              .sort((a, b) => b.annualLossAED - a.annualLossAED)
+                              .map((row, i) => {
+                                const idleSeverity =
+                                  row.balanceAED >= 50_000 ? "border-red-700 bg-red-950/40" :
+                                  row.balanceAED >= 10_000 ? "border-amber-700 bg-amber-950/30" :
+                                  "border-gray-700 bg-gray-800/30";
+                                return (
+                                  <div key={i} className={`flex justify-between items-center mb-1.5 px-2 py-1.5 rounded border ${idleSeverity} text-xs`}>
+                                    <div>
+                                      <p className="text-gray-200 font-semibold">{row.label}</p>
+                                      <p className="text-[10px] text-gray-500 font-mono">
+                                        {row.currency} {row.balance.toLocaleString(undefined, { maximumFractionDigits: 2 })} @ {row.currentRatePct}% · as of {row.asOf}
+                                      </p>
+                                    </div>
+                                    <div className="text-right">
+                                      <p className="font-mono text-red-300 text-xs">
+                                        −AED {Math.round(row.annualLossAED).toLocaleString()}/yr
+                                      </p>
+                                      <p className="text-[10px] text-gray-600 font-mono">
+                                        AED {Math.round(row.balanceAED).toLocaleString()} idle
+                                      </p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                           </div>
                         )}
 
