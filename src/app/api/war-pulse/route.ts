@@ -36,13 +36,18 @@ const QUERIES = [
   "Brent crude Iran tensions",
 ];
 
+// Boilerplate / non-substantive headline patterns to filter out
+const BOILERPLATE = /^(start of day message|market open|market close|close update|opening bell|closing bell|earnings preview$|earnings recap$|trending tickers|stocks to watch|biggest movers|premarket|pre-market|after hours)/i;
+// Must mention something Hormuz/Iran/oil-relevant to qualify
+const SUBSTANTIVE = /(iran|hormuz|tehran|opec|saudi|brent|crude|oil|tanker|strait|sanctions|israel|gaza|missile|drone|nuclear|ceasefire|blockade|warsh|fed|powell|geopolitic)/i;
+
 async function fetchHeadlines(): Promise<Array<{ title: string; publisher: string; ageMinutes: number; link: string; ts: number }>> {
   const nowSec = Math.floor(Date.now() / 1000);
   const out: Array<{ title: string; publisher: string; ageMinutes: number; link: string; ts: number }> = [];
 
   for (const q of QUERIES) {
     try {
-      const url = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&newsCount=8&lang=en-US&region=US&quotesCount=0`;
+      const url = `https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(q)}&newsCount=10&lang=en-US&region=US&quotesCount=0`;
       const res = await fetch(url, {
         headers: { "User-Agent": "Mozilla/5.0 (compatible; cg-brief/1.0)" },
         next: { revalidate: 1800 },
@@ -51,6 +56,9 @@ async function fetchHeadlines(): Promise<Array<{ title: string; publisher: strin
       const data = await res.json();
       for (const item of (data.news ?? []) as YahooNewsItem[]) {
         if (!item.title || !item.providerPublishTime) continue;
+        // Drop boilerplate or off-topic items
+        if (BOILERPLATE.test(item.title)) continue;
+        if (!SUBSTANTIVE.test(item.title)) continue;
         out.push({
           title: item.title,
           publisher: item.publisher ?? "Yahoo",
