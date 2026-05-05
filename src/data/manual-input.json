@@ -829,8 +829,8 @@
       { "date": "2026-01-31", "netWorthAED": 491500, "portfolioUSD": 35900 },
       { "date": "2026-02-28", "netWorthAED": 506200, "portfolioUSD": 37200 },
       { "date": "2026-03-31", "netWorthAED": 487300, "portfolioUSD": 36100 },
-      { "date": "2026-04-30", "netWorthAED": 495800, "portfolioUSD": 36500 },
-      { "date": "2026-05-05", "netWorthAED": 505000, "portfolioUSD": 36680 }
+      { "date": "2026-04-30", "netWorthAED": 517100, "portfolioUSD": 36500 },
+      { "date": "2026-05-05", "netWorthAED": 526710, "portfolioUSD": 36680 }
     ],
     "targetAllocationPct": {
       "equity":      35,
@@ -842,14 +842,15 @@
       "rebalanceBandPct": 3
     },
     "monthlyExpenses": [
-      { "label": "ENBD personal loan",            "amountAED": 2517, "category": "debt",          "fixed": true },
-      { "label": "Family transfers (Renata)",     "amountAED": 5000, "category": "family",        "fixed": true },
-      { "label": "Family transfers (Waleed SWIFT)","amountAED": 2973,"category": "family",        "fixed": true },
-      { "label": "Apple subscriptions",           "amountAED": 220,  "category": "discretionary", "fixed": true },
-      { "label": "OpenAI + Midjourney",           "amountAED": 117,  "category": "discretionary", "fixed": true },
-      { "label": "Carrefour groceries",           "amountAED": 1200, "category": "living",        "fixed": false },
-      { "label": "Careem rides",                  "amountAED": 250,  "category": "living",        "fixed": false },
-      { "label": "Buffer / un-categorized",       "amountAED": 3000, "category": "discretionary", "fixed": false }
+      { "label": "ENBD personal loan (INSTL_RECOVERY)",      "amountAED": 2517, "category": "debt",      "fixed": true,  "verifiedSource": "ENBD statement" },
+      { "label": "Domestic worker (Maids — DDR debit)",      "amountAED": 2997, "category": "household", "fixed": true,  "verifiedSource": "ENBD statement" },
+      { "label": "Family transfers (Renata, via Wio)",       "amountAED": 5000, "category": "family",    "fixed": true,  "verifiedSource": "Wio statement" },
+      { "label": "Family transfers (Waleed SWIFT)",          "amountAED": 2973, "category": "family",    "fixed": true,  "verifiedSource": "Wio statement" },
+      { "label": "Apple subscriptions",                      "amountAED": 220,  "category": "discretionary", "fixed": true, "verifiedSource": "Wio statement" },
+      { "label": "OpenAI + Midjourney",                      "amountAED": 117,  "category": "discretionary", "fixed": true, "verifiedSource": "Wio statement" },
+      { "label": "Carrefour groceries",                      "amountAED": 1200, "category": "living",        "fixed": false, "verifiedSource": "Wio statement" },
+      { "label": "Careem rides",                             "amountAED": 250,  "category": "living",        "fixed": false, "verifiedSource": "Wio statement" },
+      { "label": "Buffer / uncategorised",                   "amountAED": 1500, "category": "discretionary", "fixed": false }
     ],
     "stressScenarios": [
       { "name": "PINS earnings miss",     "icon": "📉", "shocks": [{ "label": "PINS RSU", "shockPct": -50 }] },
@@ -937,11 +938,12 @@
         "note": "$1.33 \u00d7 3.6725 \u2014 money market. Snapshot 2026-05-04."
       },
       {
-        "label": "ENBD AED",
-        "valueAED": 55363,
-        "confidence": "low",
+        "label": "ENBD AED current",
+        "valueAED": 77073,
+        "confidence": "high",
         "color": "purple",
-        "note": "ENBD AED savings \u2014 Sep 30 2025 snapshot. STALE 7+ months. May contain the AED 115K Hormuz dry powder (not separately tracked). Verify."
+        "note": "AED 77,072.70 \u2014 ENBD acct 1015933953702 closing balance per Statement of Account dated 03/05/2026 (period 03/11/2025\u201303/05/2026). Salary lands here.",
+        "enbd": { "currency": "AED", "balance": 77072.70, "asOf": "2026-05-01", "accountNumber": "1015933953702" }
       }
     ],
     "liabilities": [
@@ -959,19 +961,20 @@
     "incomeSources": [
       {
         "label": "Snap Middle East salary",
-        "monthlyAED": 53202,
-        "note": "212,809 AED over Jun\u2013Sep 2025 \u2248 53,202 AED/month avg"
+        "monthlyAED": 53458,
+        "note": "Latest credit AED 53,458.33 on 24/04/2026 per ENBD statement. Range Nov 2025\u2013Apr 2026: 51.7K\u201355.3K avg \u2248 53.4K."
       },
       {
         "label": "NP10 Consulting (EUR)",
-        "monthlyAED": 9329,
-        "note": "2,250 EUR/month \u00d7 4.15 AED/EUR \u2248 9,329 AED/month"
+        "monthlyAED": 9664,
+        "note": "Latest \u20ac2,340 on 20/04/2026 \u00d7 4.13 AED/EUR \u2248 9,664 AED/month per Wio EUR statement"
       }
     ],
     "untracked": [
-      "ENBD AED account: only tracked at Sep 2025 snapshot (AED 55,363) \u2014 verify current balance + locate AED 115K Hormuz dry powder (likely sits here)",
-      "Wio savings spaces all empty per 03/05/2026 statement: 'New house' AED 0; Emergency funds USD matured 29 Mar 2026 with +$487.50 interest already in USD current",
-      "Salary inflow Oct 2025\u2013Apr 2026 (~AED 372K from Snap) lands in ENBD; ~AED 96K transferred Wio\u2192eToro over the period. Net ENBD growth uncertain without statement."
+      "ENBD personal loan outstanding: prior estimate AED 86,362. Six INSTL_RECOVERY of AED 2,517 visible Nov 2025\u2013Apr 2026 (=AED 15,102 paid down) \u2192 revised ~AED 71,260. Verify with loan statement.",
+      "ENBD credit card: AED 29,348 from Sep 2025 \u2014 STALE. Request CC statement to refresh.",
+      "Hormuz AED 115K deployment: NOT held in any discrete account. Available now: AED 77K from ENBD; remainder from monthly net surplus (~AED 41K) over 1 month.",
+      "Wio savings spaces all empty per 03/05/2026: 'New house' AED 0; Emergency funds USD matured 29 Mar 2026 with +$487.50 interest already recovered into Wio USD."
     ]
   },
   "portfolio": {
