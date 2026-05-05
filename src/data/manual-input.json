@@ -827,11 +827,28 @@
         "note": "$39,431 \u00d7 3.6725 \u2014 live Apr 27 snapshot"
       },
       {
-        "label": "Wio Fixed Saving (AED)",
-        "valueAED": 115000,
+        "label": "Wio USD account",
+        "valueAED": 222150,
         "confidence": "high",
-        "color": "amber",
-        "note": "AED 115K dry powder in Wio Fixed Saving Space @ 4% p.a. \u2014 awaiting Hormuz deployment. Separate from Wio USD."
+        "color": "indigo",
+        "note": "$60,490.17 \u00d7 3.6725 \u2014 Wio USD current acct closing balance per Wio statement 03/05/2026.",
+        "wio": { "currency": "USD", "balance": 60490.17, "asOf": "2026-05-03" }
+      },
+      {
+        "label": "Wio EUR account",
+        "valueAED": 46218,
+        "confidence": "high",
+        "color": "indigo",
+        "note": "\u20ac11,190.89 \u00d7 4.13 \u2014 Wio EUR current acct closing balance per Wio statement 03/05/2026.",
+        "wio": { "currency": "EUR", "balance": 11190.89, "asOf": "2026-05-03" }
+      },
+      {
+        "label": "Wio AED account",
+        "valueAED": 4468,
+        "confidence": "high",
+        "color": "indigo",
+        "note": "AED 4,467.81 \u2014 Wio AED current acct closing balance per Wio statement 03/05/2026.",
+        "wio": { "currency": "AED", "balance": 4467.81, "asOf": "2026-05-03" }
       },
       {
         "label": "PINS RSU (Schwab)",
@@ -869,18 +886,11 @@
         "note": "$1.33 \u00d7 3.6725 \u2014 money market. Snapshot 2026-05-04."
       },
       {
-        "label": "Wio USD Saving Space",
-        "valueAED": 368869,
-        "confidence": "low",
-        "color": "indigo",
-        "note": "$100,468 \u00d7 3.6725 \u2014 Sep 30 2025 snapshot. STALE 7+ months. Salary inflow since likely materially higher. Verify."
-      },
-      {
-        "label": "Other Cash (ENBD + Wio current + EUR)",
-        "valueAED": 69568,
+        "label": "ENBD AED",
+        "valueAED": 55363,
         "confidence": "low",
         "color": "purple",
-        "note": "ENBD AED 55,363 + Wio AED current 261 + Wio EUR 3,361 \u2014 Sep 30 2025. STALE 7+ months."
+        "note": "ENBD AED savings \u2014 Sep 30 2025 snapshot. STALE 7+ months. May contain the AED 115K Hormuz dry powder (not separately tracked). Verify."
       }
     ],
     "liabilities": [
@@ -908,8 +918,9 @@
       }
     ],
     "untracked": [
-      "Wio Bank savings pot \u2018New house\u2019 (0 AED Sep 2025)",
-      "Post-Sep 2025 salary accumulation \u2014 estimate ~196K AED over 7 months"
+      "ENBD AED account: only tracked at Sep 2025 snapshot (AED 55,363) \u2014 verify current balance + locate AED 115K Hormuz dry powder (likely sits here)",
+      "Wio savings spaces all empty per 03/05/2026 statement: 'New house' AED 0; Emergency funds USD matured 29 Mar 2026 with +$487.50 interest already in USD current",
+      "Salary inflow Oct 2025\u2013Apr 2026 (~AED 372K from Snap) lands in ENBD; ~AED 96K transferred Wio\u2192eToro over the period. Net ENBD growth uncertain without statement."
     ]
   },
   "portfolio": {
