@@ -25,8 +25,8 @@ This is a rebuilt Next.js 14 trading dashboard with live market data fetched fro
 
 1. **Initialize GitHub repository** (if not already done)
    ```bash
-   git remote add origin https://github.com/digital-spit/cg-brief-v2.git
-   git push -u origin main
+   git remote add origin https://github.com/digital-spit/cg-brief.git
+   git push -u origin v2
    ```
    Note: You may need to create the repository on GitHub first if it doesn't exist.
 
