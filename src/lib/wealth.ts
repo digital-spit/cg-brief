@@ -779,7 +779,9 @@ export function buildCashDeploymentPlan(input: BuildPlanInput): DeploymentPlan {
   const candidates: DeploymentTrade[] = [];
 
   // 5a. Watchlist conviction buys with live price in entry zone
+  // (skip if executed = position already opened, no double-deploy)
   for (const pick of input.watchlist) {
+    if ((pick as any).executed === true) continue;
     if (!pick.entryZone) continue;
     if (pick.signal !== "strong_buy" && pick.signal !== "buy") continue;
     const live = input.marketData.get(pick.symbol)?.price ?? 0;
