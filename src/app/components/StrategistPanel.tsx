@@ -111,6 +111,16 @@ interface Props {
   initialNote: StrategistNote;
   initialActionItems: ActionItem[];
   portfolioSnapshot: PortfolioSnapshot;
+  manualLastUpdated?: string;
+}
+
+// Days between an ISO date and today (Dubai TZ). Returns null if unparseable.
+function daysOldDubai(dateStr?: string): number | null {
+  if (!dateStr) return null;
+  const today = new Date(new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Dubai" }));
+  const then = new Date(dateStr);
+  if (isNaN(then.getTime())) return null;
+  return Math.floor((today.getTime() - then.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 const PRIORITY_STYLES: Record<string, string> = {
@@ -131,6 +141,7 @@ export default function StrategistPanel({
   initialNote,
   initialActionItems,
   portfolioSnapshot,
+  manualLastUpdated,
 }: Props) {
   const [note, setNote] = useState<StrategistNote>(initialNote);
   const [actionItems, setActionItems] = useState<ActionItem[]>(initialActionItems);
@@ -189,7 +200,13 @@ export default function StrategistPanel({
                 <span className="text-emerald-500 text-xs">● AI live · {minsAgo === 0 ? "just now" : `${minsAgo}m ago`}</span>
               )
             ) : (
-              <span className="text-amber-500 text-xs">⚠ manual — may be stale</span>
+              (() => {
+                const age = daysOldDubai(manualLastUpdated);
+                if (age === null) return <span className="text-amber-500 text-xs">⚠ manual — no date</span>;
+                if (age <= 1) return <span className="text-emerald-400 text-xs">● manual · {age === 0 ? "today" : "1 day ago"}</span>;
+                if (age <= 3) return <span className="text-amber-400 text-xs">⚠ manual · {age} days old</span>;
+                return <span className="text-red-400 text-xs font-bold animate-pulse">⚠ MANUAL · {age} DAYS STALE — regenerate or edit</span>;
+              })()
             )}
           </div>
           <button
