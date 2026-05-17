@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-03",
+  "lastUpdated": "2026-05-17",
   "equity": {
     "beginningRealized": 38521.45,
     "endingRealized": 37710.08,
@@ -12,9 +12,9 @@
     "smartPortfoliosValue": 22433.76
   },
   "strategistNote": {
-    "title": "PINS earnings tomorrow (May 4). Warsh replaces Powell May 15. AED 115K deployment pending Hormuz.",
-    "body": "May 3, 2026. \u26a0\ufe0f CRITICAL: PINS Q1 earnings Monday May 4 after close \u2014 1,429 RSU shares carry binary risk + active securities fraud lawsuit. UAE zero CGT = full proceeds deployable. Decide before Monday open. MSTR Q1 reports May 5 \u2014 proxy BTC sentiment signal (holds 818K BTC @ $75.5K avg). Kevin Warsh replaces Powell May 15: near-term USD rebound expected, hawkish inflation focus, 2 cuts priced H2 2026. Wait for dollar peak before deploying AED 115K. BTC $78K: April ETF inflows hit $1.97B record \u2014 cycle intact, accumulate on dips to $74-76K. Gold $4,612: strongest position, hold through Warsh transition \u2014 TP1 $5,200. QQQ $674 at 52wk high \u2014 TP1 $729 is 8% away, do not chase. AED 115K deployment trigger: Hormuz fully reopened + 2 confirmed weeks. Staking: start ETH (Lido 3-4%) and SOL (Jito 7-8%) when capital unlocks.",
-    "edition": "Live Intelligence Update \u2014 May 3, 2026",
+    "title": "TRIM WEEK. TSM past TP1, ICLN/QQQ/VTI within 2.3%. PINS 3.7% above SL. NVDA prints May 20. AED 115K still locked.",
+    "body": "May 17, 2026 baseline review. Net wealth AED 554K = 55.4% of AED 1M goal. 7.5 months left, need AED 59.5K/month of growth, salary surplus only covers AED 30K \u2014 off-pace. ACTIONS THIS WEEK: 1) TRIM DISCIPLINE \u2014 TSM $404.54 is 6.1% past TP1 $380, ICLN $21.73 is 1.2% from TP1 $22, QQQ $713.29 is 2.3% from TP1 $729.54 (RSI 83.2 overbought), VTI $363.63 is 2.3% from TP1 $372.04 (RSI 74.2). Pre-stage trims, don't watch them round-trip. 2) PINS DANGER \u2014 eToro lot at $20.76, only 3.7% above $20 SL. Decide: cut at SL or widen. 3) RECONCILE PINS RSU \u2014 1,429 shares at Schwab acct ...790, May 4 earnings happened, status unknown. Verify before NVDA prints Tuesday. 4) MACRO \u2014 Warsh era live (took over May 15), CPI Apr printed May 13, AED 115K dry powder still on hold pending Hormuz reopen. Gold $4,744 holding TP1 path to $5,200. BTC $81.9K above $74-76K add zone, no action. 5) SMART PORTFOLIO CONSOLIDATION \u2014 still open task, collapse 6 \u2192 2, frees ~$11.8K for redeployment. NEXT 7 DAYS: NVDA Q1 May 20 (high), PMI Flash May 22 (medium).",
+    "edition": "Live Intelligence Update \u2014 May 17, 2026",
     "stalenessWarning": "This note is manually updated. Use 'Regenerate Analysis' for AI-generated live analysis."
   },
   "positions": [
@@ -308,7 +308,7 @@
     }
   ],
   "warStatus": {
-    "lastUpdated": "2026-05-03",
+    "lastUpdated": "2026-05-17",
     "status": "CEASEFIRE EXTENDED \u2014 FRAGILE / HORMUZ STILL BLOCKED",
     "statusKey": "ceasefire_extended_fragile",
     "description": "Original 2-week ceasefire (Apr 7) expired. Trump extended ~Apr 21 but briefly. US counter-blockade of Hormuz active since Apr 13. Iran seized ships Apr 22. Peace talks stalling as of May 2026. Oil storage nearly full. Iran losing ~$500M/day. No diplomatic resolution in sight.",
@@ -344,19 +344,39 @@
   },
   "actionItems": [
     {
-      "label": "\ud83d\udea8 PINS RSU \u2014 Decide before Monday open. Q1 earnings May 4 after close. Binary risk + fraud lawsuit. UAE = zero CGT, ~$28K fully deployable. Options: sell all, sell 50%, or hold.",
+      "label": "\u2702\ufe0f TRIM DISCIPLINE \u2014 TSM $404.54 already 6.1% past TP1 $380. ICLN $21.73 is 1.2% from TP1 $22. QQQ $713.29 is 2.3% from TP1 $729.54 (RSI 83.2). VTI $363.63 is 2.3% from TP1 $372.04 (RSI 74.2, DCA core: reduce, never exit). Pre-stage trim orders before NVDA Tuesday.",
       "priority": "critical",
       "done": false
     },
     {
-      "label": "\ud83c\udfdb\ufe0f Powell exits May 15, Warsh takes over. Near-term USD rebound expected \u2014 do NOT rush AED 115K deployment. Wait for dollar peak signal post May 15.",
+      "label": "\u26a0\ufe0f PINS eToro lot at $20.76, only 3.7% above $20 SL. Single bad day takes it out. Decide: cut at SL or widen the leash. Coordinate with RSU disposition below.",
+      "priority": "critical",
+      "done": false
+    },
+    {
+      "label": "\ud83d\udd0d VERIFY \u2014 PINS RSU 1,429 shares at Schwab acct ...790. May 4 earnings happened, disposition unknown. Log in to Schwab and reconcile before NVDA prints Tuesday.",
+      "priority": "critical",
+      "done": false
+    },
+    {
+      "label": "\ud83d\udd0c RECONNECT \u2014 eToro MCP returned 401 on May 17 review. Reconnect in Cowork \u2192 Settings so next Saturday's review pulls live portfolio.",
       "priority": "high",
       "done": false
     },
     {
-      "label": "\ud83d\udcca MSTR Q1 earnings May 5 \u2014 BTC sentiment signal. Holds 818K BTC @ $75.5K avg. Watch for BTC reaction and possible $80K breakout attempt.",
+      "label": "\ud83d\udea8 [DONE May 4] PINS RSU \u2014 Decide before Monday open. Q1 earnings May 4 after close. Binary risk + fraud lawsuit. UAE = zero CGT, ~$28K fully deployable. Options: sell all, sell 50%, or hold.",
+      "priority": "critical",
+      "done": true
+    },
+    {
+      "label": "\ud83c\udfdb\ufe0f [DONE May 15] Powell exits May 15, Warsh takes over. Near-term USD rebound expected \u2014 do NOT rush AED 115K deployment. Wait for dollar peak signal post May 15.",
       "priority": "high",
-      "done": false
+      "done": true
+    },
+    {
+      "label": "\ud83d\udcca [DONE May 5] MSTR Q1 earnings May 5 \u2014 BTC sentiment signal. Holds 818K BTC @ $75.5K avg. Watch for BTC reaction and possible $80K breakout attempt.",
+      "priority": "high",
+      "done": true
     },
     {
       "label": "\ud83e\udd47 Gold $4,612 \u2014 strongest position. Hold conviction through Warsh transition. TP1 $5,200 / TP2 $5,800. GDX high-beta leverage on gold move.",
