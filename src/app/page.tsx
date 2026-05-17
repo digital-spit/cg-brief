@@ -131,6 +131,76 @@ function StaleBadge({ dateStr, freshDays = 1, staleDays = 3, label = "updated" }
   );
 }
 
+// Top-of-page banner that aggregates every staleness signal so you can't miss it.
+// Rendered ABOVE the header; hidden entirely when everything is fresh.
+function StaleDataBanner({
+  lastUpdated,
+  warLastUpdated,
+  etoroConnected,
+  etoroSnapshotDate,
+  etoroStatementPeriod,
+}: {
+  lastUpdated?: string;
+  warLastUpdated?: string;
+  etoroConnected: boolean;
+  etoroSnapshotDate?: string;
+  etoroStatementPeriod?: string;
+}) {
+  const issues: Array<{ severity: "red" | "amber"; text: string }> = [];
+
+  const manualAge = daysOld(lastUpdated);
+  if (manualAge !== null) {
+    if (manualAge > 3) issues.push({ severity: "red", text: `Manual data is ${manualAge} days old (last edit: ${lastUpdated}). Trading decisions on this snapshot are unsafe.` });
+    else if (manualAge > 1) issues.push({ severity: "amber", text: `Manual data is ${manualAge} days old. Verify equity + strategist note before acting.` });
+  } else if (lastUpdated) {
+    issues.push({ severity: "amber", text: `Could not parse lastUpdated: "${lastUpdated}".` });
+  }
+
+  if (!etoroConnected) {
+    issues.push({ severity: "red", text: "eToro API is disconnected (401 / no keys). Live equity, cash, mirrors, and positions all fall back to manual snapshots." });
+  } else {
+    const snapAge = daysOld(etoroSnapshotDate);
+    if (snapAge !== null && snapAge > 7) {
+      issues.push({ severity: "amber", text: `eToro snapshot ${etoroSnapshotDate} is ${snapAge} days old — pull fresh statement.` });
+    }
+  }
+
+  const warAge = daysOld(warLastUpdated);
+  if (warAge !== null && warAge > 5) {
+    issues.push({ severity: "amber", text: `War status not reviewed in ${warAge} days. Hormuz + oil context may have shifted.` });
+  }
+
+  if (issues.length === 0) return null;
+
+  const hasRed = issues.some((i) => i.severity === "red");
+  const wrapperClass = hasRed
+    ? "border-red-700 bg-red-950/40"
+    : "border-amber-700 bg-amber-950/30";
+  const headerColor = hasRed ? "text-red-300" : "text-amber-300";
+  const headerLabel = hasRed ? "⚠ STALE DATA — DO NOT TRADE ON THIS DASHBOARD UNTIL REVIEWED" : "⚠ Data is borderline stale";
+
+  return (
+    <div className={`mb-5 border ${wrapperClass} rounded-2xl p-4`}>
+      <p className={`text-xs font-bold ${headerColor} uppercase tracking-widest mb-2`}>
+        {headerLabel}
+      </p>
+      <ul className="space-y-1">
+        {issues.map((i, idx) => (
+          <li key={idx} className={`text-sm font-mono ${i.severity === "red" ? "text-red-200" : "text-amber-200"}`}>
+            <span className={`inline-block w-1.5 h-1.5 rounded-full mr-2 align-middle ${i.severity === "red" ? "bg-red-500 animate-pulse" : "bg-amber-500"}`} />
+            {i.text}
+          </li>
+        ))}
+      </ul>
+      {etoroStatementPeriod && !etoroConnected && (
+        <p className="text-[10px] text-gray-500 font-mono mt-2">
+          eToro statement period on file: {etoroStatementPeriod}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function getMarketData(
   symbol: string,
   marketDataMap: Map<string, MarketData>
@@ -517,6 +587,15 @@ export default async function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 p-5">
       <div className="max-w-7xl mx-auto">
+        {/* Staleness banner — surfaces lastUpdated age, eToro connection, snapshot freshness */}
+        <StaleDataBanner
+          lastUpdated={data.lastUpdated}
+          warLastUpdated={liveWar.lastUpdated}
+          etoroConnected={isEtoroLive}
+          etoroSnapshotDate={(data as any).etoro?.currentSnapshot?.date}
+          etoroStatementPeriod={(data as any).etoro?.statementPeriod}
+        />
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -524,6 +603,9 @@ export default async function Dashboard() {
               <h1 className="text-3xl font-bold tracking-tight">C&G Brief</h1>
               <p className="text-sm text-gray-400">
                 Live Dashboard · {dateStr} {timeStr} Dubai
+              </p>
+              <p className="text-[10px] text-gray-500 font-mono mt-1">
+                Manual data <StaleBadge dateStr={data.lastUpdated} freshDays={1} staleDays={3} label="edited" />
               </p>
             </div>
             <div className="flex flex-col items-end gap-2">
@@ -1470,6 +1552,7 @@ export default async function Dashboard() {
               initialNote={data.strategistNote}
               initialActionItems={data.actionItems}
               portfolioSnapshot={portfolioSnapshot}
+              manualLastUpdated={data.lastUpdated}
             />
 
             {/* Wealth Progress */}
