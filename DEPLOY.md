@@ -43,7 +43,21 @@ This is a rebuilt Next.js 14 trading dashboard with live market data fetched fro
 
 ## Environment Variables
 
-**No environment variables are required** — all configuration is in `src/data/manual-input.json`.
+**Required in Vercel for live data (currently broken — May 17, 2026):**
+
+| Var | Purpose | Where to get it |
+|-----|---------|----------------|
+| `ETORO_API_KEY` | eToro public API auth (live equity, positions, cash, mirrors) | https://www.etoro.com/api → API keys. Rotate if leaked. |
+| `ETORO_USER_KEY` | eToro per-user key | Same as above |
+| `ANTHROPIC_API_KEY` | Powers `/api/strategist` Live Analysis button | console.anthropic.com |
+
+**Without these:** dashboard falls back to manual snapshots in `manual-input.json` and the StaleDataBanner at the top of the page will warn loudly that eToro is disconnected. Yahoo Finance prices keep working — they're public.
+
+**Sanity check after deploy:**
+```bash
+curl -s https://cg-brief-v2.vercel.app/api/snapshot | jq '.lastUpdated'
+curl -s https://cg-brief-v2.vercel.app/api/war-pulse | jq '.source'  # should be "live-ai" or "live-rule", not "fallback"
+```
 
 ## Data Updates
 
