@@ -1,10 +1,10 @@
 {
-  "lastUpdated": "2026-05-17",
+  "lastUpdated": "2026-05-10",
   "equity": {
     "beginningRealized": 38521.45,
     "endingRealized": 37710.08,
     "endingUnrealized": 39431.21,
-    "cashIdle": 2200,
+    "cashIdle": 0.5,
     "periodPnl": -786.99,
     "statementPeriod": "APR 1\u201325, 2026",
     "currentTotalInvested": 36096.54,
@@ -12,9 +12,9 @@
     "smartPortfoliosValue": 22433.76
   },
   "strategistNote": {
-    "title": "TRIM WEEK. TSM past TP1, ICLN/QQQ/VTI within 2.3%. PINS 3.7% above SL. NVDA prints May 20. AED 115K still locked.",
-    "body": "May 17, 2026 baseline review. Net wealth AED 554K = 55.4% of AED 1M goal. 7.5 months left, need AED 59.5K/month of growth, salary surplus only covers AED 30K \u2014 off-pace. ACTIONS THIS WEEK: 1) TRIM DISCIPLINE \u2014 TSM $404.54 is 6.1% past TP1 $380, ICLN $21.73 is 1.2% from TP1 $22, QQQ $713.29 is 2.3% from TP1 $729.54 (RSI 83.2 overbought), VTI $363.63 is 2.3% from TP1 $372.04 (RSI 74.2). Pre-stage trims, don't watch them round-trip. 2) PINS DANGER \u2014 eToro lot at $20.76, only 3.7% above $20 SL. Decide: cut at SL or widen. 3) RECONCILE PINS RSU \u2014 1,429 shares at Schwab acct ...790, May 4 earnings happened, status unknown. Verify before NVDA prints Tuesday. 4) MACRO \u2014 Warsh era live (took over May 15), CPI Apr printed May 13, AED 115K dry powder still on hold pending Hormuz reopen. Gold $4,744 holding TP1 path to $5,200. BTC $81.9K above $74-76K add zone, no action. 5) SMART PORTFOLIO CONSOLIDATION \u2014 still open task, collapse 6 \u2192 2, frees ~$11.8K for redeployment. NEXT 7 DAYS: NVDA Q1 May 20 (high), PMI Flash May 22 (medium).",
-    "edition": "Live Intelligence Update \u2014 May 17, 2026",
+    "title": "RECONCILED book. PINS half what dashboard claimed. ICLN closed. 2 unmapped eToro instruments need IDs.",
+    "body": "May 10, 2026 \u2014 POSITION RECONCILIATION. Live eToro pull confirms dashboard was off by 50%+ on three positions: PINS real 21.97 sh @ $29.10 (not 42.52 @ $24.44), TSM real 0.76 sh @ $290.42 (not 2.10 @ $295.14), ICLN NOT HELD (manual said 57.76 sh). Free cash $0.50 (dashboard said $2,200). 25 lots total on eToro, ~$15K committed. ACTIONS: 1) UPDATE FRAMEWORK SL/TP TO MATCH REAL BROKER STOPS \u2014 most lots show eToro stopLossRate 0.0001 (no real broker stop). Framework SLs in this file are decision triggers, not orders. Place actual stops on PINS (currently below framework $20), TSM (real eToro trailing SL $321.27 already set), Gold (real eToro SL $4,465.52 set). 2) MAP TWO UNKNOWN INSTRUMENTS \u2014 eToro instrumentID 1555 (15.35 units @ $57.98, $890) and 4236 (3.03 units @ $428.64, $1,300), both opened May 5. Likely WPM + AVGO from copier or watchlist deployment. Check eToro UI, add to INSTRUMENT_SYMBOL_MAP in lib/etoro.ts. 3) PINS DECISION HAS HALF THE STAKES PREVIOUSLY THOUGHT \u2014 21.97 sh @ $29.10 underwater ~$212 if cut at $19.47 (per other chat). Schwab RSU 1,429 sh is the bigger exposure. 4) AED 115K Hormuz still locked. NEXT 7 DAYS: NVDA Q1 May 20 (TSM read-across), CPI May 13.",
+    "edition": "Reconciliation Update \u2014 May 10, 2026",
     "stalenessWarning": "This note is manually updated. Use 'Regenerate Analysis' for AI-generated live analysis."
   },
   "positions": [
@@ -57,64 +57,43 @@
     {
       "symbol": "PINS",
       "label": "Pinterest (eToro)",
-      "quantity": 42.52158,
-      "avgCost": 24.44,
+      "quantity": 21.96659,
+      "avgCost": 29.10,
       "stopLoss": 20,
       "takeProfit": 32,
       "takeProfit2": 40,
-      "entryDate": "earlier",
-      "notes": "42.52 sh @ $24.44 avg = $1,039 cost. Currently -17.3% below avg cost. SEPARATE: 1,429 RSU shares at employer broker. SL $20 / TP1 $32 / TP2 $40. Q1 earnings May 4.",
+      "entryDate": "2025-10-20 + 2025-11-17",
+      "notes": "RECONCILED 2026-05-10 from live eToro: 2 lots (13.13 sh @ $26.62 Nov 17 + 8.83 sh @ $32.79 Oct 20) = 21.97 sh @ $29.10 avg = $639 cost. Prior manual qty 42.52 was phantom — 20.55 sh never existed on eToro. SEPARATE: 1,429 RSU shares at Schwab acct ...790 (much larger exposure). Note: eToro stopLossRate is set to 0.0001 (no actual stop on broker) — $20 here is the framework SL.",
       "status": "active"
     },
     {
       "symbol": "BTC-USD",
       "label": "Bitcoin",
-      "quantity": 0.046618,
-      "avgCost": 87059.37,
+      "quantity": 0.048952,
+      "avgCost": 87995,
       "stopLoss": 70000,
       "takeProfit": 110000,
       "takeProfit2": 130000,
-      "entryDate": "2026-04-07",
-      "notes": "0.0466 BTC @ $87.1K avg. $78K current (-9.9%). April ETF inflows $1.97B record. SL $70K. Add at $74-76K. TP1 $110K / TP2 $130K.",
+      "entryDate": "various, oldest 2025-10-27",
+      "notes": "RECONCILED 2026-05-10 from live eToro: 6 lots aggregating to 0.048952 BTC @ $87,995 avg = $4,309 cost. Individual lot SLs range $73,407-$74,432 (per-lot eToro stops). Framework SL $70K below all of them. TP1 $110K / TP2 $130K. Watch April ETF inflow trend.",
       "status": "active"
     },
     {
       "symbol": "ICLN",
       "label": "iShares Global Clean Energy ETF",
-      "quantity": 57.76173,
-      "avgCost": 16.62,
-      "stopLoss": 15,
-      "takeProfit": 22,
-      "takeProfit2": 25,
+      "quantity": 0,
+      "avgCost": 0,
+      "stopLoss": 0,
+      "takeProfit": 0,
+      "takeProfit2": 0,
       "entryDate": "earlier",
-      "notes": "57.76 sh @ $16.62. SL $15 / TP1 $22 (+32%) / TP2 $25 (+50%). IRA policy headwind \u2014 reassess vs watchlist alternatives.",
-      "status": "active",
-      "addZones": {
-        "uptrendAdd": {
-          "price": 20.5,
-          "note": "Breakout confirmed above $20.50 with volume \u2014 add on momentum"
-        },
-        "dipLight": {
-          "min": 18.5,
-          "max": 19.0,
-          "note": "Breakout retest \u2014 prior resistance now support"
-        },
-        "dipMedium": {
-          "min": 17.5,
-          "max": 18.0,
-          "note": "Structural mid-range support, ~10% off highs"
-        },
-        "dipConviction": {
-          "min": 16.5,
-          "max": 17.0,
-          "note": "Near avg cost, major base support \u2014 back up the truck"
-        }
-      }
+      "notes": "POSITION NOT HELD on eToro per reconciliation 2026-05-10. Prior manual qty 57.76 was phantom \u2014 either closed without dashboard update, or never existed. Status set to closed; metadata preserved here in case it re-opens.",
+      "status": "closed"
     },
     {
       "symbol": "ETH-USD",
       "label": "Ethereum",
-      "quantity": 0,
+      "quantity": 0.000528,
       "avgCost": 2253.60,
       "stopLoss": 1950,
       "takeProfit": 3200,
@@ -142,13 +121,13 @@
     {
       "symbol": "TSM",
       "label": "Taiwan Semiconductor ADR",
-      "quantity": 2.10071,
-      "avgCost": 295.14,
-      "stopLoss": 265,
-      "takeProfit": 380,
-      "takeProfit2": 420,
-      "entryDate": "older + jaynemesis adds",
-      "notes": "2.10 sh @ $295.14. +36%+ unrealized. SL $265 / TP1 $380 (+29%) / TP2 $420 (+42%). Q2 earnings July (est).",
+      "quantity": 0.757523,
+      "avgCost": 290.42,
+      "stopLoss": 321.27,
+      "takeProfit": 426,
+      "takeProfit2": 480,
+      "entryDate": "2025-11-06",
+      "notes": "RECONCILED 2026-05-10 from live eToro: 1 lot · 0.7575 sh @ $290.42 = $220 cost. Prior manual qty 2.10 was phantom — 1.34 sh never existed. Real SL on eToro = $321.27 (trailing stop, set above cost — locks in profit). TP1 $426 / TP2 $480. NVDA Q1 May 20 = read-across.",
       "status": "active",
       "addZones": {
         "uptrendAdd": {
@@ -308,7 +287,7 @@
     }
   ],
   "warStatus": {
-    "lastUpdated": "2026-05-17",
+    "lastUpdated": "2026-05-10",
     "status": "CEASEFIRE EXTENDED \u2014 FRAGILE / HORMUZ STILL BLOCKED",
     "statusKey": "ceasefire_extended_fragile",
     "description": "Original 2-week ceasefire (Apr 7) expired. Trump extended ~Apr 21 but briefly. US counter-blockade of Hormuz active since Apr 13. Iran seized ships Apr 22. Peace talks stalling as of May 2026. Oil storage nearly full. Iran losing ~$500M/day. No diplomatic resolution in sight.",
