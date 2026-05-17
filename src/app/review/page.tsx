@@ -13,7 +13,10 @@ import manualInput from "@/data/manual-input.json";
 import InteractiveChecklist from "../components/InteractiveChecklist";
 import Link from "next/link";
 
-export const revalidate = 900; // 15-min ISR, same as main dashboard
+// Always render fresh — Sunday Review is rare/manual traffic, so caching adds risk
+// (stale action recommendations) for negligible perf gain. Bypass CDN entirely.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // ─── Helpers ───────────────────────────────────────────────────────────
 
