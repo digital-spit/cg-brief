@@ -314,15 +314,36 @@ export interface ReconciliationResult {
   livePositions: PositionWithLive[];
   staleManualEntries: string[];   // symbols in manual but absent from eToro live
   unmappedLiveEntries: string[];  // symbols in eToro live but absent from manual metadata
-  source: "etoro-live" | "manual-fallback";
+  source: "etoro-live" | "manual-fallback" | "etoro-unavailable";
+}
+
+export interface ReconcileOptions {
+  // V2 source-of-truth policy: refuse to serve manual data when eToro is unavailable.
+  // Set true on any consumer where silent stale data is worse than empty data
+  // (snapshot API, scheduled review tasks, the Cowork mirror artifact).
+  // When true, returns { livePositions: [], source: "etoro-unavailable", ... } if
+  // eToro is null/empty instead of falling back to the V1 manual-driven path.
+  requireLive?: boolean;
 }
 
 export function reconcilePositions(
   manualMetadata: Array<Record<string, unknown>>,
   etoroAggregated: Map<string, AggregatedPosition> | undefined,
-  marketData: Map<string, MarketData>
+  marketData: Map<string, MarketData>,
+  options: ReconcileOptions = {}
 ): ReconciliationResult {
-  // Fallback: no eToro live → render manual as-is (legacy path)
+  // V2 strict mode — never serve manual qty/avgCost when eToro is unavailable.
+  if ((!etoroAggregated || etoroAggregated.size === 0) && options.requireLive) {
+    return {
+      livePositions: [],
+      staleManualEntries: manualMetadata.map((m) => m.symbol as string),
+      unmappedLiveEntries: [],
+      source: "etoro-unavailable",
+    };
+  }
+
+  // Legacy fallback: no eToro live → render manual as-is (preserved for dashboard
+  // page rendering when eToro is offline; new callers should pass requireLive: true).
   if (!etoroAggregated || etoroAggregated.size === 0) {
     const livePositions = manualMetadata.map((m) => {
       const sym = m.symbol as string;
