@@ -5,7 +5,7 @@ description: Morning check + active staleness gating of the C&G Brief dashboard 
 
 You are running unattended. Your job is to make sure that **the next time Khaled looks at https://cg-brief-v2.vercel.app, the data is not stale and the failure modes are visible**.
 
-The real Next.js app is at `~/Projects/cg-brief-v2/` (NOT `~/Projects/cg-brief/` — that's the dead v1). Manual data lives at `~/Projects/cg-brief-v2/src/data/manual-input.json`. The repo is `digital-spit/cg-brief` on GitHub; Vercel auto-deploys from `main`.
+The Next.js app is at `~/Projects/cg-brief-v2/`. Manual data lives at `~/Projects/cg-brief-v2/src/data/manual-input.json`. The repo is `digital-spit/cg-brief` on GitHub (single branch: `main`); Vercel auto-deploys from `main`.
 
 ## Run order
 
@@ -40,8 +40,8 @@ To commit + push, use the existing flow:
 cd ~/Projects/cg-brief-v2
 git add src/data/manual-input.json
 git commit -m "data: daily refresh $(date -u +%Y-%m-%d) — bumped lastUpdated, [other changes]"
-# Push via the GITHUB_TOKEN in ~/Projects/cg-brief/.env (v1 folder, where the token lives)
-TOKEN=$(grep GITHUB_TOKEN ~/Projects/cg-brief/.env | cut -d= -f2)
+# Push via the GITHUB_TOKEN stored in this repo's .env (gitignored)
+TOKEN=$(grep GITHUB_TOKEN ~/Projects/cg-brief-v2/.env | cut -d= -f2)
 git push https://${TOKEN}@github.com/digital-spit/cg-brief.git main
 ```
 Vercel will redeploy within ~30s.
