@@ -23,14 +23,15 @@ This is a rebuilt Next.js 14 trading dashboard with live market data fetched fro
 
 ## Deployment to Vercel
 
-1. **Initialize GitHub repository** (if not already done)
-   ```bash
-   git remote add origin https://github.com/digital-spit/cg-brief.git
-   git push -u origin v2
-   ```
-   Note: You may need to create the repository on GitHub first if it doesn't exist.
+The repo `digital-spit/cg-brief` has a single branch `main` containing this Next.js app. Vercel auto-deploys from `main`.
 
-2. **Deploy to Vercel**
+1. **Push changes**
+   ```bash
+   git push origin main
+   ```
+   Vercel rebuilds and ships in ~30s.
+
+2. **Manual deploy (rarely needed)**
    ```bash
    vercel --prod
    ```
