@@ -150,6 +150,40 @@
           "note": "Strong structural support, still +15% above avg cost"
         }
       }
+    },
+    {
+      "symbol": "FCX",
+      "label": "Freeport-McMoRan (copper supercycle)",
+      "quantity": 15.35012,
+      "avgCost": 57.98,
+      "stopLoss": 49,
+      "takeProfit": 72,
+      "takeProfit2": 90,
+      "entryDate": "2026-05-05",
+      "notes": "Opened 2026-05-05 from Cash Deployment Plan watchlist execution: 15.35 sh @ $57.98 = $890 (conviction 8/10 strong_buy). Copper supercycle thesis (Goldman + JPM): AI data centers need 475kmt/yr copper by 2026, structural 330kmt deficit. Real eToro stopLossRate is 0.0001 — framework SL $49 (-15.5%). TP1 $72 (+24%) / TP2 $90 (+55%).",
+      "status": "active",
+      "addZones": {
+        "uptrendAdd": { "price": 65, "note": "Breakout above $65 with volume — copper momentum confirmation" },
+        "dipMedium": { "min": 52, "max": 55, "note": "Pullback to entry zone — add" },
+        "dipConviction": { "min": 49, "max": 51, "note": "Near framework SL — re-evaluate thesis before adding" }
+      }
+    },
+    {
+      "symbol": "AVGO",
+      "label": "Broadcom (AI infrastructure)",
+      "quantity": 3.032848,
+      "avgCost": 428.64,
+      "stopLoss": 360,
+      "takeProfit": 520,
+      "takeProfit2": 640,
+      "entryDate": "2026-05-05",
+      "notes": "Opened 2026-05-05 from Cash Deployment Plan watchlist execution: 3.03 sh @ $428.64 = $1,300 (conviction 8/10 strong_buy). JPMorgan #1 AI infrastructure pick — custom silicon for Google/Meta/Apple, $571B AI capex flows through AVGO. Q2 earnings June 25 next catalyst. WATCHLIST entry zone $195-215 is STALE — current price 2x that, entered on momentum. SL $360 (-16%) / TP1 $520 (+21%) / TP2 $640 (+49%). Real eToro stopLossRate is 0.0001 — framework SL only.",
+      "status": "active",
+      "addZones": {
+        "uptrendAdd": { "price": 475, "note": "Breakout above $475 on AI capex announcement — momentum add" },
+        "dipMedium": { "min": 395, "max": 415, "note": "Pullback within 5% of entry — add" },
+        "dipConviction": { "min": 360, "max": 380, "note": "Near framework SL — thesis review trigger" }
+      }
     }
   ],
   "copyPortfolio": {

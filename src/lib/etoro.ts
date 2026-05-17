@@ -6,10 +6,13 @@ const ETORO_BASE = "https://public-api.etoro.com/api/v1";
 export const INSTRUMENT_SYMBOL_MAP: Record<number, string> = {
   18: "GC=F",        // Gold CFD
   1184: "PINS",      // Pinterest
+  1555: "FCX",       // Freeport-McMoRan (copper supercycle conviction)
   3006: "QQQ",       // Nasdaq 100 ETF
+  4236: "AVGO",      // Broadcom (AI infrastructure conviction)
   4237: "VTI",       // Vanguard Total Market ETF
   4481: "TSM",       // Taiwan Semiconductor ADR
-  8739: "ICLN",      // iShares Clean Energy ETF
+  6149: "SCCO",      // Southern Copper (currently dust residual only)
+  8739: "ICLN",      // iShares Clean Energy ETF (closed but kept for history)
   100000: "BTC-USD", // Bitcoin
   100001: "ETH-USD", // Ethereum
 };
