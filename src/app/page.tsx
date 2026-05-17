@@ -17,6 +17,7 @@ import manualInput from "@/data/manual-input.json";
 import RefreshButton from "./refresh-button";
 import LiveNewsFeed from "./components/LiveNewsFeed";
 import StrategistPanel from "./components/StrategistPanel";
+import Link from "next/link";
 import InteractiveChecklist from "./components/InteractiveChecklist";
 
 export const revalidate = 900; // 15 min ISR — Refresh button bypasses cache on demand
@@ -607,6 +608,9 @@ export default async function Dashboard() {
               <p className="text-[10px] text-gray-500 font-mono mt-1">
                 Manual data <StaleBadge dateStr={data.lastUpdated} freshDays={1} staleDays={3} label="edited" />
               </p>
+              <Link href="/review" className="inline-block mt-2 text-xs px-3 py-1 rounded-md bg-emerald-900/40 hover:bg-emerald-800/60 border border-emerald-800 hover:border-emerald-600 text-emerald-200 font-semibold transition-colors">
+                📋 Sunday Review →
+              </Link>
             </div>
             <div className="flex flex-col items-end gap-2">
               <RefreshButton />
